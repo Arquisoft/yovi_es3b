@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.26">
-<title>Introduction and Goals</title>
+<title>yovi_es3b</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -436,14 +436,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
+<h1><span class="image"><img src="./images/arc42-logo.png" alt="arc42"></span> yovi_es3b</h1>
+<div class="details">
+<span id="revnumber">version 8.2 EN,</span>
+<span id="revdate">January 2023</span>
+<br><span id="revremark">(based upon AsciiDoc version)</span>
+</div>
 <div id="toc" class="toc">
-<div id="toctitle">table of contents</div>
+<div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#section-introduction-and-goals">1. Introduction and Goals</a>
+<li><a href="#section-introduction-and-goals">1. 1. Introduction and Goals</a>
 <ul class="sectlevel2">
-<li><a href="#_requirements_overview">1.1. Requirements Overview</a></li>
-<li><a href="#_quality_goals">1.2. Quality Goals</a></li>
-<li><a href="#_stakeholders">1.3. Stakeholders</a></li>
+<li><a href="#_1_1_requirements_overview">1.1. 1.1 Requirements Overview</a></li>
+<li><a href="#_1_2_quality_goals">1.2. 1.2 Quality Goals</a></li>
+<li><a href="#_1_3_stakeholders">1.3. 1.3 Stakeholders</a></li>
 </ul>
 </li>
 <li><a href="#section-architecture-constraints">2. Architecture Constraints</a></li>
@@ -495,14 +501,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div id="content">
-<div class="paragraph">
-<p>=yovi_es3b
- <span class="image"><img src="./images/arc42-logo.png" alt="arc42"></span>
-:revnumber: 8.2 EN
-:revdate: January 2023
-:revremark: (based upon AsciiDoc version)
-:toc-title: Table of Contents</p>
-</div>
+<div id="preamble">
+<div class="sectionbody">
 <style>
 .arc42help {font-size:small; width: 14px; height: 16px; overflow: hidden; position: absolute; right: 0; padding: 2px 0 3px 2px;}
 .arc42help::before {content: "?";}
@@ -519,7 +519,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>arc42, the template for documentation of software and system architecture.</p>
 </div>
 <div class="paragraph">
-<p>Template Version {revnumber}. {revremark}, {revdate}</p>
+<p>Template Version 8.2 EN. (based upon AsciiDoc version), January 2023</p>
 </div>
 <div class="paragraph">
 <p>Created, maintained and &#169; by Dr. Peter Hruschka, Dr. Gernot Starke and contributors.
@@ -547,9 +547,29 @@ For documentation of your own system you use better the <em>plain</em> version.<
 </div>
 </div>
 <div style="page-break-after: always;"></div>
+</div>
+</div>
 <div class="sect1">
-<h2 id="section-introduction-and-goals">1. Introduction and Goals</h2>
+<h2 id="section-introduction-and-goals">1. 1. Introduction and Goals</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Software development company Micrati has decided to shift its focus
+to the development of a video game based on the classical board game Y.
+The new game will be named <strong>YOVI</strong>.</p>
+</div>
+<div class="paragraph">
+<p>YOVI is a two-player strategy game in which each player is assigned a color.
+The board consists of hexagonal tiles arranged in a triangular shape.
+Players take turns placing a piece of their assigned color on an empty tile.
+The objective of the game is to connect the three sides of the triangular board
+with a continuous path of pieces of the same color.</p>
+</div>
+<div class="paragraph">
+<p>The main goal of the project is to deliver a deployed, accessible,
+and scalable web-based system that allows users to play Y against
+the computer with multiple strategies and configurable difficulty levels,
+while also exposing a documented API for bot interaction.</p>
+</div>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -578,7 +598,134 @@ These include</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_requirements_overview">1.1. Requirements Overview</h3>
+<h3 id="_1_1_requirements_overview">1.1. 1.1 Requirements Overview</h3>
+<div class="paragraph">
+<p>The system will be composed of two main subsystems:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A Web Application implemented in TypeScript that allows users to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Play games through a graphical interface.</p>
+</li>
+<li>
+<p>Register and manage their accounts.</p>
+</li>
+<li>
+<p>Access statistics and match history.</p>
+</li>
+<li>
+<p>Interact through a public API that enables bot integration.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>A Game Engine module implemented in Rust responsible for:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Determining whether a match has been won.</p>
+</li>
+<li>
+<p>Suggesting the next move based on different strategies.</p>
+</li>
+<li>
+<p>Providing a basic web service interface to be invoked by the Web Application.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Communication between both subsystems will be performed through JSON
+messages using the YEN (Y Notation) format to represent game states.</p>
+</div>
+<div class="sect3">
+<h4 id="_1_1_1_functional_requirements">1.1.1. 1.1.1 Functional Requirements</h4>
+<div class="paragraph">
+<p>The system must fulfill the following functional requirements:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The system shall provide a web-based frontend that allows users
+to play the classical version of the Y game.</p>
+</li>
+<li>
+<p>The system shall allow a human player to play against the computer.</p>
+</li>
+<li>
+<p>The board size shall be configurable.</p>
+</li>
+<li>
+<p>The system shall implement more than one computer strategy.
+Each strategy may include different difficulty levels,
+which can be selected by the user.</p>
+</li>
+<li>
+<p>The system shall allow users to register and authenticate.</p>
+</li>
+<li>
+<p>The system shall store and display user statistics, including:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Number of games played.</p>
+</li>
+<li>
+<p>Number of games won and lost.</p>
+</li>
+<li>
+<p>Additional performance metrics if necessary.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The system shall provide a public REST API that allows:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Access to user information.</p>
+</li>
+<li>
+<p>Access to match information.</p>
+</li>
+<li>
+<p>Management of matches.</p>
+</li>
+<li>
+<p>Interaction from external bots.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The API shall include a method <code>play</code> that:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Receives at least a parameter <code>position</code> in YEN notation.</p>
+</li>
+<li>
+<p>Returns the next move in YEN notation.</p>
+</li>
+<li>
+<p>Optionally allows the selection of strategy and difficulty.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The system shall be deployed and accessible via the Web.</p>
+</li>
+</ul>
+</div>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -607,8 +754,64 @@ If requirements documents exist this overview should refer to these documents.</
 </div>
 </div>
 </div>
+</div>
 <div class="sect2">
-<h3 id="_quality_goals">1.2. Quality Goals</h3>
+<h3 id="_1_2_quality_goals">1.2. 1.2 Quality Goals</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Priority</th>
+<th class="tableblock halign-left valign-top">Quality Goal</th>
+<th class="tableblock halign-left valign-top">Concrete Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Performance</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system shall return a move suggestion from the Rust engine in less than 1 second
+for standard board sizes under normal load conditions (up to 50 concurrent users).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scalability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system shall support at least 50 concurrent authenticated users playing matches
+simultaneously without service degradation (response times above 2 seconds or request failures).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Availability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The deployed system shall achieve at least 99% uptime measured on a monthly basis,
+excluding scheduled maintenance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modifiability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">It shall be possible to add a new computer strategy without modifying the Web frontend
+and without changing existing strategy implementations (Open/Closed Principle).
+Integration of a new strategy should require changes only within the Rust engine module.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Usability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A new user shall be able to register and start a game in less than 5 minutes
+without external documentation. The interface shall clearly indicate:
+current turn, selected strategy, board size, and game result.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interoperability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The public REST API shall follow standard HTTP conventions and JSON format,
+and it shall be fully documented (e.g., OpenAPI). External bots shall be able to
+interact with the <code>play</code> endpoint without accessing internal implementation details.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -639,7 +842,7 @@ If you as an architect do not know how the quality of your work will be judged&#
 </div>
 </div>
 <div class="sect2">
-<h3 id="_stakeholders">1.3. Stakeholders</h3>
+<h3 id="_1_3_stakeholders">1.3. 1.3 Stakeholders</h3>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -679,27 +882,38 @@ These stakeholders determine the extent and the level of detail of your work and
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Role/Name</th>
-<th class="tableblock halign-left valign-top">Contact</th>
-<th class="tableblock halign-left valign-top">Expectations</th>
+<th class="tableblock halign-left valign-top">Stakeholder</th>
+<th class="tableblock halign-left valign-top">Interest</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Role-1&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Contact-1&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Expectation-1&gt;</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Players</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Want to play the game easily, select strategies, and track their statistics.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Role-2&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Contact-2&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Expectation-2&gt;</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Developers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Need a maintainable and well-documented architecture, witch will ensure
+easy modifications in the future.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project Team</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Needs proper documentation, testing, and a simple architecture for the project,
+to simplify the development and maintenance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Micrati</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Expects a functional, high-quality, and innovative product, which boosts
+profits for the company.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Teachers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Need a good documentation and a functional project to grade students.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1267,9 +1481,17 @@ building block instances depicted in this diagram.&gt;</em></p>
 <div class="paragraph">
 <p>It is possible to use a sequence diagram:</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="./images/Sequence%20diagram.png" alt="Sequence diagram" width="332" height="335">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+actor Alice
+actor Bob
+database Pod as "Bob's Pod"
+Alice -&gt; Bob: Authentication Request
+Bob --&gt; Alice: Authentication Response
+Alice  --&gt; Pod: Store route
+Alice -&gt; Bob: Another authentication Request
+Alice &lt;-- Bob: another authentication Response</pre>
 </div>
 </div>
 </div>
@@ -1801,7 +2023,8 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-11 13:52:50 +0100
+Version 8.2 EN<br>
+Last updated 2026-02-04 11:06:33 +0100
 </div>
 </div>
 </body>
