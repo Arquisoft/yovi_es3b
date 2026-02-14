@@ -1,23 +1,87 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-introduction-and-goals]]
-== Introduction and Goals
+== 1. Introduction and Goals
+Software development company Micrati has decided to shift its focus
+to the development of a video game based on the classical board game Y.
+The new game will be named *YOVI*.
+
+YOVI is a two-player strategy game in which each player is assigned a color.
+The board consists of hexagonal tiles arranged in a triangular shape.
+Players take turns placing a piece of their assigned color on an empty tile.
+The objective of the game is to connect the three sides of the triangular board
+with a continuous path of pieces of the same color.
+
+The main goal of the project is to deliver a deployed, accessible,
+and scalable web-based system that allows users to play Y against
+the computer with multiple strategies and configurable difficulty levels,
+while also exposing a documented API for bot interaction.
 
 ifdef::arc42help[]
 [role="arc42help"]
 ****
-Describes the relevant requirements and the driving forces that software architects and development team must consider. 
+Describes the relevant requirements and the driving forces that software architects and development team must consider.
 These include
 
-* underlying business goals, 
-* essential features, 
-* essential functional requirements, 
+* underlying business goals,
+* essential features,
+* essential functional requirements,
 * quality goals for the architecture and
 * relevant stakeholders and their expectations
 ****
 endif::arc42help[]
 
-=== Requirements Overview
+=== 1.1 Requirements Overview
+The system will be composed of two main subsystems:
+
+* A Web Application implemented in TypeScript that allows users to:
+** Play games through a graphical interface.
+** Register and manage their accounts.
+** Access statistics and match history.
+** Interact through a public API that enables bot integration.
+
+* A Game Engine module implemented in Rust responsible for:
+** Determining whether a match has been won.
+** Suggesting the next move based on different strategies.
+** Providing a basic web service interface to be invoked by the Web Application.
+
+Communication between both subsystems will be performed through JSON
+messages using the YEN (Y Notation) format to represent game states.
+
+==== 1.1.1 Functional Requirements
+
+The system must fulfill the following functional requirements:
+
+* The system shall provide a web-based frontend that allows users
+to play the classical version of the Y game.
+
+* The system shall allow a human player to play against the computer.
+
+* The board size shall be configurable.
+
+* The system shall implement more than one computer strategy.
+Each strategy may include different difficulty levels,
+which can be selected by the user.
+
+* The system shall allow users to register and authenticate.
+
+* The system shall store and display user statistics, including:
+** Number of games played.
+** Number of games won and lost.
+** Additional performance metrics if necessary.
+
+* The system shall provide a public REST API that allows:
+** Access to user information.
+** Access to match information.
+** Management of matches.
+** Interaction from external bots.
+
+* The API shall include a method `play` that:
+** Receives at least a parameter `position` in YEN notation.
+** Returns the next move in YEN notation.
+** Optionally allows the selection of strategy and difficulty.
+
+* The system shall be deployed and accessible via the Web.
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -45,7 +109,46 @@ See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 docum
 ****
 endif::arc42help[]
 
-=== Quality Goals
+=== 1.2 Quality Goals
+
+[cols="1,1,3"]
+|===
+|Priority |Quality Goal |Concrete Description
+
+|1
+|Performance
+|The system shall return a move suggestion from the Rust engine in less than 1 second
+for standard board sizes under normal load conditions (up to 50 concurrent users).
+
+|2
+|Scalability
+|The system shall support at least 50 concurrent authenticated users playing matches
+simultaneously without service degradation (response times above 2 seconds or request failures).
+
+|3
+|Availability
+|The deployed system shall achieve at least 99% uptime measured on a monthly basis,
+excluding scheduled maintenance.
+
+|4
+|Modifiability
+|It shall be possible to add a new computer strategy without modifying the Web frontend
+and without changing existing strategy implementations (Open/Closed Principle).
+Integration of a new strategy should require changes only within the Rust engine module.
+
+|5
+|Usability
+|A new user shall be able to register and start a game in less than 5 minutes
+without external documentation. The interface shall clearly indicate:
+current turn, selected strategy, board size, and game result.
+
+|6
+|Interoperability
+|The public REST API shall follow standard HTTP conventions and JSON format,
+and it shall be fully documented (e.g., OpenAPI). External bots shall be able to
+interact with the `play` endpoint without accessing internal implementation details.
+
+|===
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -69,7 +172,7 @@ A table with quality goals and concrete scenarios, ordered by priorities
 ****
 endif::arc42help[]
 
-=== Stakeholders
+=== 1.3 Stakeholders
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -93,9 +196,25 @@ Table with role names, person names, and their expectations with respect to the 
 ****
 endif::arc42help[]
 
-[options="header",cols="1,2,2"]
+[cols="1,2"]
 |===
-|Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+|Stakeholder |Interest
+
+|Players
+|Want to play the game easily, select strategies, and track their statistics.
+
+|Developers
+|Need a maintainable and well-documented architecture, witch will ensure
+easy modifications in the future.
+
+|Project Team
+|Needs proper documentation, testing, and a simple architecture for the project,
+to simplify the development and maintenance.
+
+|Micrati
+|Expects a functional, high-quality, and innovative product, which boosts
+profits for the company.
+
+|Teachers
+|Need a good documentation and a functional project to grade students.
 |===
