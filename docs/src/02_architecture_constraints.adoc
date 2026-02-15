@@ -3,27 +3,39 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-architecture-constraints]]
 == Architecture Constraints
 
+=== Technical Constraints
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Any requirement that constraints software architects in their freedom of design and implementation decisions or decision about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
+[cols="1,3",options="header"]
+|===
+| Constraint | Description
+| **Frontend** | The web application must be built with React, Vite, and TypeScript.
+| **Game Engine Language** | The core of the game must be implemented in Rust.
+| **Data Exchange** | Communication between the web application and the Rust module must use JSON messages following the YEN notation.
+| **Bot Support** | The system must provide an external API for bots to interact with the game.
+| **Deployment** | The application must be accessible via web browser.
+| **Git and github** | The project will have a version control through Git. The repository will be public in GitHub.
+| **Tools for documentation** | The project will use AsciiDoc for text and PlantUML for diagrams.
+|===
 
-.Motivation
-Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
-Constraints must always be dealt with; they may be negotiable, though.
+=== Organizational Constraints
 
-.Form
-Simple tables of constraints with explanations.
-If needed you can subdivide them into
-technical constraints, organizational and political constraints and
-conventions (e.g. programming or versioning guidelines, documentation or naming conventions)
+[cols="1,3",options="header"]
+|===
+| Constraint | Description
+| **Team** | The project is developed by a team of four students, as assigned by the course teacher.
+| **Deadline** | The project must be delivered on the established deadlines.
+| **Issues** | The GitHub Issues tab will be used for management tasks.
+| **Meetings** | During weekly labs, the team will hold progress reviews to evaluate the previous tasks completion and define the next ones.
+| **Pull requests** | We use Pull Request workflow for all changes. This ensures the code is reviewed by another team member, helping us to maintain consistency and fix issues before merging.
+|===
 
+=== Conventions
 
-.Further Information
-
-See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 documentation.
-
-****
-endif::arc42help[]
+[cols="1,3",options="header"]
+|===
+| Constraint | Description
+| **Documentation Standard** | Documentation must follow the Arc42 template.
+| **Language** | The documentation and the final application will be developed in English.
+| **Usability** | The interface should be easy to use and accessible, making sure everyone has a smooth experience while playing.
+| **Coding** | We focus on code quality by using meaningful names, modular components, and clear documentation.
+|===
