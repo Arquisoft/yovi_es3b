@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.26">
+<meta name="generator" content="Asciidoctor 2.0.23">
 <title>yovi_es3b</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -116,6 +116,7 @@ h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title str
 :not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
 pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
 pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
 pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
 em em{font-style:normal}
 strong strong{font-weight:400}
@@ -218,7 +219,6 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
 .literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
 .listingblock>.content{position:relative}
-.listingblock pre>code{display:block}
 .listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
 .listingblock:hover code[data-lang]::before{display:block}
 .listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
@@ -452,11 +452,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_1_3_stakeholders">1.3. 1.3 Stakeholders</a></li>
 </ul>
 </li>
-<li><a href="#section-architecture-constraints">2. Architecture Constraints</a></li>
+<li><a href="#section-architecture-constraints">2. Architecture Constraints</a>
+<ul class="sectlevel2">
+<li><a href="#_technical_constraints">2.1. Technical Constraints</a></li>
+<li><a href="#_organizational_constraints">2.2. Organizational Constraints</a></li>
+<li><a href="#_conventions">2.3. Conventions</a></li>
+</ul>
+</li>
 <li><a href="#section-context-and-scope">3. Context and Scope</a>
 <ul class="sectlevel2">
 <li><a href="#_business_context">3.1. Business Context</a></li>
 <li><a href="#_technical_context">3.2. Technical Context</a></li>
+<li><a href="#_mapping_input_output">3.3. Mapping Input / Output</a></li>
 </ul>
 </li>
 <li><a href="#section-solution-strategy">4. Solution Strategy</a></li>
@@ -924,129 +931,475 @@ profits for the company.</p></td>
 <div class="sect1">
 <h2 id="section-architecture-constraints">2. Architecture Constraints</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<div class="title">Contents</div>
-<p>Any requirement that constraints software architects in their freedom of design and implementation decisions or decision about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.</p>
+<div class="sect2">
+<h3 id="_technical_constraints">2.1. Technical Constraints</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Constraint</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Frontend</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The web application must be built with React, Vite, and TypeScript.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Game Engine Language</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The core of the game must be implemented in Rust.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Data Exchange</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Communication between the web application and the Rust module must use JSON messages following the YEN notation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Bot Support</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The system must provide an external API for bots to interact with the game.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Deployment</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application must be accessible via web browser.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Git and github</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The project will have a version control through Git. The repository will be public in GitHub.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Tools for documentation</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The project will use AsciiDoc for text and PlantUML for diagrams.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
-Constraints must always be dealt with; they may be negotiable, though.</p>
+<div class="sect2">
+<h3 id="_organizational_constraints">2.2. Organizational Constraints</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Constraint</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Team</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The project is developed by a team of four students, as assigned by the course teacher.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Deadline</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The project must be delivered on the established deadlines.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Issues</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The GitHub Issues tab will be used for management tasks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Meetings</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">During weekly labs, the team will hold progress reviews to evaluate the previous tasks completion and define the next ones.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Pull requests</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">We use Pull Request workflow for all changes. This ensures the code is reviewed by another team member, helping us to maintain consistency and fix issues before merging.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>Simple tables of constraints with explanations.
-If needed you can subdivide them into
-technical constraints, organizational and political constraints and
-conventions (e.g. programming or versioning guidelines, documentation or naming conventions)</p>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-2/">Architecture Constraints</a> in the arc42 documentation.</p>
-</div>
-</div>
-</div>
+<div class="sect2">
+<h3 id="_conventions">2.3. Conventions</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Constraint</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Documentation Standard</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Documentation must follow the Arc42 template.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Language</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The documentation and the final application will be developed in English.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Usability</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The interface should be easy to use and accessible, making sure everyone has a smooth experience while playing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Coding</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">We focus on code quality by using meaningful names, modular components, and clear documentation.</p></td>
+</tr>
+</tbody>
+</table>
 <div style="page-break-after: always;"></div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="section-context-and-scope">3. Context and Scope</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
 <div class="paragraph">
-<div class="title">Contents</div>
-<p>Context and scope - as the name suggests - delimits your system (i.e. your scope) from all its communication partners
-(neighboring systems and users, i.e. the context of your system). It thereby specifies the external interfaces.</p>
+<p>This section describes the system as a black box, showing its interactions with external actors and systems.
+It also presents the technical interfaces used between the main
+subsystems.</p>
+</div>
+<div class="sect2">
+<h3 id="_business_context">3.1. Business Context</h3>
+<div class="paragraph">
+<p>YOVI is a software platform designed to allow users to play the game Y
+through a web application, while also enabling automated interaction
+through an external API consumed by bots. The system provides gameplay
+functionality, user management, statistics tracking, and game validation
+through a dedicated game engine.</p>
 </div>
 <div class="paragraph">
-<p>If necessary, differentiate the business context (domain specific inputs and outputs) from the technical context (channels, protocols, hardware).</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>The domain interfaces and technical interfaces to communication partners are among your system&#8217;s most critical aspects. Make sure that you completely understand them.</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>Various options:</p>
+<p>From a business perspective, the system offers:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Context diagrams</p>
+<p>A web interface for playing the classic version of the game Y.</p>
 </li>
 <li>
-<p>Lists of communication partners and their interfaces.</p>
+<p>User registration and management.</p>
+</li>
+<li>
+<p>Game history and statistics visualization.</p>
+</li>
+<li>
+<p>An external API for automated clients (bots).</p>
+</li>
+<li>
+<p>Game validation and move suggestion functionalities.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-3/">Context and Scope</a> in the arc42 documentation.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_business_context">3.1. Business Context</h3>
-<div class="sidebarblock arc42help">
+<div class="sect3">
+<h4 id="_external_actors">3.1.1. External Actors</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Actor / External System</th>
+<th class="tableblock halign-left valign-top">Interaction with YOVI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web User</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plays matches, selects strategies, and consults statistics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External Bot</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uses the public API to play games automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game Engine</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Checks win conditions and suggests next moves.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web Deployment Platform</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provides public access to the system.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="imageblock">
 <div class="content">
-<div class="paragraph">
-<div class="title">Contents</div>
-<p>Specification of <strong>all</strong> communication partners (users, IT-systems, &#8230;&#8203;) with explanations of domain specific inputs and outputs or interfaces.
-Optionally you can add domain specific formats or communication protocols.</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>All stakeholders should understand which data are exchanged with the environment of the system.</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>All kinds of diagrams that show the system as a black box and specify the domain interfaces to communication partners.</p>
-</div>
-<div class="paragraph">
-<p>Alternatively (or additionally) you can use a table.
-The title of the table is the name of your system, the three columns contain the name of the communication partner, the inputs, and the outputs.</p>
+<img src="./images/contextdiagram.png" alt="Context diagram">
 </div>
 </div>
-</div>
-<div class="paragraph">
-<p><strong>&lt;Diagram or Table&gt;</strong></p>
-</div>
-<div class="paragraph">
-<p><strong>&lt;optionally: Explanation of external domain interfaces&gt;</strong></p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_technical_context">3.2. Technical Context</h3>
-<div class="sidebarblock arc42help">
-<div class="content">
 <div class="paragraph">
-<div class="title">Contents</div>
-<p>Technical interfaces (channels and transmission media) linking your system to its environment. In addition a mapping of domain specific input/output to the channels, i.e. an explanation which I/O uses which channel.</p>
+<p>At a technical level, YOVI is composed of several subsystems that
+communicate using web protocols and JSON messages, including the
+YEN notation for representing game states.</p>
+</div>
+<div class="sect3">
+<h4 id="_main_technical_containers">3.2.1. Main Technical Containers</h4>
+<div class="sect4">
+<h5 id="_web_application_typescript">Web Application (TypeScript)</h5>
+<div class="paragraph">
+<p>Responsibilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>User interface.</p>
+</li>
+<li>
+<p>User interaction and gameplay visualization.</p>
+</li>
+<li>
+<p>Access to backend services.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_backend_api">Backend API</h5>
+<div class="paragraph">
+<p>Responsibilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Application orchestration.</p>
+</li>
+<li>
+<p>User and game management.</p>
+</li>
+<li>
+<p>Exposure of the external API for bots.</p>
+</li>
+<li>
+<p>Communication with the game engine.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_game_engine_rust">Game Engine (Rust)</h5>
+<div class="paragraph">
+<p>Responsibilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Game state validation.</p>
+</li>
+<li>
+<p>Win detection.</p>
+</li>
+<li>
+<p>Move suggestion according to selected strategies.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_database_if_present_in_the_final_architecture">Database (if present in the final architecture)</h5>
+<div class="paragraph">
+<p>Responsibilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Persistent storage of users.</p>
+</li>
+<li>
+<p>Game history.</p>
+</li>
+<li>
+<p>Statistics.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_technical_interfaces">3.2.2. Technical Interfaces</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">From</th>
+<th class="tableblock halign-left valign-top">To</th>
+<th class="tableblock halign-left valign-top">Channel</th>
+<th class="tableblock halign-left valign-top">Data Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Browser</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frontend Web App</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTPS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTML/CSS/JavaScript</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frontend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External Bots</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">REST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game Engine (Rust)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP REST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON (YEN)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database Driver</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SQL</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_technical_context_diagram">3.2.3. Technical Context Diagram</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Include here a <strong>Container Diagram (C4 Level 2)</strong> showing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Browser / Client</p>
+</li>
+<li>
+<p>Frontend Web Application</p>
+</li>
+<li>
+<p>Backend API</p>
+</li>
+<li>
+<p>Game Engine (Rust)</p>
+</li>
+<li>
+<p>Database</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<div class="title">Motivation</div>
-<p>Many stakeholders make architectural decision based on the technical interfaces between the system and its context. Especially infrastructure or hardware designers decide these technical interfaces.</p>
+<p>Relationships should indicate:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTPS communication between browser and frontend</p>
+</li>
+<li>
+<p>REST/JSON between frontend and backend</p>
+</li>
+<li>
+<p>REST/JSON (YEN) between backend and game engine</p>
+</li>
+<li>
+<p>Persistence connection between backend and database</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_optional_improvement_recommended">3.2.4. Optional Improvement (Recommended)</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Optionally, include a <strong>UML Component Diagram</strong> for the Backend API showing internal components such as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>User Management</p>
+</li>
+<li>
+<p>Game Management</p>
+</li>
+<li>
+<p>Strategy Manager</p>
+</li>
+<li>
+<p>Persistence Layer</p>
+</li>
+<li>
+<p>Game Engine Adapter</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<div class="title">Form</div>
-<p>E.g. UML deployment diagram describing channels to neighboring systems,
-together with a mapping table showing the relationships between channels and input/output.</p>
+<p>This is not mandatory but helps bridge this section with the internal architecture described later.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>&lt;Diagram or Table&gt;</strong></p>
+<div class="sect2">
+<h3 id="_mapping_input_output">3.3. Mapping Input / Output</h3>
+<div class="sect3">
+<h4 id="_inputs">3.3.1. Inputs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>User interactions through the web interface.</p>
+</li>
+<li>
+<p>API requests from external bots.</p>
+</li>
+<li>
+<p>Board states encoded using YEN notation.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>&lt;optionally: Explanation of technical interfaces&gt;</strong></p>
 </div>
-<div class="paragraph">
-<p><strong>&lt;Mapping Input/Output to Channels&gt;</strong></p>
+<div class="sect3">
+<h4 id="_outputs">3.3.2. Outputs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Updated game state.</p>
+</li>
+<li>
+<p>Match results (win / ongoing).</p>
+</li>
+<li>
+<p>User statistics.</p>
+</li>
+<li>
+<p>Suggested moves returned by the game engine.</p>
+</li>
+</ul>
 </div>
 <div style="page-break-after: always;"></div>
+</div>
 </div>
 </div>
 </div>
@@ -1481,17 +1834,9 @@ building block instances depicted in this diagram.&gt;</em></p>
 <div class="paragraph">
 <p>It is possible to use a sequence diagram:</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-actor Alice
-actor Bob
-database Pod as "Bob's Pod"
-Alice -&gt; Bob: Authentication Request
-Bob --&gt; Alice: Authentication Response
-Alice  --&gt; Pod: Store route
-Alice -&gt; Bob: Another authentication Request
-Alice &lt;-- Bob: another authentication Response</pre>
+<img src="./images/Sequence%20diagram.png" alt="Sequence diagram" width="332" height="335">
 </div>
 </div>
 </div>
@@ -2024,7 +2369,7 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2026-02-04 11:06:33 +0100
+Last updated 2026-02-16 09:15:33 +0100
 </div>
 </div>
 </body>
