@@ -41,8 +41,8 @@ app.post('/createuser', async (req, res) => {
 
 
 if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`User Service listening at http://localhost:${port}`)
+  app.listen(port,'0.0.0.0', () => {
+    console.log(`User Service listening on port ${port}`)
   })
 }
 
