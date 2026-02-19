@@ -28,10 +28,13 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 //Nos intentamos conectar a mongo
-connectMongo().catch((e) => {
-  console.error("[users] Mongo connection error:", e);
-  process.exit(1);
-});
+if (process.env.NODE_ENV !== 'test') {
+  connectMongo().catch((e) => {
+    console.error("[users] Mongo connection error:", e);
+    process.exit(1);
+  });
+}
+
 //esto lo que hace basicamente es mostrarte todos los usuarios, es para verificar si funciona
 app.get("/users", async (_req, res) => {
   const users = await User.find({}, { username: 1, createdAt: 1 }).sort({ createdAt: -1 }).limit(50);
@@ -44,8 +47,9 @@ app.post('/createuser', async (req, res) => {
     // Simulate a 1 second delay to mimic processing/network latency
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    await User.create({ username }); //creamos un documento para que se almacene en mongodb
-
+    if (process.env.NODE_ENV !== 'test') {
+      await User.create({ username });
+    }
     const message = `Hello ${username}! welcome to the course!`;
     res.json({ message });
   } catch (err) {
