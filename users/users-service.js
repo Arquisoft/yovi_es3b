@@ -5,6 +5,7 @@ const swaggerUi = require('swagger-ui-express');
 const fs = require('node:fs');
 const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
+const path = require('path');
 
 const metricsMiddleware = promBundle({includeMethod: true});
 app.use(metricsMiddleware);

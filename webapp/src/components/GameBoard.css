@@ -1,0 +1,131 @@
+/* ── Layout principal ───────────────────────────────────── */
+.game-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+/* ── Cabecera ───────────────────────────────────────────── */
+.game-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.game-title {
+  font-family: var(--font-ui);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  /* Sutil resplandor en el título */
+  text-shadow: 0 0 40px var(--accent-glow);
+}
+
+.game-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Leyenda de lados ───────────────────────────────────── */
+.side-legend {
+  display: flex;
+  gap: 1.4rem;
+}
+
+.side-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.side-legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.side-legend-dot--0 { background: var(--side-0); box-shadow: 0 0 6px var(--side-0); }
+.side-legend-dot--1 { background: var(--side-1); box-shadow: 0 0 6px var(--side-1); }
+.side-legend-dot--2 { background: var(--side-2); box-shadow: 0 0 6px var(--side-2); }
+
+.side-legend-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Contenedor del tablero ─────────────────────────────── */
+.board-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow:
+          0 0 0 1px var(--border-soft),
+          0 8px 40px rgba(0, 0, 0, 0.5),
+          0 0 60px rgba(124, 106, 247, 0.04);
+}
+
+.board-svg {
+  width: min(90vw, 540px);
+  height: auto;
+  display: block;
+}
+
+/* ── Celdas SVG ─────────────────────────────────────────── */
+.hex-cell {
+  cursor: pointer;
+}
+.hex-cell--occupied {
+  cursor: default;
+}
+.hex-polygon {
+  transition: fill 0.12s;
+}
+
+/* ── Indicador de turno ─────────────────────────────────── */
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.turn-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.turn-dot--1 {
+  background: var(--player-1);
+  box-shadow: 0 0 8px var(--player-1);
+}
+.turn-dot--2 {
+  background: var(--player-2);
+  box-shadow: 0 0 8px var(--player-2);
+}
+
+.turn-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Botón nueva partida ────────────────────────────────── */
+.reset-button {
+  /* hereda el botón base de index.css */
+}

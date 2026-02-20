@@ -1,95 +1,100 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   padding: 2rem;
-  text-align: center;
+  gap: 0.5rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Línea decorativa superior */
+.App::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* ── Título de la pantalla de registro ──────────────────── */
+.App h2 {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-/* Register Form Styles */
+/* ── Formulario de registro ─────────────────────────────── */
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1.2rem;
+  width: 100%;
   max-width: 300px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
 .form-group label {
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #333;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .form-input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.95rem;
+  font-family: var(--font-ui);
+  background: var(--bg-raised);
+  color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-
+.form-input::placeholder { color: var(--text-dim); }
 .form-input:focus {
-  border-color: #007bff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .submit-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  background-color: #03080e;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  margin-top: 0.4rem;
+  width: 100%;
+  padding: 0.7rem;
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--text);
+  font-size: 0.72rem;
+}
+.submit-button:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.submit-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-.submit-button:hover {
-  background-color: #0056b3;
+.error-message {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--side-2);
+  letter-spacing: 0.03em;
 }
