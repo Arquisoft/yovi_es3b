@@ -43,7 +43,7 @@ From a business perspective, the system offers:
 |Provides public access to the system.
 |===
 
-image::contextdiagram.png[Context diagram]
+image::contextDiagram.png[Context diagram]
 
 
 === Technical Context
@@ -124,39 +124,26 @@ Responsibilities:
 
 ==== Technical Context Diagram
 
-[NOTE]
-====
-Include here a **Container Diagram (C4 Level 2)** showing:
+image::technicalContext.png[Technical Context diagram]
 
-* Browser / Client
-* Frontend Web Application
-* Backend API
-* Game Engine (Rust)
-* Database
 
-Relationships should indicate:
+=== Scope
 
-* HTTPS communication between browser and frontend
-* REST/JSON between frontend and backend
-* REST/JSON (YEN) between backend and game engine
-* Persistence connection between backend and database
-====
+YOVI is responsible for:
 
-==== Optional Improvement (Recommended)
+* Managing user accounts and authentication.
+* Handling game sessions and history.
+* Validating game states.
+* Detecting win conditions.
+* Providing move suggestions for players.
+* Exposing a public API for automated bots.
 
-[NOTE]
-====
-Optionally, include a **UML Component Diagram** for the Backend API showing internal components such as:
+YOVI is not responsible for:
 
-* User Management
-* Game Management
-* Strategy Manager
-* Persistence Layer
-* Game Engine Adapter
-
-This is not mandatory but helps bridge this section with the internal architecture described later.
-====
-
+* Payment processing or external financial transactions.
+* Cross-game matchmaking platforms.
+* Third-party authentication providers (OAuth, SSO).
+* External infrastructure management (servers, cloud services).
 
 === Mapping Input / Output
 
