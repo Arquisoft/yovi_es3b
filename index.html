@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.23">
+<meta name="generator" content="Asciidoctor 2.0.26">
 <title>yovi_es3b</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -116,7 +116,6 @@ h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title str
 :not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
 pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
 pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
-pre>code{display:block}
 pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
 em em{font-style:normal}
 strong strong{font-weight:400}
@@ -219,6 +218,7 @@ table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
 .literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
 .literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
 .listingblock>.content{position:relative}
+.listingblock pre>code{display:block}
 .listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
 .listingblock:hover code[data-lang]::before{display:block}
 .listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
@@ -463,7 +463,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_business_context">3.1. Business Context</a></li>
 <li><a href="#_technical_context">3.2. Technical Context</a></li>
-<li><a href="#_mapping_input_output">3.3. Mapping Input / Output</a></li>
+<li><a href="#_scope">3.3. Scope</a></li>
+<li><a href="#_mapping_input_output">3.4. Mapping Input / Output</a></li>
 </ul>
 </li>
 <li><a href="#section-solution-strategy">4. Solution Strategy</a></li>
@@ -1122,7 +1123,7 @@ through a dedicated game engine.</p>
 </table>
 <div class="imageblock">
 <div class="content">
-<img src="./images/contextdiagram.png" alt="Context diagram">
+<img src="./images/contextDiagram.png" alt="Context diagram">
 </div>
 </div>
 </div>
@@ -1269,103 +1270,64 @@ YEN notation for representing game states.</p>
 </div>
 <div class="sect3">
 <h4 id="_technical_context_diagram">3.2.3. Technical Context Diagram</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Include here a <strong>Container Diagram (C4 Level 2)</strong> showing:</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/technicalContext.png" alt="Technical Context diagram">
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Browser / Client</p>
-</li>
-<li>
-<p>Frontend Web Application</p>
-</li>
-<li>
-<p>Backend API</p>
-</li>
-<li>
-<p>Game Engine (Rust)</p>
-</li>
-<li>
-<p>Database</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Relationships should indicate:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>HTTPS communication between browser and frontend</p>
-</li>
-<li>
-<p>REST/JSON between frontend and backend</p>
-</li>
-<li>
-<p>REST/JSON (YEN) between backend and game engine</p>
-</li>
-<li>
-<p>Persistence connection between backend and database</p>
-</li>
-</ul>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_optional_improvement_recommended">3.2.4. Optional Improvement (Recommended)</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Optionally, include a <strong>UML Component Diagram</strong> for the Backend API showing internal components such as:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>User Management</p>
-</li>
-<li>
-<p>Game Management</p>
-</li>
-<li>
-<p>Strategy Manager</p>
-</li>
-<li>
-<p>Persistence Layer</p>
-</li>
-<li>
-<p>Game Engine Adapter</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>This is not mandatory but helps bridge this section with the internal architecture described later.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_mapping_input_output">3.3. Mapping Input / Output</h3>
+<h3 id="_scope">3.3. Scope</h3>
+<div class="paragraph">
+<p>YOVI is responsible for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Managing user accounts and authentication.</p>
+</li>
+<li>
+<p>Handling game sessions and history.</p>
+</li>
+<li>
+<p>Validating game states.</p>
+</li>
+<li>
+<p>Detecting win conditions.</p>
+</li>
+<li>
+<p>Providing move suggestions for players.</p>
+</li>
+<li>
+<p>Exposing a public API for automated bots.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>YOVI is not responsible for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Payment processing or external financial transactions.</p>
+</li>
+<li>
+<p>Cross-game matchmaking platforms.</p>
+</li>
+<li>
+<p>Third-party authentication providers (OAuth, SSO).</p>
+</li>
+<li>
+<p>External infrastructure management (servers, cloud services).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mapping_input_output">3.4. Mapping Input / Output</h3>
 <div class="sect3">
-<h4 id="_inputs">3.3.1. Inputs</h4>
+<h4 id="_inputs">3.4.1. Inputs</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1381,7 +1343,7 @@ YEN notation for representing game states.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_outputs">3.3.2. Outputs</h4>
+<h4 id="_outputs">3.4.2. Outputs</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1834,9 +1796,17 @@ building block instances depicted in this diagram.&gt;</em></p>
 <div class="paragraph">
 <p>It is possible to use a sequence diagram:</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
 <div class="content">
-<img src="./images/Sequence%20diagram.png" alt="Sequence diagram" width="332" height="335">
+<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
+actor Alice
+actor Bob
+database Pod as "Bob's Pod"
+Alice -&gt; Bob: Authentication Request
+Bob --&gt; Alice: Authentication Response
+Alice  --&gt; Pod: Store route
+Alice -&gt; Bob: Another authentication Request
+Alice &lt;-- Bob: another authentication Response</pre>
 </div>
 </div>
 </div>
@@ -2369,7 +2339,7 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2026-02-16 09:15:33 +0100
+Last updated 2026-02-15 15:50:11 +0100
 </div>
 </div>
 </body>
