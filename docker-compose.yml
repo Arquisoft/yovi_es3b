@@ -1,10 +1,22 @@
 services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - monitor-net
+
   users:
     build: ./users
     container_name: users
     image: ghcr.io/arquisoft/yovi_es3b-users:latest
     ports:
       - "3000:3000"
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/yovi
+    depends_on:
+      - mongo
     networks:
       - monitor-net
 
@@ -50,6 +62,9 @@ services:
       - ./users/monitoring/grafana/provisioning:/etc/grafana/provisioning
     networks:
       - monitor-net
+
+volumes:
+  mongo_data:
 
 networks:
   monitor-net:
