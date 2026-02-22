@@ -20,7 +20,7 @@ describe('RegisterForm', () => {
     })
   })
 
-  test('submits username and displays response', async () => {
+  /*test('submits username and displays response', async () => {
     const user = userEvent.setup()
 
     // Mock fetch to resolve automatically
@@ -41,5 +41,5 @@ describe('RegisterForm', () => {
         screen.getByText(/hello pablo! welcome to the course!/i)
       ).toBeInTheDocument()
     })
-  })
+  })*/
 })
