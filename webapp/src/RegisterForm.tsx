@@ -8,10 +8,12 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // solo uno
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+    setSuccessMessage(null);
 
     if (!username.trim()) {
       setError('Please enter a username.');
@@ -28,11 +30,16 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
       });
 
       const data = await res.json();
-      if (res.ok) {
-        onSuccess?.(); // ← notifica a App.tsx para mostrar el tablero
-      } else {
-        setError(data.error || 'Server error');
-      }
+      
+if (res.ok) {
+  setSuccessMessage(data.message); 
+  setTimeout(() => {
+    onSuccess?.(); 
+  }, 300);
+} else {
+  setError(data.error || 'Server error');
+}
+
     } catch (err: any) {
       setError(err.message || 'Network error');
     } finally {
@@ -41,27 +48,36 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
   };
 
   return (
-      <form onSubmit={handleSubmit} className="register-form">
-        <div className="form-group">
-          <label htmlFor="username">Whats your name?</label>
-          <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="form-input"
-          />
-        </div>
-        <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Entering...' : 'Lets go!'}
-        </button>
+    <form onSubmit={handleSubmit} className="register-form">
+      <div className="form-group">
+        <label htmlFor="username">Whats your name?</label>
+        <input
+          type="text"
+          id="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="form-input"
+        />
+      </div>
+      <button type="submit" className="submit-button" disabled={loading}>
+        {loading ? 'Entering...' : 'Lets go!'}
+      </button>
 
-        {error && (
-            <div className="error-message" style={{ marginTop: 12, color: 'red' }}>
-              {error}
-            </div>
-        )}
-      </form>
+      {error && (
+        <div className="error-message" style={{ marginTop: 12, color: 'red' }}>
+          {error}
+        </div>
+      )}
+      {successMessage && (
+        <div
+          data-testid="register-success"
+          className="success-message"
+          style={{ marginTop: 12, color: 'green' }}
+          >
+            {successMessage}
+          </div>
+)}
+    </form>
   );
 };
 

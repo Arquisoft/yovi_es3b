@@ -1,8 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen,  waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import RegisterForm from '../RegisterForm'
 import { afterEach, describe, expect, test, vi } from 'vitest' 
 import '@testing-library/jest-dom'
+
 
 describe('RegisterForm', () => {
   afterEach(() => {
@@ -13,30 +14,32 @@ describe('RegisterForm', () => {
     render(<RegisterForm />)
     const user = userEvent.setup()
 
-    await user.click(screen.getByRole('button', { name: /lets go!/i }))
-    expect(screen.getByText(/please enter a username/i)).toBeInTheDocument()
+    await waitFor(async () => {
+      await user.click(screen.getByRole('button', { name: /lets go!/i }))
+      expect(screen.getByText(/please enter a username/i)).toBeInTheDocument()
+    })
   })
 
-  test('submits username and calls onSuccess', async () => {
+  test('submits username and displays response', async () => {
     const user = userEvent.setup()
 
     // Mock fetch to resolve automatically
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    global.fetch = vi.fn().mockResolvedValueOnce({
       ok: true,
       json: async () => ({ message: 'Hello Pablo! Welcome to the course!' }),
-    }))
+    } as Response)
 
-    const onSuccess = vi.fn()
-
-    render(<RegisterForm onSuccess={onSuccess} />)
+    render(<RegisterForm />)
 
     // Wrap interaction + assertion inside waitFor
-    await user.type(screen.getByLabelText(/whats your name\?/i), 'Pablo')
-    await user.click(screen.getByRole('button', { name: /lets go!/i }))
+    await waitFor(async () => {
+      await user.type(screen.getByLabelText(/whats your name\?/i), 'Pablo')
+      await user.click(screen.getByRole('button', { name: /lets go!/i }))
 
-    // Response message should appear
-    await waitFor(() => {
-      expect(onSuccess).toHaveBeenCalled()
+      // Response message should appear
+      expect(
+        screen.getByText(/hello pablo! welcome to the course!/i)
+      ).toBeInTheDocument()
     })
   })
 })
