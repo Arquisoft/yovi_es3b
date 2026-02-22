@@ -1,68 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700&display=swap');
+
+/* ── Tokens ─────────────────────────────────────────────── */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --bg:           #0f0f13;
+  --bg-surface:   #16161d;
+  --bg-raised:    #1e1e28;
+  --border:       #2a2a38;
+  --border-soft:  #222230;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --text:         #e2e2e8;
+  --text-muted:   #6b6b80;
+  --text-dim:     #3a3a50;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  --accent:       #7c6af7;
+  --accent-glow:  rgba(124, 106, 247, 0.18);
+  --accent-dim:   rgba(124, 106, 247, 0.08);
+
+  --side-0:       #f0a040;
+  --side-1:       #4fb3ff;
+  --side-2:       #f05070;
+
+  --player-1:     #c8c0f0;
+  --player-1-str: #9080d0;
+  --player-2:     #f0b84a;
+  --player-2-str: #c08828;
+
+  --font-ui:   'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+#root {
+  width: 100%;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* ── Tipografía base ────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
 }
 
+p { margin: 0; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover { color: var(--text); }
+
+/* ── Botón base ─────────────────────────────────────────── */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.6rem;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text-muted);
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--accent-dim);
 }
-button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
