@@ -8,11 +8,17 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [responseMessage, setResponseMessage] = useState<string | null>(null);
+  const [welcomeName, setWelcomeName] = useState<string | null>(null); // ← nuevo
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
+
+    // Si ya tenemos el mensaje de bienvenida, este click navega al tablero
+    if (welcomeName !== null) {
+      onSuccess?.(welcomeName);
+      return;
+    }
 
     if (!username.trim()) {
       setError('Please enter a username.');
@@ -30,8 +36,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
 
       const data = await res.json();
       if (res.ok) {
-        setResponseMessage(data.message)
-        onSuccess?.(username); // ← notifica a App.tsx para mostrar el tablero
+        setWelcomeName(username); // ← guarda el nombre, no navega aún
       } else {
         setError(data.error || 'Server error');
       }
@@ -55,12 +60,12 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
           />
         </div>
         <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Entering...' : 'Lets go!'}
+          {loading ? 'Entering...' : welcomeName ? 'Go to game!' : 'Lets go!'}
         </button>
 
-        {responseMessage && (
-            <div className="succces-message" style={{ marginTop: 12, color: 'red' }}>
-              {responseMessage}
+        {welcomeName && (
+            <div className="success-message" style={{ marginTop: 12 }}>
+              Hello {welcomeName}! Welcome to the course!
             </div>
         )}
         {error && (
