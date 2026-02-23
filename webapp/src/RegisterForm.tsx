@@ -60,7 +60,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
           />
         </div>
         <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Entering...' : welcomeName ? 'Go to game!' : 'Lets go!'}
+          {loading ? 'Entering...' : welcomeName ? 'Lets go!' : 'Lets go!'}
         </button>
 
         {welcomeName && (
