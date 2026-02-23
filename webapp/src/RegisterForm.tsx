@@ -8,6 +8,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -29,6 +30,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
 
       const data = await res.json();
       if (res.ok) {
+        setResponseMessage(data.message)
         onSuccess?.(username); // ← notifica a App.tsx para mostrar el tablero
       } else {
         setError(data.error || 'Server error');
@@ -56,6 +58,11 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
           {loading ? 'Entering...' : 'Lets go!'}
         </button>
 
+        {responseMessage && (
+            <div className="succces-message" style={{ marginTop: 12, color: 'red' }}>
+              {responseMessage}
+            </div>
+        )}
         {error && (
             <div className="error-message" style={{ marginTop: 12, color: 'red' }}>
               {error}

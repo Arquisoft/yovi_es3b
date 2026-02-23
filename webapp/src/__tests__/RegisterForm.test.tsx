@@ -29,7 +29,7 @@ describe('RegisterForm', () => {
       json: async () => ({ message: 'Hello Pablo! Welcome to the course!' }),
     } as Response)
 
-    render(<RegisterForm />)
+    render(<RegisterForm/>)
 
     // Wrap interaction + assertion inside waitFor
     await waitFor(async () => {
