@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 
 interface Props {
-  onSuccess?: () => void;
+  onSuccess?: (name:string) => void;
 }
 
 const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
-   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -30,8 +29,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
 
       const data = await res.json();
       if (res.ok) {
-        setResponseMessage(data.message);
-        onSuccess?.(); // ← notifica a App.tsx para mostrar el tablero
+        onSuccess?.(username); // ← notifica a App.tsx para mostrar el tablero
       } else {
         setError(data.error || 'Server error');
       }
@@ -57,12 +55,6 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
         <button type="submit" className="submit-button" disabled={loading}>
           {loading ? 'Entering...' : 'Lets go!'}
         </button>
-
-        {responseMessage && (
-        <div className="success-message" style={{ marginTop: 12, color: 'green' }}>
-          {responseMessage}
-        </div>
-      )}
 
         {error && (
             <div className="error-message" style={{ marginTop: 12, color: 'red' }}>

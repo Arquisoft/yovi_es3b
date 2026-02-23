@@ -56,9 +56,10 @@ const CELL_STROKE_CORNER = "#333348";
 
 type GameBoardProps = {
   size?: number; // opcional
+  userName: string;
 };
 
-export default function GameBoard( {size = 9 }: GameBoardProps) {
+export default function GameBoard( {size = 9, userName }: GameBoardProps) {
   const cells = generateBoard(size);
   const [board, setBoard]     = useState<Board>({});
   const [current, setCurrent] = useState<Player>(1);
@@ -91,6 +92,7 @@ export default function GameBoard( {size = 9 }: GameBoardProps) {
         <div className="game-header">
           <h1 className="game-title">Game Y</h1>
           <p className="game-subtitle">Conecta los tres lados para ganar</p>
+          <p className="success-message">Hello {userName}! welcome to the course!</p>
         </div>
 
         <div className="side-legend">
