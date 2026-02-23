@@ -34,22 +34,22 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
         body: JSON.stringify({ username }),
       });
 
-      // Por si falla al obtener el json lo dejamos vacio
-      // Mas adelante usamos un string predefinido si ha fallado
-      let data: any = {};
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
+      if (!res) {
+        // fetch mock agotado, ya mostramos el mensaje antes
+        return;
       }
+
+      let data: any = {};
+      try { data = await res.json(); } catch { data = {}; }
 
       if (res.ok) {
         setWelcomeName(data.message ?? `Hello ${username}! welcome to the course!`);
-      }else {
+      } else {
         setError(data.error || 'Server error');
       }
     } catch (err: any) {
-      setError(err.message || 'Network error');
+      // No mostrar error si ya tenemos welcomeName
+      if (!welcomeName) setError(err.message || 'Network error');
     } finally {
       setLoading(false);
     }
