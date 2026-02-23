@@ -1,24 +1,15 @@
 import React, { useState } from 'react';
 
-interface Props {
-  onSuccess?: (name:string) => void;
-}
-
-const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
+const RegisterForm: React.FC = () => {
   const [username, setUsername] = useState('');
+  const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [welcomeName, setWelcomeName] = useState<string | null>(null); // ← nuevo
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setResponseMessage(null);
     setError(null);
-
-    // Si ya tenemos el mensaje de bienvenida, este click navega al tablero
-    if (welcomeName !== null) {
-      onSuccess?.(welcomeName);
-      return;
-    }
 
     if (!username.trim()) {
       setError('Please enter a username.');
@@ -27,29 +18,24 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
 
     setLoading(true);
     try {
-      const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+      const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
       const res = await fetch(`${API_URL}/createuser`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username })
       });
 
-      if (!res) {
-        // fetch mock agotado, ya mostramos el mensaje antes
-        return;
-      }
-
-      let data: any = {};
-      try { data = await res.json(); } catch { data = {}; }
-
+      const data = await res.json();
       if (res.ok) {
-        setWelcomeName(data.message ?? `Hello ${username}! welcome to the course!`);
+        setResponseMessage(data.message);
+        setUsername('');
       } else {
         setError(data.error || 'Server error');
       }
     } catch (err: any) {
-      // No mostrar error si ya tenemos welcomeName
-      if (!welcomeName) setError(err.message || 'Network error');
+      setError(err.message || 'Network error');
     } finally {
       setLoading(false);
     }
@@ -68,14 +54,15 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
           />
         </div>
         <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Entering...' : welcomeName ? 'Lets go!' : 'Lets go!'}
+          {loading ? 'Entering...' : 'Lets go!'}
         </button>
 
-        {welcomeName && (
-            <div className="success-message" style={{ marginTop: 12 }}>
-              {welcomeName}
+        {responseMessage && (
+            <div className="success-message" style={{ marginTop: 12, color: 'green' }}>
+              {responseMessage}
             </div>
         )}
+
         {error && (
             <div className="error-message" style={{ marginTop: 12, color: 'red' }}>
               {error}
