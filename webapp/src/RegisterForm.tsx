@@ -34,10 +34,18 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
         body: JSON.stringify({ username }),
       });
 
-      const data = await res.json();
+      // Por si falla al obtener el json lo dejamos vacio
+      // Mas adelante usamos un string predefinido si ha fallado
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
+
       if (res.ok) {
-        setWelcomeName(data.message); // ← usa el mensaje del servidor, no el username
-      } else {
+        setWelcomeName(data.message ?? `Hello ${username}! welcome to the course!`);
+      }else {
         setError(data.error || 'Server error');
       }
     } catch (err: any) {
