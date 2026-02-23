@@ -36,7 +36,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
 
       const data = await res.json();
       if (res.ok) {
-        setWelcomeName(username); // ← guarda el nombre, no navega aún
+        setWelcomeName(data.message); // ← usa el mensaje del servidor, no el username
       } else {
         setError(data.error || 'Server error');
       }
@@ -60,12 +60,12 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
           />
         </div>
         <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Entering...' : welcomeName ? 'Go to game!' : 'Lets go!'}
+          {loading ? 'Entering...' : welcomeName ? 'Lets go!' : 'Lets go!'}
         </button>
 
         {welcomeName && (
             <div className="success-message" style={{ marginTop: 12 }}>
-              Hello {welcomeName}! Welcome to the course!
+              {welcomeName}
             </div>
         )}
         {error && (
