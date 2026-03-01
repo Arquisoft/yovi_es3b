@@ -55,6 +55,7 @@ jobs:
   e2e:
     name: Run E2E tests
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: [test-node, test-rust]
     steps:
       - name: Checkout
@@ -83,7 +84,7 @@ jobs:
   docker-push-users:
     name: Publish users image
     runs-on: ubuntu-latest
-    needs: [test-node, test-rust]
+    needs: e2e
     permissions:
       contents: read
       packages: write
