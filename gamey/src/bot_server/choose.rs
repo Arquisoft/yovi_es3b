@@ -1,9 +1,15 @@
-use crate::{Coordinates, GameY, YEN, check_api_version, error::ErrorResponse, state::AppState};
+
 use axum::{
-    Json,
     extract::{Path, State},
+    http::StatusCode,
+    Json,
 };
 use serde::{Deserialize, Serialize};
+use crate::{check_api_version, Coordinates, GameY, YEN};
+use crate::error::ErrorResponse;
+use crate::game::GameStatus;
+use crate::state::AppState;
+
 
 /// Path parameters extracted from the choose endpoint URL.
 #[derive(Deserialize)]
@@ -18,79 +24,118 @@ pub struct ChooseParams {
 ///
 /// Contains the bot's chosen move coordinates along with context
 /// about which API version and bot were used.
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct MoveResponse {
     /// The API version used for this request.
     pub api_version: String,
     /// The bot that selected this move.
     pub bot_id: String,
-    /// The coordinates where the bot chooses to place its piece.
-    pub coords: Coordinates,
+    /// The current game status (ongoing/finished).
+    pub status: GameStatus,
+    /// The coordinates chosen by the bot (None when the game is already finished).
+    pub coords: Option<Coordinates>,
 }
 
-/// Handler for the bot move selection endpoint.
-///
-/// This endpoint accepts a game state in YEN format and returns the
-/// coordinates of the bot's chosen move.
-///
-/// # Route
-/// `POST /{api_version}/ybot/choose/{bot_id}`
-///
-/// # Request Body
-/// A JSON object in YEN format representing the current game state.
-///
-/// # Response
-/// On success, returns a `MoveResponse` with the chosen coordinates.
-/// On failure, returns an `ErrorResponse` with details about what went wrong.
+
+    /// Handler for the bot move selection endpoint.
+    ///
+    /// This endpoint accepts a game state in YEN format and returns the
+    /// coordinates of the bot's chosen move.
+    ///
+    /// # Route
+    /// `POST /{api_version}/ybot/choose/{bot_id}`
+    ///
+    /// # Request Body
+    /// A JSON object in YEN format representing the current game state.
+    ///
+    /// # Response
+    /// On success, returns a `MoveResponse` with the chosen coordinates.
+    /// On failure, returns an `ErrorResponse` with details about what went wrong.
+    
+
 #[axum::debug_handler]
 pub async fn choose(
     State(state): State<AppState>,
     Path(params): Path<ChooseParams>,
     Json(yen): Json<YEN>,
-) -> Result<Json<MoveResponse>, Json<ErrorResponse>> {
-    check_api_version(&params.api_version)?;
+) -> Result<Json<MoveResponse>, (StatusCode, Json<ErrorResponse>)> {
+    // Api Version
+    if let Err(err) = check_api_version(&params.api_version) {
+        return Err((StatusCode::BAD_REQUEST, Json(err)));
+    }
+
+    // Parse the YEN built on the webapp
     let game_y = match GameY::try_from(yen) {
         Ok(game) => game,
         Err(err) => {
-            return Err(Json(ErrorResponse::error(
-                &format!("Invalid YEN format: {}", err),
-                Some(params.api_version),
-                Some(params.bot_id),
-            )));
+            return Err((
+                StatusCode::BAD_REQUEST,
+                Json(ErrorResponse::error(
+                    &format!("Invalid YEN format: {err}"),
+                    Some(params.api_version.clone()),
+                    Some(params.bot_id.clone()),
+                )),
+            ));
         }
     };
+
+    // if the game ended
+    if game_y.check_game_over() {
+        let resp = MoveResponse {
+            api_version: params.api_version,
+            bot_id: params.bot_id,
+            status: game_y.status().clone(),
+            coords: None,
+        };
+        return Ok(Json(resp));
+    }
+
+    // If the game continues
     let bot = match state.bots().find(&params.bot_id) {
         Some(bot) => bot,
         None => {
             let available_bots = state.bots().names().join(", ");
-            return Err(Json(ErrorResponse::error(
-                &format!(
-                    "Bot not found: {}, available bots: [{}]",
-                    params.bot_id, available_bots
-                ),
-                Some(params.api_version),
-                Some(params.bot_id),
-            )));
+            return Err((
+                StatusCode::NOT_FOUND,
+                Json(ErrorResponse::error(
+                    &format!(
+                        "Bot not found: {}, available bots: [{}]",
+                        params.bot_id, available_bots
+                    ),
+                    Some(params.api_version.clone()),
+                    Some(params.bot_id.clone()),
+                )),
+            ));
         }
     };
+
+    // The bot makes a move(Depending on the endpoint)
     let coords = match bot.choose_move(&game_y) {
         Some(coords) => coords,
         None => {
-            // Handle the case where the bot has no valid moves
-            return Err(Json(ErrorResponse::error(
-                "No valid moves available for the bot",
-                Some(params.api_version),
-                Some(params.bot_id),
-            )));
+            return Err((
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(ErrorResponse::error(
+                    "No valid moves available for the bot",
+                    Some(params.api_version.clone()),
+                    Some(params.bot_id.clone()),
+                )),
+            ));
         }
     };
+
+    // We build the MoveResponse to send as a JSON
     let response = MoveResponse {
         api_version: params.api_version,
         bot_id: params.bot_id,
-        coords,
+        status: game_y.status().clone(),
+        coords: Some(coords),
     };
     Ok(Json(response))
 }
+
+
 
 #[cfg(test)]
 mod tests {
