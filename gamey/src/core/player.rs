@@ -34,7 +34,10 @@ impl Display for Player {
 ///
 /// This is a lightweight wrapper around a `u32` that provides type safety
 /// for player identification throughout the game.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PlayerId(u32);
 
 impl PlayerId {

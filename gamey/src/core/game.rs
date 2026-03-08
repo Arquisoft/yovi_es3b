@@ -544,14 +544,18 @@ fn apply_player_color(symbol: String, player: Option<PlayerId>) -> String {
     }
 }
 
+
+use serde::{Serialize, Deserialize};
 /// Represents the current status of a game.
-#[derive(Debug, Clone)]
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GameStatus {
-    /// The game is still in progress with the specified player to move next.
+        /// The game is still in progress with the specified player to move next.
     Ongoing { next_player: PlayerId },
     /// The game has ended with a winner.
     Finished { winner: PlayerId },
 }
+
 
 #[cfg(test)]
 mod tests {

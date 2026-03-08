@@ -6,87 +6,85 @@
 //! # Endpoints
 //! - `GET /status` - Health check endpoint
 //! - `POST /{api_version}/ybot/choose/{bot_id}` - Request a move from a bot
-//!
-//! # Example
-//! ```no_run
-//! use gamey::run_bot_server;
-//!
-//! #[tokio::main]
-//! async fn main() {
-//!     if let Err(e) = run_bot_server(3000).await {
-//!         eprintln!("Server error: {}", e);
-//!     }
-//! }
-//! ```
 
 pub mod choose;
 pub mod error;
 pub mod state;
 pub mod version;
-use axum::response::IntoResponse;
+
+use axum::{
+    response::IntoResponse,
+    routing::{get, post},
+    Router,
+};
 use std::sync::Arc;
+use tokio::net::TcpListener;
+use tower_http::cors::{Any, CorsLayer};
+
 pub use choose::MoveResponse;
 pub use error::ErrorResponse;
 pub use version::*;
 
-use crate::{GameYError, RandomBot, YBotRegistry, state::AppState};
+use crate::{
+    state::AppState,
+    GameYError,
+    RandomBot,
+    YBotRegistry,
+};
 
 /// Creates the Axum router with the given state.
-///
-/// This is useful for testing the API without binding to a network port.
-pub fn create_router(state: AppState) -> axum::Router {
-    axum::Router::new()
-        .route("/status", axum::routing::get(status))
+pub fn create_router(state: AppState) -> Router {
+    Router::new()
+        .route("/status", get(status))
         .route(
+            // ✅ Axum 0.8: parámetros de ruta con llaves {param}
             "/{api_version}/ybot/choose/{bot_id}",
-            axum::routing::post(choose::choose),
+            post(choose::choose),
         )
         .with_state(state)
 }
 
 /// Creates the default application state with the standard bot registry.
-///
-/// The default state includes the `RandomBot` which selects moves randomly.
 pub fn create_default_state() -> AppState {
     let bots = YBotRegistry::new().with_bot(Arc::new(RandomBot));
     AppState::new(bots)
 }
 
 /// Starts the bot server on the specified port.
-///
-/// This function blocks until the server is shut down.
-///
-/// # Arguments
-/// * `port` - The TCP port to listen on
-///
-/// # Errors
-/// Returns `GameYError::ServerError` if:
-/// - The TCP port cannot be bound (e.g., port already in use, permission denied)
-/// - The server encounters an error while running
 pub async fn run_bot_server(port: u16) -> Result<(), GameYError> {
+    // Estado por defecto
     let state = create_default_state();
-    let app = create_router(state);
 
-    let addr = format!("0.0.0.0:{}", port);
-    let listener = tokio::net::TcpListener::bind(&addr)
+    // CORS permisivo para desarrollo (restringe en prod)
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_headers(Any)
+        .allow_methods(Any);
+
+    // Router con CORS
+    let app = create_router(state).layer(cors);
+
+    // En Docker: bind en 0.0.0.0
+    let addr = format!("0.0.0.0:{port}");
+    let listener = TcpListener::bind(&addr)
         .await
         .map_err(|e| GameYError::ServerError {
-            message: format!("Failed to bind to {}: {}", addr, e),
+            message: format!("Failed to bind to {addr}: {e}"),
         })?;
 
-    println!("Server mode: Listening on http://{}", addr);
+    println!("Server mode: Listening on http://{addr}");
+
+    // Bloquea hasta que el server se detiene
     axum::serve(listener, app)
         .await
         .map_err(|e| GameYError::ServerError {
-            message: format!("Server error: {}", e),
+            message: format!("Server error: {e}"),
         })?;
 
     Ok(())
 }
 
 /// Health check endpoint handler.
-///
-/// Returns "OK" to indicate the server is running.
 pub async fn status() -> impl IntoResponse {
     "OK"
 }
