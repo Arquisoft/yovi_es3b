@@ -31,7 +31,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess }) => {
       const data = await res.json();
       if (res.ok) {
         setResponseMessage(data.message);
-        onSuccess?.(); // ← notifica a App.tsx para mostrar el tablero
+        onSuccess?.(); 
       } else {
         setError(data.error || 'Server error');
       }

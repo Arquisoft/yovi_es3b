@@ -37,7 +37,6 @@ pub fn create_router(state: AppState) -> Router {
     Router::new()
         .route("/status", get(status))
         .route(
-            // ✅ Axum 0.8: parámetros de ruta con llaves {param}
             "/{api_version}/ybot/choose/{bot_id}",
             post(choose::choose),
         )
@@ -52,16 +51,12 @@ pub fn create_default_state() -> AppState {
 
 /// Starts the bot server on the specified port.
 pub async fn run_bot_server(port: u16) -> Result<(), GameYError> {
-    // Estado por defecto
     let state = create_default_state();
 
-    // CORS permisivo para desarrollo (restringe en prod)
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_headers(Any)
         .allow_methods(Any);
-
-    // Router con CORS
     let app = create_router(state).layer(cors);
 
     // En Docker: bind en 0.0.0.0
@@ -73,8 +68,6 @@ pub async fn run_bot_server(port: u16) -> Result<(), GameYError> {
         })?;
 
     println!("Server mode: Listening on http://{addr}");
-
-    // Bloquea hasta que el server se detiene
     axum::serve(listener, app)
         .await
         .map_err(|e| GameYError::ServerError {
