@@ -6,7 +6,7 @@ type Board = Record<string, Player>;
 
 const HEX_SIZE = 26;
 const SIDE_COLORS = ["#f0a040", "#4fb3ff", "#f05070"];
-const SIDE_NAMES = ["Lado derecho", "Lado inferior", "Lado izquierdo"];
+const SIDE_NAMES = ["Lado izquierdo", "Lado inferior", "Lado derecho"];
 const PLAYER_FILL: Record<Player, string> = { 1: "#c8c0f0", 2: "#f0b84a" };
 const PLAYER_STROKE: Record<Player, string> = { 1: "#9080d0", 2: "#c08828" };
 const PLAYER_LABEL: Record<Player, string> = { 1: "Jugador 1", 2: "Bot" };
@@ -170,7 +170,7 @@ export default function GameBoard({ size = 9, userName }: GameBoardProps) {
         typeof coords.z === "number" &&
         coords.x + coords.y + coords.z === size - 1
       ) {
-        const botKey = `${coords.x},${coords.y}`; // q=x, r=y (canónico)
+        const botKey = `${coords.x},${coords.y}`; 
         setBoard((prev) => (prev[botKey] ? prev : { ...prev, [botKey]: 2 }));
       } else {
         // If no coords, nothing happens, in case we add the option to skip turns

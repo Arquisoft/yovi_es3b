@@ -59,24 +59,19 @@ pub async fn choose(
     State(state): State<AppState>,
     Path(params): Path<ChooseParams>,
     Json(yen): Json<YEN>,
-) -> Result<Json<MoveResponse>, (StatusCode, Json<ErrorResponse>)> {
+) -> Result<Json<MoveResponse>,Json<ErrorResponse>> {
     // Api Version
-    if let Err(err) = check_api_version(&params.api_version) {
-        return Err((StatusCode::BAD_REQUEST, Json(err)));
-    }
+    check_api_version(&params.api_version)?;
 
     // Parse the YEN built on the webapp
     let game_y = match GameY::try_from(yen) {
         Ok(game) => game,
         Err(err) => {
-            return Err((
-                StatusCode::BAD_REQUEST,
-                Json(ErrorResponse::error(
-                    &format!("Invalid YEN format: {err}"),
-                    Some(params.api_version.clone()),
-                    Some(params.bot_id.clone()),
-                )),
-            ));
+             return Err(Json(ErrorResponse::error(
+                &format!("Invalid YEN format: {}", err),
+                Some(params.api_version),
+                Some(params.bot_id),
+            )));
         }
     };
 
@@ -86,7 +81,7 @@ pub async fn choose(
             api_version: params.api_version,
             bot_id: params.bot_id,
             status: game_y.status().clone(),
-            coords: None,
+            coords: Coordinates::new(1, 1, 1),
         };
         return Ok(Json(resp));
     }
@@ -96,17 +91,14 @@ pub async fn choose(
         Some(bot) => bot,
         None => {
             let available_bots = state.bots().names().join(", ");
-            return Err((
-                StatusCode::NOT_FOUND,
-                Json(ErrorResponse::error(
-                    &format!(
-                        "Bot not found: {}, available bots: [{}]",
-                        params.bot_id, available_bots
-                    ),
-                    Some(params.api_version.clone()),
-                    Some(params.bot_id.clone()),
-                )),
-            ));
+             return Err(Json(ErrorResponse::error(
+                &format!(
+                    "Bot not found: {}, available bots: [{}]",
+                    params.bot_id, available_bots
+                ),
+                Some(params.api_version),
+                Some(params.bot_id),
+            )));
         }
     };
 
@@ -114,14 +106,11 @@ pub async fn choose(
     let coords = match bot.choose_move(&game_y) {
         Some(coords) => coords,
         None => {
-            return Err((
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(ErrorResponse::error(
-                    "No valid moves available for the bot",
-                    Some(params.api_version.clone()),
-                    Some(params.bot_id.clone()),
-                )),
-            ));
+            return Err(Json(ErrorResponse::error(
+                "No valid moves available for the bot",
+                Some(params.api_version),
+                Some(params.bot_id),
+            )));
         }
     };
 
@@ -130,7 +119,7 @@ pub async fn choose(
         api_version: params.api_version,
         bot_id: params.bot_id,
         status: game_y.status().clone(),
-        coords: Some(coords),
+        coords: coords,
     };
     Ok(Json(response))
 }
@@ -139,6 +128,8 @@ pub async fn choose(
 
 #[cfg(test)]
 mod tests {
+     use super::*;
+    use crate::PlayerId;
     use super::*;
 
     #[test]
@@ -147,6 +138,7 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 2, 3),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         assert_eq!(response.api_version, "v1");
         assert_eq!(response.bot_id, "random");
@@ -159,6 +151,7 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 2, 3),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let json = serde_json::to_string(&response).unwrap();
         assert!(json.contains("\"api_version\":\"v1\""));
@@ -167,7 +160,16 @@ mod tests {
 
     #[test]
     fn test_move_response_deserialize() {
-        let json = r#"{"api_version":"v1","bot_id":"test","coords":{"x":0,"y":1,"z":2}}"#;
+       let json = r#"{
+        "api_version":"v1",
+        "bot_id":"test",
+        "coords":{"x":0,"y":1,"z":2},
+        "status":{
+            "Ongoing":{
+                "next_player":0
+            }
+        }
+    }"#;
         let response: MoveResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.api_version, "v1");
         assert_eq!(response.bot_id, "test");
@@ -179,6 +181,7 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(0, 0, 0),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let cloned = response.clone();
         assert_eq!(response, cloned);
@@ -190,16 +193,19 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 1, 1),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let r2 = MoveResponse {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 1, 1),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let r3 = MoveResponse {
             api_version: "v2".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 1, 1),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         assert_eq!(r1, r2);
         assert_ne!(r1, r3);
