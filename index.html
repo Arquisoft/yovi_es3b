@@ -467,7 +467,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_mapping_input_output">3.4. Mapping Input / Output</a></li>
 </ul>
 </li>
-<li><a href="#section-solution-strategy">4. Solution Strategy</a></li>
+<li><a href="#section-solution-strategy">4. Solution Strategy</a>
+<ul class="sectlevel2">
+<li><a href="#_technologies_used">4.1. Technologies used</a></li>
+</ul>
+</li>
 <li><a href="#section-building-block-view">5. Building Block View</a>
 <ul class="sectlevel2">
 <li><a href="#_whitebox_overall_system">5.1. Whitebox Overall System</a></li>
@@ -496,7 +500,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_concept_n">8.3. <em>&lt;Concept n&gt;</em></a></li>
 </ul>
 </li>
-<li><a href="#section-design-decisions">9. Architecture Decisions</a></li>
+<li><a href="#section-design-decisions">9. Architecture Decisions</a>
+<ul class="sectlevel2">
+<li><a href="#_contents">9.1. Contents</a></li>
+<li><a href="#_adr_1_rust_for_the_gamey_engine">9.2. ADR 1: Rust for the Gamey Engine</a></li>
+<li><a href="#_adr_2_node_js_express_for_the_users_service">9.3. ADR 2: Node.js &amp; Express for the Users Service</a></li>
+<li><a href="#_adr_3_react_typescript_for_the_webapp_frontend">9.4. ADR 3: React &amp; TypeScript for the Webapp Frontend</a></li>
+<li><a href="#_adr_4_vite_as_the_frontend_build_tool">9.5. ADR 4: Vite as the Frontend Build Tool</a></li>
+<li><a href="#_adr_5_mongodb_with_mongoose_for_persistence">9.6. ADR 5: MongoDB with Mongoose for Persistence</a></li>
+<li><a href="#_adr_6_docker_docker_compose_for_orchestration">9.7. ADR 6: Docker &amp; Docker Compose for Orchestration</a></li>
+<li><a href="#_adr_7_github_actions">9.8. ADR 7: GitHub Actions</a></li>
+<li><a href="#_adr_8_code_quality_monitoring_sonarcloud_codescene">9.9. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</a></li>
+</ul>
+</li>
 <li><a href="#section-quality-scenarios">10. Quality Requirements</a>
 <ul class="sectlevel2">
 <li><a href="#_quality_tree">10.1. Quality Tree</a></li>
@@ -1368,48 +1384,77 @@ YEN notation for representing game states.</p>
 <div class="sect1">
 <h2 id="section-solution-strategy">4. Solution Strategy</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
+<div class="sect2">
+<h3 id="_technologies_used">4.1. Technologies used</h3>
+<div class="sect3">
+<h4 id="_frontend">4.1.1. Frontend</h4>
 <div class="paragraph">
-<div class="title">Contents</div>
-<p>A short summary and explanation of the fundamental decisions and solution strategies, that shape system architecture. It includes</p>
+<p>We use <strong>React</strong> with <strong>TypeScript</strong> for the web UI of the Game Y app. This framework for JavaScript is very
+popular and highly used in the software market. It was also the framework provided with the app demo by
+the teachers. TypeScript adds static typing on top of JavaScript, which helps catch errors at compile time
+and improves code maintainability. Finally, we use <strong>Vite</strong>, a modern build tool
+that provides fast hot module replacement (HMR) during development and optimized production builds.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>technology decisions</p>
-</li>
-<li>
-<p>decisions about the top-level decomposition of the system, e.g. usage of an architectural pattern or design pattern</p>
-</li>
-<li>
-<p>decisions on how to achieve key quality goals</p>
-</li>
-<li>
-<p>relevant organizational decisions, e.g. selecting a development process or delegating certain tasks to third parties.</p>
-</li>
-</ul>
 </div>
+<div class="sect3">
+<h4 id="_backend">4.1.2. Backend</h4>
 <div class="paragraph">
-<div class="title">Motivation</div>
-<p>These decisions form the cornerstones for your architecture. They are the foundation for many other detailed decisions or implementation rules.</p>
+<p>The backend is implemented in <strong>Rust</strong>, a systems programming language focused on performance and memory
+safety. The language has a growing community and huge support by enterprises. Linux Kernel is being
+partially upgraded with modules in Rust, combining with classic C modules.</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_supporting_services">4.1.3. Supporting services</h4>
 <div class="paragraph">
-<div class="title">Form</div>
-<p>Keep the explanations of such key decisions short.</p>
+<p>Auxiliary services are built with <strong>Node.js</strong> and <strong>Express</strong>, handling cross-cutting concerns such as user
+authentication and profile management that are kept separate from the core game logic in Rust. Express
+provides a minimal and flexible routing layer that makes these REST endpoints straightforward to maintain
+and extend independently of the main backend.</p>
 </div>
 <div class="paragraph">
-<p>Motivate what was decided and why it was decided that way,
-based upon problem statement, quality goals and key constraints.
-Refer to details in the following sections.</p>
+<p>For data persistence, two complementary solutions are used. <strong>MongoDB</strong> stores structured application data
+such as user profiles and match history, offering a flexible document model that adapts well to evolving
+data requirements. <strong>Firebase</strong> covers real-time needs and authentication: its Authentication service
+manages identity providers and session tokens, while its real-time capabilities are leveraged where
+low-latency data synchronization between clients is needed.</p>
 </div>
 <div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-4/">Solution Strategy</a> in the arc42 documentation.</p>
+<p>To handle deployment setup and enable an easy share of the app, we use <strong>Docker</strong>. Each component of the game
+is stored in a docker container that interacts with the other ones.</p>
+</div>
+<div class="paragraph">
+<p>Server wise, we use <strong>Azure</strong> to deploy the app in a virtual machine accessible by a public url</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_version_control">4.1.4. Version control</h4>
+<div class="paragraph">
+<p><strong>Git</strong> is used for source control, with <strong>GitHub</strong> as the remote repository and collaboration platform.
+GitHub also hosts the project&#8217;s issue tracker and pull request workflow, supporting code review and
+continuous integration. Summaries of the weekly meetings between development team are posted in
+GitHub wiki.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_documentation">4.1.5. Documentation</h4>
+<div class="paragraph">
+<p>Architecture and technical documentation is written in <strong>AsciiDoc</strong>, a lightweight markup language well
+suited for structured, version-controlled documentation. Diagrams are authored with <strong>PlantUML</strong>, which
+allows architecture and sequence diagrams to be described as plain text and rendered automatically,
+keeping them in sync with the rest of the documentation inside the repository. Arc 42 template is used
+to enhance documentation structure and cohesion.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_communication">4.1.6. Communication</h4>
+<div class="paragraph">
+<p>The language used for all project communication — including documentation, commit messages, pull request
+descriptions, and code comments — is <strong>English</strong>.</p>
 </div>
 <div style="page-break-after: always;"></div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2095,51 +2140,304 @@ on this list.</p>
 <div class="sect1">
 <h2 id="section-design-decisions">9. Architecture Decisions</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
+<div class="sect2">
+<h3 id="_contents">9.1. Contents</h3>
 <div class="paragraph">
-<div class="title">Contents</div>
-<p>Important, expensive, large scale or risky architecture decisions including rationales.
-With "decisions" we mean selecting one alternative based on given criteria.</p>
+<p>This section documents the important, high-impact architectural decisions that influence the design and development of Yovi_es3b.
+The decisions are documented using the ADR format, organized by importance and consequences. Each decision includes the status, context, alternatives, justification, and consequences.</p>
 </div>
-<div class="paragraph">
-<p>Please use your judgement to decide whether an architectural decision should be documented
-here in this central section or whether you better document it locally
-(e.g. within the white box template of one building block).</p>
+<hr>
 </div>
-<div class="paragraph">
-<p>Avoid redundancy.
-Refer to section 4, where you already captured the most important decisions of your architecture.</p>
+<div class="sect2">
+<h3 id="_adr_1_rust_for_the_gamey_engine">9.2. ADR 1: Rust for the Gamey Engine</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The gamey engine requires high-performance game logic and bot calculations. The system needs memory safety guarantees without sacrificing performance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Java, Python, C/C++</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Performance:</strong> Rust delivers compiled performance comparable to C/C++ without runtime overhead.
+<strong>Memory Safety:</strong> Rust&#8217;s ownership system guarantees memory safety at compile time, eliminating entire classes of bugs (null pointer dereferences, buffer overflows).
+<strong>Concurrency:</strong> Rust&#8217;s type system ensures thread safety without needing a garbage collector, ideal for game loop processing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- High learning curve for developers unfamiliar with Rust&#8217;s.
+- A little longer compile times compared to interpreted languages.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>Stakeholders of your system should be able to comprehend and retrace your decisions.</p>
+<div class="sect2">
+<h3 id="_adr_2_node_js_express_for_the_users_service">9.3. ADR 2: Node.js &amp; Express for the Users Service</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The users service handles I/O-intensive operations including REST API endpoints, database queries, and user management.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Java/Spring Boot</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Non-blocking I/O:</strong> Node.js is very good at handling concurrent I/O operations with minimal overhead, ideal for managing multiple database queries and API requests.
+<strong>JavaScript Ecosystem:</strong> Rich ecosystem of libraries for REST API development, database drivers, and middleware.
+<strong>Development Speed:</strong> Rapid prototyping and iteration due to dynamic typing and extensive npm package availability.
+<strong>Operational Consistency:</strong> TypeScript is used for type safety, bringing consistency with the webapp frontend.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- Less suitable for CPU-intensive operations.
+- Memory consumption can be higher than compiled languages for equivalent workloads.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>Various options:</p>
+<div class="sect2">
+<h3 id="_adr_3_react_typescript_for_the_webapp_frontend">9.4. ADR 3: React &amp; TypeScript for the Webapp Frontend</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The webapp requires a dynamic, interactive user interface with component reusability and type safety. The frontend must communicate without any problems with backend services.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Angular, Svelte</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Component-Based Architecture:</strong> React enables building modular, reusable UI components that simplify maintenance and testing.
+<strong>Type Safety:</strong> TypeScript reduces runtime errors and improves IDE support, enhancing developer productivity.
+<strong>Ecosystem &amp; Tooling:</strong> very good ecosystem with extensive third-party libraries and a strong community support.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- Adds build complexity compared to normal JavaScript.
+- Requires discipline in state management as the application scales.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>ADR (<a href="https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions">Documenting Architecture Decisions</a>) for every important decision</p>
-</li>
-<li>
-<p>List or table, ordered by importance and consequences or:</p>
-</li>
-<li>
-<p>more detailed in form of separate sections per decision</p>
-</li>
-</ul>
+<div class="sect2">
+<h3 id="_adr_4_vite_as_the_frontend_build_tool">9.5. ADR 4: Vite as the Frontend Build Tool</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The React webapp requires a modern build tool that provides fast development experience and optimized production builds.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Webpack</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Production Optimization:</strong> Automatic code splitting and tree-shaking produce optimized bundles.
+<strong>Configuration Simplicity:</strong> Minimal configuration required, while remaining extensible for advanced use cases.
+<strong>Modern Tooling:</strong> use modern build techniques without the legacy constraints of older tools.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- Smaller ecosystem compared to Webpack, we think is sufficient for the project&#8217;s scale.
+- Requires Node.js version compatibility.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-9/">Architecture Decisions</a> in the arc42 documentation.
-There you will find links and examples about ADR.</p>
+<div class="sect2">
+<h3 id="_adr_5_mongodb_with_mongoose_for_persistence">9.6. ADR 5: MongoDB with Mongoose for Persistence</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">To develop the project, a database was required to store users' data and game state.
+The database needed to store user profiles and authentication data and persist game state information between sessions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Firebase, SQLite</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Integration with Node.js:</strong> MongoDB works naturally with JSON-like documents
+<strong>Flexible schema design:</strong> The project may evolve during development, and MongoDB allows schema changes without complex migrations.
+<strong>Document-oriented model:</strong> User data and game state can be stored as structured documents, which simplifying development.
+<strong>Docker-friendly deployment:</strong> MongoDB has official Docker images, which simplifies integration into the existing docker-compose setup.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- Faster development due to schema flexibility
+- Reduced complexity when mapping backend objects to database documents
+- Easy integration with the existing JavaScript stack
+- Simple local and production deployment using Docker
+- Good scalability options if the application grows
+- Lack of strict relational constraints
+- More responsibility at the application level to enforce relationships
+- Complex relational queries would be harder to implement compared to relational databases.
+- Transactions are supported, but a relational database would be be more mature in highly complex transactional scenarios</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
+<div class="sect2">
+<h3 id="_adr_6_docker_docker_compose_for_orchestration">9.7. ADR 6: Docker &amp; Docker Compose for Orchestration</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yovi_es3b consists of multiple independent services (webapp, users, gamey, MongoDB) requiring consistent deployment across development, testing, and production environments.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes, Platform-as-a-Service (PaaS)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Reproducibility:</strong> Docker ensures identical environments across developer machines and production servers.
+<strong>Ease of Use:</strong> Docker Compose provides simple, declarative orchestration for the project&#8217;s current scale without Kubernetes complexity.
+<strong>Isolation:</strong> Each service runs in its own container with isolated dependencies, preventing version conflicts.
+<strong>Rapid Onboarding:</strong> New developers can run <code>docker-compose up</code> and have the entire system running within seconds.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- Docker Compose is not suitable for production a large scale project.
+- Requires Docker to be installed on all development machines.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
+<div class="sect2">
+<h3 id="_adr_7_github_actions">9.8. ADR 7: GitHub Actions</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yovi_es3b requires automated testing, code quality checks, and build validation on every code push to maintain code integrity and catch issues early.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Jenkins</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Native Integration:</strong> Seamless integration with GitHub repositories without external infrastructure.
+<strong>Simplicity:</strong> Declarative YAML-based workflow configuration is intuitive and maintainable.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- Limited flexibility compared to self-hosted CI solutions for complex multi-platform builds.
+- Secrets management through GitHub requires careful configuration.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
+<div class="sect2">
+<h3 id="_adr_8_code_quality_monitoring_sonarcloud_codescene">9.9. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maintaining code quality and reach 80% test coverage is important in our project.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternatives</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Manual code reviews, SonarQube</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Justification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Comprehensive Analysis:</strong> SonarCloud detects bugs and security vulnerabilities across multiple languages.
+<strong>Coverage Tracking:</strong> Provides clear visibility into test coverage trends over time.
+<strong>GitHub Integration:</strong> Both tools integrate directly with pull requests, providing instant feedback to developers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consequences</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- Introduces tooling dependencies and potential false positives in static analysis.
+- Increased CI/CD pipeline execution time due to analysis steps.</p></td>
+</tr>
+</tbody>
+</table>
 <div style="page-break-after: always;"></div>
+</div>
 </div>
 </div>
 <div class="sect1">
