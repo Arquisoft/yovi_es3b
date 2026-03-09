@@ -34,7 +34,7 @@ pub struct MoveResponse {
     /// The current game status (ongoing/finished).
     pub status: GameStatus,
     /// The coordinates chosen by the bot (None when the game is already finished).
-    pub coords: Option<Coordinates>,
+    pub coords: Coordinates,
 }
 
 
