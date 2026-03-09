@@ -3,32 +3,50 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
+=== Technologies used
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-A short summary and explanation of the fundamental decisions and solution strategies, that shape system architecture. It includes
+==== Frontend
+We use *React* with *TypeScript* for the web UI of the Game Y app. This framework for JavaScript is very
+popular and highly used in the software market. It was also the framework provided with the app demo by
+the teachers. TypeScript adds static typing on top of JavaScript, which helps catch errors at compile time
+and improves code maintainability. Finally, we use *Vite*, a modern build tool
+that provides fast hot module replacement (HMR) during development and optimized production builds.
 
-* technology decisions
-* decisions about the top-level decomposition of the system, e.g. usage of an architectural pattern or design pattern
-* decisions on how to achieve key quality goals
-* relevant organizational decisions, e.g. selecting a development process or delegating certain tasks to third parties.
+==== Backend
+The backend is implemented in *Rust*, a systems programming language focused on performance and memory
+safety. The language has a growing community and huge support by enterprises. Linux Kernel is being
+partially upgraded with modules in Rust, combining with classic C modules.
 
-.Motivation
-These decisions form the cornerstones for your architecture. They are the foundation for many other detailed decisions or implementation rules.
+==== Supporting services
+Auxiliary services are built with *Node.js* and *Express*, handling cross-cutting concerns such as user
+authentication and profile management that are kept separate from the core game logic in Rust. Express
+provides a minimal and flexible routing layer that makes these REST endpoints straightforward to maintain
+and extend independently of the main backend.
 
-.Form
-Keep the explanations of such key decisions short.
+For data persistence, two complementary solutions are used. *MongoDB* stores structured application data
+such as user profiles and match history, offering a flexible document model that adapts well to evolving
+data requirements. *Firebase* covers real-time needs and authentication: its Authentication service
+manages identity providers and session tokens, while its real-time capabilities are leveraged where
+low-latency data synchronization between clients is needed.
 
-Motivate what was decided and why it was decided that way,
-based upon problem statement, quality goals and key constraints.
-Refer to details in the following sections.
+To handle deployment setup and enable an easy share of the app, we use *Docker*. Each component of the game
+is stored in a docker container that interacts with the other ones.
 
+Server wise, we use *Azure* to deploy the app in a virtual machine accessible by a public url
 
-.Further Information
+==== Version control
+*Git* is used for source control, with *GitHub* as the remote repository and collaboration platform.
+GitHub also hosts the project's issue tracker and pull request workflow, supporting code review and
+continuous integration. Summaries of the weekly meetings between development team are posted in
+GitHub wiki.
 
-See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentation.
+==== Documentation
+Architecture and technical documentation is written in *AsciiDoc*, a lightweight markup language well
+suited for structured, version-controlled documentation. Diagrams are authored with *PlantUML*, which
+allows architecture and sequence diagrams to be described as plain text and rendered automatically,
+keeping them in sync with the rest of the documentation inside the repository. Arc 42 template is used
+to enhance documentation structure and cohesion.
 
-****
-endif::arc42help[]
+==== Communication
+The language used for all project communication — including documentation, commit messages, pull request
+descriptions, and code comments — is *English*.
