@@ -5,7 +5,7 @@ use axum::{
     Json,
 };
 use serde::{Deserialize, Serialize};
-use crate::{check_api_version, Coordinates, GameY, YEN, PlayerId};
+use crate::{check_api_version, Coordinates, GameY, YEN};
 use crate::error::ErrorResponse;
 use crate::game::GameStatus;
 use crate::state::AppState;
@@ -59,24 +59,19 @@ pub async fn choose(
     State(state): State<AppState>,
     Path(params): Path<ChooseParams>,
     Json(yen): Json<YEN>,
-) -> Result<Json<MoveResponse>, (StatusCode, Json<ErrorResponse>)> {
+) -> Result<Json<MoveResponse>,Json<ErrorResponse>> {
     // Api Version
-    if let Err(err) = check_api_version(&params.api_version) {
-        return Err((StatusCode::BAD_REQUEST, Json(err)));
-    }
+    check_api_version(&params.api_version)?;
 
     // Parse the YEN built on the webapp
     let game_y = match GameY::try_from(yen) {
         Ok(game) => game,
         Err(err) => {
-            return Err((
-                StatusCode::BAD_REQUEST,
-                Json(ErrorResponse::error(
-                    &format!("Invalid YEN format: {err}"),
-                    Some(params.api_version.clone()),
-                    Some(params.bot_id.clone()),
-                )),
-            ));
+             return Err(Json(ErrorResponse::error(
+                &format!("Invalid YEN format: {}", err),
+                Some(params.api_version),
+                Some(params.bot_id),
+            )));
         }
     };
 
@@ -96,17 +91,14 @@ pub async fn choose(
         Some(bot) => bot,
         None => {
             let available_bots = state.bots().names().join(", ");
-            return Err((
-                StatusCode::NOT_FOUND,
-                Json(ErrorResponse::error(
-                    &format!(
-                        "Bot not found: {}, available bots: [{}]",
-                        params.bot_id, available_bots
-                    ),
-                    Some(params.api_version.clone()),
-                    Some(params.bot_id.clone()),
-                )),
-            ));
+             return Err(Json(ErrorResponse::error(
+                &format!(
+                    "Bot not found: {}, available bots: [{}]",
+                    params.bot_id, available_bots
+                ),
+                Some(params.api_version),
+                Some(params.bot_id),
+            )));
         }
     };
 
@@ -114,14 +106,11 @@ pub async fn choose(
     let coords = match bot.choose_move(&game_y) {
         Some(coords) => coords,
         None => {
-            return Err((
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(ErrorResponse::error(
-                    "No valid moves available for the bot",
-                    Some(params.api_version.clone()),
-                    Some(params.bot_id.clone()),
-                )),
-            ));
+            return Err(Json(ErrorResponse::error(
+                "No valid moves available for the bot",
+                Some(params.api_version),
+                Some(params.bot_id),
+            )));
         }
     };
 
@@ -139,6 +128,8 @@ pub async fn choose(
 
 #[cfg(test)]
 mod tests {
+     use super::*;
+    use crate::PlayerId;
     use super::*;
 
     #[test]
@@ -169,7 +160,16 @@ mod tests {
 
     #[test]
     fn test_move_response_deserialize() {
-        let json = r#"{"api_version":"v1","bot_id":"test","coords":{"x":0,"y":1,"z":2},"status": Ongoing{"next_player": 0}}"#;
+       let json = r#"{
+        "api_version":"v1",
+        "bot_id":"test",
+        "coords":{"x":0,"y":1,"z":2},
+        "status":{
+            "Ongoing":{
+                "next_player":0
+            }
+        }
+    }"#;
         let response: MoveResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.api_version, "v1");
         assert_eq!(response.bot_id, "test");
