@@ -15,6 +15,9 @@ services:
       - "3000:3000"
     environment:
       - MONGO_URL=mongodb://mongo:27017/yovi
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
     depends_on:
       - mongo
     networks:
