@@ -1,50 +1,60 @@
-/*Se va a encargar de tener la logica para que cualquier componente sepa si esta logeado el usuario en cualquier
-    momento.
- */
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
 
 interface AuthContextType {
-    user: User | null;        // usuario de Firebase (null si no logueado)
-    loading: boolean;         // true mientras Firebase comprueba la sesión
-    token: string | null;     // JWT para mandar al backend
+    user: User | null;
+    loading: boolean;
+    token: string | null;
+    username: string | null;  // ← nuevo
 }
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
     loading: true,
     token: null,
+    username: null,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Firebase llama a este callback cada vez que cambia el estado de auth
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             setUser(firebaseUser);
             if (firebaseUser) {
                 const idToken = await firebaseUser.getIdToken();
                 setToken(idToken);
+
+                try {
+                    const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+                    const res = await fetch(`${API_URL}/users/me`, {
+                        headers: {Authorization: `Bearer ${idToken}`}
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setUsername(data.username);
+                    }
+                } catch (err) {
+                    console.error('Error obteniendo perfil:', err);
+                }
             } else {
                 setToken(null);
+                setUsername(null);
             }
-            setLoading(false);
+            setLoading(false); // ← ahora va aquí, después de todo
         });
 
-        return unsubscribe; // limpia el listener al desmontar
+        return unsubscribe;
     }, []);
-
-    return (
-        <AuthContext.Provider value={{ user, loading, token }}>
+    return (                                                    // ← faltaba esto
+        <AuthContext.Provider value={{user, loading, token, username}}>
             {children}
         </AuthContext.Provider>
     );
 }
 
-// Hook para usar el contexto fácilmente en cualquier componente
 export const useAuth = () => useContext(AuthContext);

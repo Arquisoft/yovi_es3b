@@ -24,8 +24,11 @@ try {
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400'); // cachea el preflight 24h, es decir Cuando el navegador va a hacer una petición
+  // "no estándar" , primero pregunta al servidor si puede mandar la petición con Authorizacition o no. Con el max-Age ganamos latencia cuando este desplegado
+  //ya que esto se pregunta en cada petición y con esto lo ponemos que recuerde 24 horas.
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
 });
@@ -38,6 +41,19 @@ if (process.env.NODE_ENV !== 'test') {
     process.exit(1);
   });
 }
+// Devuelve el perfil del usuario autenticado
+app.get('/users/me', verifyToken, async (req, res) => {
+  try {
+    const user = await User.findOne(
+        { firebaseUid: req.user.uid },
+        { username: 1, gamesPlayed: 1, gamesWon: 1, gamesLost: 1, createdAt: 1 }
+    );
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Lista de usuarios para ranking, protegida
 app.get("/users", verifyToken, async (_req, res) => {

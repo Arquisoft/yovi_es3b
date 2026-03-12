@@ -1,11 +1,11 @@
 import { useAuth } from './context/AuthContext';
 
 const LobbyPage: React.FC = () => {
-    const { user } = useAuth();
+    const { username } = useAuth();
 
     return (
         <div className="lobby-page">
-            <h1>Bienvenido, {user?.displayName ?? user?.email}</h1>
+            <h1>Bienvenido, {username ?? '...'}</h1>
         </div>
     );
 };
