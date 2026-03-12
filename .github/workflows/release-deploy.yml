@@ -147,12 +147,17 @@ jobs:
     needs: [docker-push-users, docker-push-webapp, docker-push-gamey]
     steps:
       - name: Deploy over SSH
-        uses: fifsky/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_HOST }}
-          user: ${{ secrets.DEPLOY_USER }}
+          username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
-          command: |
+          envs: FIREBASE_PROJECT_ID,FIREBASE_CLIENT_EMAIL,FIREBASE_PRIVATE_KEY
+          script: |
             wget https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ github.event.repository.name }}/master/docker-compose.yml -O docker-compose.yml
             docker compose down
             docker compose up -d --pull always
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}

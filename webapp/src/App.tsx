@@ -1,19 +1,36 @@
-import './App.css'
 import { useState } from 'react';
-import RegisterForm from './RegisterForm';
-import GameBoard from './components/GameBoard';
+import { useAuth } from './context/AuthContext';
+import AuthPage from './AuthPage';
+import LobbyPage from './LobbyPage';
+import GamePage from './GamePage';
+import ProfilePage from './ProfilePage';
+import HistoryPage from './HistoryPage';
+import Navbar from './components/NavBar';
+import './App.css';
 
 function App() {
-    const [registered, setRegistered] = useState(false);
+    const { user, loading } = useAuth();
+    const [currentPage, setCurrentPage] = useState('lobby');
 
-    if (registered) {
-        return <GameBoard />;
-    }
+    if (loading) return <div className="loading">Cargando...</div>;
+
+    if (!user) return <AuthPage onSuccess={() => setCurrentPage('lobby')} />;
+
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'game':    return <GamePage />;
+            case 'profile': return <ProfilePage />;
+            case 'history': return <HistoryPage />;
+            default:        return <LobbyPage />;
+        }
+    };
 
     return (
         <div className="App">
-            <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
-            <RegisterForm onSuccess={() => setRegistered(true)} />
+            <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
+            <main className="main-content">
+                {renderPage()}
+            </main>
         </div>
     );
 }

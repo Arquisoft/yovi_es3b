@@ -2,17 +2,19 @@
   "name": "users",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/users-service.js",
   "scripts": {
-    "start": "node users-service.js",
+    "start": "node src/users-service.js",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "express-prom-bundle": "^8.0.0",
+    "firebase-admin": "^13.7.0",
     "js-yaml": "^4.1.0",
     "mongoose": "^9.2.1",
     "swagger-ui-express": "^5.0.1"
