@@ -1,19 +1,19 @@
-import './App.css'
-import { useState } from 'react';
-import RegisterForm from './RegisterForm';
+import { useAuth } from './context/AuthContext';
+import AuthPage from './AuthPage';
 import GameBoard from './components/GameBoard';
+import Navbar from './components/NavBar';
+import './App.css';
 
 function App() {
-    const [registered, setRegistered] = useState(false);
+    const { user, loading } = useAuth();
 
-    if (registered) {
-        return <GameBoard />;
-    }
+    // Mientras Firebase comprueba si hay sesión activa, no renderizamos nada
+    if (loading) return <div>Loading...</div>;
 
     return (
         <div className="App">
-            <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
-            <RegisterForm onSuccess={() => setRegistered(true)} />
+            <Navbar />
+            {user ? <GameBoard /> : <AuthPage onSuccess={() => {}} />}
         </div>
     );
 }
