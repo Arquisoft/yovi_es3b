@@ -4,7 +4,12 @@ import RegisterForm from '../components/auth/RegisterForm'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import '@testing-library/jest-dom'
 
-// ---- MOCK FIREBASE ----
+// Mock del módulo firebase/firebase para que no intente inicializar Firebase
+vi.mock('../firebase/firebase', () => ({
+  auth: {}
+}))
+
+// Mock de firebase/auth
 vi.mock('firebase/auth', () => ({
   createUserWithEmailAndPassword: vi.fn()
 }))
@@ -23,7 +28,6 @@ describe('RegisterForm', () => {
     )
 
     const user = userEvent.setup()
-
     await user.click(screen.getByRole('button', { name: /register/i }))
 
     expect(
@@ -35,16 +39,13 @@ describe('RegisterForm', () => {
     const user = userEvent.setup()
     const onSuccess = vi.fn()
 
-    const mockToken = 'fake-token'
-
     const mockCredential = {
       user: {
-        getIdToken: vi.fn().mockResolvedValue(mockToken)
+        getIdToken: vi.fn().mockResolvedValue('fake-token')
       }
     }
 
     const { createUserWithEmailAndPassword } = await import('firebase/auth')
-
     ;(createUserWithEmailAndPassword as any).mockResolvedValue(mockCredential)
 
     global.fetch = vi.fn().mockResolvedValue({
