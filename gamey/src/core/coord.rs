@@ -40,6 +40,19 @@ impl Coordinates {
         self.z
     }
 
+    //Returns distance to the center of the board
+    pub fn distance_to_center(&self, board_size: u32) -> i32 {
+        let center = (board_size - 1) as i32 / 2;
+        ((self.x as i32 - center).abs()
+         + (self.y as i32 - center).abs()
+         + (self.z as i32 - center).abs()) as i32
+    }
+
+    //Returns if a coord is touchign any of the edges
+    pub fn is_on_edge(&self) -> bool {
+        self.touches_side_a() || self.touches_side_b() || self.touches_side_c()
+    }
+
     /// Converts a linear index to barycentric coordinates (x, y, z).
     ///
     /// The index follows row-major order starting from the top of the triangle.
