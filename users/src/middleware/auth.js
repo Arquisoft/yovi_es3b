@@ -16,6 +16,7 @@ function createVerifyToken(adminInstance = null) {
             req.user = decoded;
             next();
         } catch (err) {
+            console.error("verifyToken error:", err.code, err.message);
             return res.status(401).json({ error: "Token inválido o expirado" });
         }
     }
