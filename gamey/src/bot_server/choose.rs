@@ -113,7 +113,8 @@ pub async fn choose(
             )));
         }
     };
-
+    
+    println!("CornerBot coords: {:?}", coords);
     // We build the MoveResponse to send as a JSON
     let response = MoveResponse {
         api_version: params.api_version,

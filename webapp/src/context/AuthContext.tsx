@@ -37,9 +37,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     if (res.ok) {
                         const data = await res.json();
                         setUsername(data.username);
+                    } else {
+                        // Fallback: usa el displayName de Firebase si la API falla
+                        setUsername(firebaseUser.displayName);
                     }
                 } catch (err) {
                     console.error('Error obteniendo perfil:', err);
+                    setUsername(firebaseUser.displayName);
                 }
             } else {
                 setToken(null);

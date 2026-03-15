@@ -29,6 +29,7 @@ use crate::{
     state::AppState,
     GameYError,
     RandomBot,
+    CornerBot,
     YBotRegistry,
 };
 
@@ -45,7 +46,9 @@ pub fn create_router(state: AppState) -> Router {
 
 /// Creates the default application state with the standard bot registry.
 pub fn create_default_state() -> AppState {
-    let bots = YBotRegistry::new().with_bot(Arc::new(RandomBot));
+    let bots = YBotRegistry::new()
+        .with_bot(Arc::new(RandomBot))
+        .with_bot(Arc::new(CornerBot));
     AppState::new(bots)
 }
 

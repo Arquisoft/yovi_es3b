@@ -57,6 +57,14 @@ impl GameY {
         }
     }
 
+     ///Returns if the position at coords is ocuppied by the player
+    pub fn is_my_piece(&self, coords: Coordinates, player: PlayerId) -> bool {
+        match self.board_map.get(&coords) {
+            Some((_, p)) => *p == player,
+            None => false, // Empty coords
+        }
+    }
+
     /// Returns the current game status.
     pub fn status(&self) -> &GameStatus {
         &self.status
@@ -258,7 +266,7 @@ impl GameY {
     }
 
     /// Returns the neighboring coordinates for a given cell.
-    fn get_neighbors(&self, coords: &Coordinates) -> Vec<Coordinates> {
+    pub fn get_neighbors(&self, coords: &Coordinates) -> Vec<Coordinates> {
         let mut neighbors = Vec::new();
         let x = coords.x();
         let y = coords.y();

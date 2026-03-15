@@ -86,9 +86,10 @@ function buildYEN(size: number, board: Record<string, 1 | 2>) {
 type GameBoardProps = {
   size?: number;
   userName?: string;
+  botId?: string; 
 };
 
-export default function GameBoard({ size = 9, userName }: GameBoardProps) {
+export default function GameBoard({ size = 9, userName, botId }: GameBoardProps) {
   const cells = useMemo(() => generateBoard(size), [size]);
   const [board, setBoard] = useState<Board>({});
   const [current, setCurrent] = useState<Player>(1);
@@ -119,13 +120,15 @@ export default function GameBoard({ size = 9, userName }: GameBoardProps) {
 
     try {
       const API_URL = "http://localhost:4000";
+    const bot = botId ?? "random_bot";
       const yen = buildYEN(size, nextBoard);
 
-      const res = await fetch(`${API_URL}/v1/ybot/choose/random_bot`, {
+      const res = await fetch(`${API_URL}/v1/ybot/choose/${bot}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(yen),
       });
+
 
       // In case of 409 error skip it. Might delete if manage to make the error not necessary
       if (res.status === 409) {
@@ -149,6 +152,7 @@ export default function GameBoard({ size = 9, userName }: GameBoardProps) {
 
       const data = await res.json();
 
+      console.log("data completo del bot:", data);
       // Read GameStatus
       const status = data?.status;
       if (status && typeof status === "object" && "Finished" in status) {
