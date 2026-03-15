@@ -129,6 +129,7 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
         body: JSON.stringify(yen),
       });
 
+
       // In case of 409 error skip it. Might delete if manage to make the error not necessary
       if (res.status === 409) {
         gameFinishedRef.current = true;
@@ -151,6 +152,7 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
 
       const data = await res.json();
 
+      console.log("data completo del bot:", data);
       // Read GameStatus
       const status = data?.status;
       if (status && typeof status === "object" && "Finished" in status) {
