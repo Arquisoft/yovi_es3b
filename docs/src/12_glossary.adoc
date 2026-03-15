@@ -3,42 +3,52 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-glossary]]
 == Glossary
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-The most important domain and technical terms that your stakeholders use when discussing the system.
+The most important domain and technical terms that stakeholders should know the meaning.
 
-You can also see the glossary as source for translations if you work in multi-language teams.
-
-.Motivation
-You should clearly define your terms, so that all stakeholders
-
-* have an identical understanding of these terms
-* do not use synonyms and homonyms
-
-
-.Form
-
-A table with columns <Term> and <Definition>.
-
-Potentially more columns in case you need translations.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-12/[Glossary] in the arc42 documentation.
-
-****
-endif::arc42help[]
-
-[cols="e,2e" options="header"]
+[cols="1,3", options="header"]
 |===
-|Term |Definition
+|Term
+|Definition
 
-|<Term-1>
-|<definition-1>
+|JSON
+|A text-based data format for structuring information using key-value pairs and arrays. Essential for backend-to-frontend communication and integration with the game engine's API responses.
 
-|<Term-2>
-|<definition-2>
+|API
+|A set of standardized protocols and endpoints that enable different software components to exchange data and trigger actions. In Yovi, the API serves as the communication bridge between the user interface, microservices, and the core game logic.
+
+|Bots
+|Autonomous software agents programmed to play the game without human intervention. Bots leverage the project's public API to make moves, evaluate board states, and compete against human players.
+
+|Microservice REST
+|An architectural pattern that decomposes the application into modular, independently deployable services communicating via HTTP/REST conventions. Each Yovi service (users, gamey, webapp) operates autonomously while coordinating through REST endpoints.
+
+|Frontend
+|The user-facing layer of the application built with React and Vite. Handles game visualization, player input, real-time board updates, and provides an interactive interface for gameplay and user authentication.
+
+|Backend
+|A collection of microservices that manage game logic execution, player session lifecycle, move validation, and state persistence. Coordinates between the database, game engine, and frontend to deliver a cohesive user experience.
+
+|Game Engine
+|The computational core responsible for enforcing game rules, validating moves, calculating game trees, and determining outcomes. Implemented in Rust for performance and safety, it exposes its functionality through standardized APIs.
+
+|Docker
+|Container technology that packages the application with all dependencies into isolated, reproducible environments. Enables seamless deployment across development, testing, and production while maintaining environment consistency.
+
+|Arc42
+|A mature architecture documentation framework that structures technical documentation into 12 logical sections. Provides stakeholders with a comprehensive view of design decisions, system interactions, and technical trade-offs.
+
+|Microservices
+|A distributed system design where independent services specialize in specific business capabilities and communicate via well-defined contracts. Yovi adopts this pattern to enable parallel development, independent scaling, and technology diversity (Rust backend, TypeScript frontend).
+
+|GitHub
+|A version control and collaboration platform built on Git. Serves as the central repository for source code, issue tracking, pull request reviews, and team coordination throughout the development lifecycle.
+
+|LLM (Large Language Model)
+|An AI system trained on vast text datasets capable of understanding context and generating human-like responses. Can assist with code generation, documentation, and architectural decision-making during development.
+
+|PlantUML
+|A text-based diagram generation tool that converts structured descriptions into visual representations. Useful for creating sequence diagrams, component diagrams, and architecture visualizations during documentation phases.
+
+|YEN Notation
+|A JSON-compatible serialization protocol that captures a complete snapshot of game state including the board configuration, current turn, active players, and game metadata. Facilitates state persistence and inter-service communication.
 |===
