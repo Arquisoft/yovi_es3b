@@ -119,7 +119,7 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
     setLoadingBot(true);
 
     try {
-      const API_URL = "http://localhost:4000";
+      const API_URL = import.meta.env.VITE_GAMEY_URL ?? "http://localhost:4000";
     const bot = botId ?? "random_bot";
       const yen = buildYEN(size, nextBoard);
 
