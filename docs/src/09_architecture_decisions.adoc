@@ -3,8 +3,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-design-decisions]]
 == Architecture Decisions
 
-=== Contents
-
 This section documents the important, high-impact architectural decisions that influence the design and development of Yovi_es3b.
 The decisions are documented using the ADR format, organized by importance and consequences. Each decision includes the status, context, alternatives, justification, and consequences.
 
