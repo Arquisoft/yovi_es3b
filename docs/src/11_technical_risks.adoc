@@ -3,25 +3,103 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-technical-risks]]
 == Risks and Technical Debts
 
+This section serves as a list of identified technical risks and technical debts, ordered by priority with associated mitigation measures.
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-A list of identified technical risks or technical debts, ordered by priority
+---
 
-.Motivation
-“Risk management is project management for grown-ups” (Tim Lister, Atlantic Systems Guild.) 
+=== Identified Risks
 
-This should be your motto for systematic detection and evaluation of risks and technical debts in the architecture, which will be needed by management stakeholders (e.g. project managers, product owners) as part of the overall risk analysis and measurement planning.
+[cols="^1,2,3,^1,^1,3", options="header"]
+|===
+|ID
+|Risk
+|Description
+|Impact
+|Probability
+|Mitigation Measures
 
-.Form
-List of risks and/or technical debts, probably including suggested measures to minimize, mitigate or avoid risks or reduce technical debts.
+|R1
+|Learning Rust
+|Rust is a language with complex syntax and strict memory management requirements. Developing without prior experience can cause significant delays in early sprints and bad code quality.
+|Medium
+|High
+|See tutorials. Use LLms to explain code. Implement algorithms with progressive difficulty levels.
 
+|R2
+|Complexity of used technologies (Rust + TypeScript + JavaScript)
+|The project uses Rust as the primary language alongside TypeScript and JavaScript, with very different paradigms and ecosystems. This significantly increases development complexity and maintainability.
+|High
+|Medium
+|Implement continuous training in Rust and TypeScript. Establish clear integration patterns between backend (Rust) and frontend (TypeScript/JavaScript) components. Good documentation.
 
-.Further Information
+|R3
+|Azure subscription
+|The student Azure plan provides only €100 in credits. Once spent, development, testing, and deployment activities may be interrupted.
+|Medium
+|Medium
+|Make automations to power off the server when is not being used. Try to look for alternatives of azure.
 
-See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 documentation.
+|R4
+|External Library Dependencies (crates and npm)
+|The project depends on external packages that may contain security vulnerabilities, become unmaintained, or introduce incompatible changes, affecting system stability and security.
+|Medium
+|Low
+|Perform periodic audits using cargo-audit. Keep dependencies updated cautiously. Review major version changes before upgrading.
 
-****
-endif::arc42help[]
+|R5
+|Team Communication and Coordination
+|Lack of communication between the members of the team working on different layers (Rust backend, TypeScript frontend) can lead to misunderstandings, duplicated work, and integration errors.
+|High
+|Low
+|Establish clear communication channels. Make pull request. Maintain updated documentation of interfaces and API contracts. Hold weekly meetings between teammates.
+
+|R6
+|Team Member Abandonment
+|Unexpected departure of a team member could leave tasks undone and cause loss of knowledge.
+|Medium
+|Low
+|All members of the team have to known everything, clear documentation.
+|===
+
+---
+
+=== Technical Debt
+
+[cols="^1,2,3,^1,3", options="header"]
+|===
+|ID
+|Technical Debt
+|Description
+|Impact
+|Planned Actions
+
+|D1
+|Insufficiently Documented Code
+|Lack of clear documentation in some parts of the project makes code comprehension difficult and increases risk of errors during maintenance and refactoring.
+|Medium
+|Establish documentation standards. Make some code reviews focused on documentation quality. Maintain updated documentation.
+
+|D2
+|Initial Implementation Without Optimization
+|Current implementation prioritize functionality over performance.
+|Medium
+|Plan continuous improvement iterations. Conduct performance profiling. Optimize algorithms.
+
+|D3
+|Not 100% Test Coverage
+|Rust's complexity can lead to insufficient initial testing, leaving code without exhaustive validation.
+|Medium
+|Implement more unit tests in Rust. Establish code coverage metrics.
+
+|D4
+|Technical Debt From Strict Deadlines
+|Strict delivery deadlines forced compromises that work but are unsustainable long-term.
+|Medium
+|Try to get time in each deliverable for refactoring. Identify and prioritize critical debt areas. Perform gradual refactoring without affecting functionality.
+
+|D5
+|Integration Between Backend (Rust) and Frontend (TypeScript)
+|The code does not follow the best architectural or structural practices, generating unnecessary coupling.
+|Medium
+|Define clear API contracts. Document data schemas. Conduct code reviews focused on layer interfaces.
+|===
