@@ -503,15 +503,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#section-design-decisions">9. Architecture Decisions</a>
 <ul class="sectlevel2">
-<li><a href="#_contents">9.1. Contents</a></li>
-<li><a href="#_adr_1_rust_for_the_gamey_engine">9.2. ADR 1: Rust for the Gamey Engine</a></li>
-<li><a href="#_adr_2_node_js_express_for_the_users_service">9.3. ADR 2: Node.js &amp; Express for the Users Service</a></li>
-<li><a href="#_adr_3_react_typescript_for_the_webapp_frontend">9.4. ADR 3: React &amp; TypeScript for the Webapp Frontend</a></li>
-<li><a href="#_adr_4_vite_as_the_frontend_build_tool">9.5. ADR 4: Vite as the Frontend Build Tool</a></li>
-<li><a href="#_adr_5_mongodb_with_mongoose_for_persistence">9.6. ADR 5: MongoDB with Mongoose for Persistence</a></li>
-<li><a href="#_adr_6_docker_docker_compose_for_orchestration">9.7. ADR 6: Docker &amp; Docker Compose for Orchestration</a></li>
-<li><a href="#_adr_7_github_actions">9.8. ADR 7: GitHub Actions</a></li>
-<li><a href="#_adr_8_code_quality_monitoring_sonarcloud_codescene">9.9. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</a></li>
+<li><a href="#_adr_1_rust_for_the_gamey_engine">9.1. ADR 1: Rust for the Gamey Engine</a></li>
+<li><a href="#_adr_2_node_js_express_for_the_users_service">9.2. ADR 2: Node.js &amp; Express for the Users Service</a></li>
+<li><a href="#_adr_3_react_typescript_for_the_webapp_frontend">9.3. ADR 3: React &amp; TypeScript for the Webapp Frontend</a></li>
+<li><a href="#_adr_4_vite_as_the_frontend_build_tool">9.4. ADR 4: Vite as the Frontend Build Tool</a></li>
+<li><a href="#_adr_5_mongodb_with_mongoose_for_persistence">9.5. ADR 5: MongoDB with Mongoose for Persistence</a></li>
+<li><a href="#_adr_6_docker_docker_compose_for_orchestration">9.6. ADR 6: Docker &amp; Docker Compose for Orchestration</a></li>
+<li><a href="#_adr_7_github_actions">9.7. ADR 7: GitHub Actions</a></li>
+<li><a href="#_adr_8_code_quality_monitoring_sonarcloud_codescene">9.8. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</a></li>
 </ul>
 </li>
 <li><a href="#section-quality-scenarios">10. Quality Requirements</a>
@@ -520,7 +519,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_quality_scenarios">10.2. Quality Scenarios</a></li>
 </ul>
 </li>
-<li><a href="#section-technical-risks">11. Risks and Technical Debts</a></li>
+<li><a href="#section-technical-risks">11. Risks and Technical Debts</a>
+<ul class="sectlevel2">
+<li><a href="#_identified_risks">11.1. Identified Risks</a></li>
+<li><a href="#_technical_debt">11.2. Technical Debt</a></li>
+</ul>
+</li>
 <li><a href="#section-glossary">12. Glossary</a></li>
 </ul>
 </div>
@@ -1850,17 +1854,9 @@ building block instances depicted in this diagram.&gt;</em></p>
 <div class="paragraph">
 <p>It is possible to use a sequence diagram:</p>
 </div>
-<div class="listingblock">
+<div class="imageblock">
 <div class="content">
-<pre>Failed to generate image: Could not load PlantUML. Either require 'asciidoctor-diagram-plantuml' or specify the location of the PlantUML JAR(s) using the 'DIAGRAM_PLANTUML_CLASSPATH' environment variable. Alternatively a PlantUML binary can be provided (plantuml-native in $PATH).
-actor Alice
-actor Bob
-database Pod as "Bob's Pod"
-Alice -&gt; Bob: Authentication Request
-Bob --&gt; Alice: Authentication Response
-Alice  --&gt; Pod: Store route
-Alice -&gt; Bob: Another authentication Request
-Alice &lt;-- Bob: another authentication Response</pre>
+<img src="./images/Sequence%20diagram.png" alt="Sequence diagram" width="332" height="335">
 </div>
 </div>
 </div>
@@ -2149,16 +2145,13 @@ on this list.</p>
 <div class="sect1">
 <h2 id="section-design-decisions">9. Architecture Decisions</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_contents">9.1. Contents</h3>
 <div class="paragraph">
 <p>This section documents the important, high-impact architectural decisions that influence the design and development of Yovi_es3b.
 The decisions are documented using the ADR format, organized by importance and consequences. Each decision includes the status, context, alternatives, justification, and consequences.</p>
 </div>
 <hr>
-</div>
 <div class="sect2">
-<h3 id="_adr_1_rust_for_the_gamey_engine">9.2. ADR 1: Rust for the Gamey Engine</h3>
+<h3 id="_adr_1_rust_for_the_gamey_engine">9.1. ADR 1: Rust for the Gamey Engine</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2193,7 +2186,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_2_node_js_express_for_the_users_service">9.3. ADR 2: Node.js &amp; Express for the Users Service</h3>
+<h3 id="_adr_2_node_js_express_for_the_users_service">9.2. ADR 2: Node.js &amp; Express for the Users Service</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2229,7 +2222,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_3_react_typescript_for_the_webapp_frontend">9.4. ADR 3: React &amp; TypeScript for the Webapp Frontend</h3>
+<h3 id="_adr_3_react_typescript_for_the_webapp_frontend">9.3. ADR 3: React &amp; TypeScript for the Webapp Frontend</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2264,7 +2257,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_4_vite_as_the_frontend_build_tool">9.5. ADR 4: Vite as the Frontend Build Tool</h3>
+<h3 id="_adr_4_vite_as_the_frontend_build_tool">9.4. ADR 4: Vite as the Frontend Build Tool</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2299,7 +2292,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_5_mongodb_with_mongoose_for_persistence">9.6. ADR 5: MongoDB with Mongoose for Persistence</h3>
+<h3 id="_adr_5_mongodb_with_mongoose_for_persistence">9.5. ADR 5: MongoDB with Mongoose for Persistence</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2343,7 +2336,7 @@ The database needed to store user profiles and authentication data and persist g
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_6_docker_docker_compose_for_orchestration">9.7. ADR 6: Docker &amp; Docker Compose for Orchestration</h3>
+<h3 id="_adr_6_docker_docker_compose_for_orchestration">9.6. ADR 6: Docker &amp; Docker Compose for Orchestration</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2379,7 +2372,7 @@ The database needed to store user profiles and authentication data and persist g
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_7_github_actions">9.8. ADR 7: GitHub Actions</h3>
+<h3 id="_adr_7_github_actions">9.7. ADR 7: GitHub Actions</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2413,7 +2406,7 @@ The database needed to store user profiles and authentication data and persist g
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_8_code_quality_monitoring_sonarcloud_codescene">9.9. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</h3>
+<h3 id="_adr_8_code_quality_monitoring_sonarcloud_codescene">9.8. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2553,75 +2546,155 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 <div class="sect1">
 <h2 id="section-technical-risks">11. Risks and Technical Debts</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
 <div class="paragraph">
-<div class="title">Contents</div>
-<p>A list of identified technical risks or technical debts, ordered by priority</p>
+<p>This section serves as a list of identified technical risks and technical debts, ordered by priority with associated mitigation measures.</p>
 </div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>“Risk management is project management for grown-ups” (Tim Lister, Atlantic Systems Guild.)</p>
+<hr>
+<div class="sect2">
+<h3 id="_identified_risks">11.1. Identified Risks</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 9.0909%;">
+<col style="width: 18.1818%;">
+<col style="width: 27.2727%;">
+<col style="width: 9.0909%;">
+<col style="width: 9.0909%;">
+<col style="width: 27.2728%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">ID</th>
+<th class="tableblock halign-left valign-top">Risk</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-center valign-top">Impact</th>
+<th class="tableblock halign-center valign-top">Probability</th>
+<th class="tableblock halign-left valign-top">Mitigation Measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">R1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Learning Rust</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rust is a language with complex syntax and strict memory management requirements. Developing without prior experience can cause significant delays in early sprints and bad code quality.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">See tutorials. Use LLms to explain code. Implement algorithms with progressive difficulty levels.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">R2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Complexity of used technologies (Rust + TypeScript + JavaScript)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The project uses Rust as the primary language alongside TypeScript and JavaScript, with very different paradigms and ecosystems. This significantly increases development complexity and maintainability.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implement continuous training in Rust and TypeScript. Establish clear integration patterns between backend (Rust) and frontend (TypeScript/JavaScript) components. Good documentation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">R3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Azure subscription</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The student Azure plan provides only €100 in credits. Once spent, development, testing, and deployment activities may be interrupted.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Make automations to power off the server when is not being used. Try to look for alternatives of azure.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">R4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">External Library Dependencies (crates and npm)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The project depends on external packages that may contain security vulnerabilities, become unmaintained, or introduce incompatible changes, affecting system stability and security.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Perform periodic audits using cargo-audit. Keep dependencies updated cautiously. Review major version changes before upgrading.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">R5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Team Communication and Coordination</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lack of communication between the members of the team working on different layers (Rust backend, TypeScript frontend) can lead to misunderstandings, duplicated work, and integration errors.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Establish clear communication channels. Make pull request. Maintain updated documentation of interfaces and API contracts. Hold weekly meetings between teammates.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">R6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Team Member Abandonment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unexpected departure of a team member could leave tasks undone and cause loss of knowledge.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All members of the team have to known everything, clear documentation.</p></td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
-<div class="paragraph">
-<p>This should be your motto for systematic detection and evaluation of risks and technical debts in the architecture, which will be needed by management stakeholders (e.g. project managers, product owners) as part of the overall risk analysis and measurement planning.</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>List of risks and/or technical debts, probably including suggested measures to minimize, mitigate or avoid risks or reduce technical debts.</p>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-11/">Risks and Technical Debt</a> in the arc42 documentation.</p>
-</div>
-</div>
-</div>
+<div class="sect2">
+<h3 id="_technical_debt">11.2. Technical Debt</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 10%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">ID</th>
+<th class="tableblock halign-left valign-top">Technical Debt</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-center valign-top">Impact</th>
+<th class="tableblock halign-left valign-top">Planned Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">D1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Insufficiently Documented Code</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lack of clear documentation in some parts of the project makes code comprehension difficult and increases risk of errors during maintenance and refactoring.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Establish documentation standards. Make some code reviews focused on documentation quality. Maintain updated documentation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">D2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initial Implementation Without Optimization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current implementation prioritize functionality over performance.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Plan continuous improvement iterations. Conduct performance profiling. Optimize algorithms.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">D3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not 100% Test Coverage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rust&#8217;s complexity can lead to insufficient initial testing, leaving code without exhaustive validation.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implement more unit tests in Rust. Establish code coverage metrics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">D4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technical Debt From Strict Deadlines</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strict delivery deadlines forced compromises that work but are unsustainable long-term.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Try to get time in each deliverable for refactoring. Identify and prioritize critical debt areas. Perform gradual refactoring without affecting functionality.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">D5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integration Between Backend (Rust) and Frontend (TypeScript)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The code does not follow the best architectural or structural practices, generating unnecessary coupling.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Define clear API contracts. Document data schemas. Conduct code reviews focused on layer interfaces.</p></td>
+</tr>
+</tbody>
+</table>
 <div style="page-break-after: always;"></div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="section-glossary">12. Glossary</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
 <div class="paragraph">
-<div class="title">Contents</div>
-<p>The most important domain and technical terms that your stakeholders use when discussing the system.</p>
-</div>
-<div class="paragraph">
-<p>You can also see the glossary as source for translations if you work in multi-language teams.</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>You should clearly define your terms, so that all stakeholders</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>have an identical understanding of these terms</p>
-</li>
-<li>
-<p>do not use synonyms and homonyms</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>A table with columns &lt;Term&gt; and &lt;Definition&gt;.</p>
-</div>
-<div class="paragraph">
-<p>Potentially more columns in case you need translations.</p>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-12/">Glossary</a> in the arc42 documentation.</p>
-</div>
-</div>
+<p>The most important domain and technical terms that stakeholders should know the meaning.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
+<col style="width: 25%;">
+<col style="width: 75%;">
 </colgroup>
 <thead>
 <tr>
@@ -2631,12 +2704,60 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Term-1&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;definition-1&gt;</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A text-based data format for structuring information using key-value pairs and arrays. Essential for backend-to-frontend communication and integration with the game engine&#8217;s API responses.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;Term-2&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;definition-2&gt;</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A set of standardized protocols and endpoints that enable different software components to exchange data and trigger actions. In Yovi, the API serves as the communication bridge between the user interface, microservices, and the core game logic.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bots</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Autonomous software agents programmed to play the game without human intervention. Bots leverage the project&#8217;s public API to make moves, evaluate board states, and compete against human players.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Microservice REST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An architectural pattern that decomposes the application into modular, independently deployable services communicating via HTTP/REST conventions. Each Yovi service (users, gamey, webapp) operates autonomously while coordinating through REST endpoints.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frontend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user-facing layer of the application built with React and Vite. Handles game visualization, player input, real-time board updates, and provides an interactive interface for gameplay and user authentication.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A collection of microservices that manage game logic execution, player session lifecycle, move validation, and state persistence. Coordinates between the database, game engine, and frontend to deliver a cohesive user experience.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game Engine</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The computational core responsible for enforcing game rules, validating moves, calculating game trees, and determining outcomes. Implemented in Rust for performance and safety, it exposes its functionality through standardized APIs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Container technology that packages the application with all dependencies into isolated, reproducible environments. Enables seamless deployment across development, testing, and production while maintaining environment consistency.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Arc42</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A mature architecture documentation framework that structures technical documentation into 12 logical sections. Provides stakeholders with a comprehensive view of design decisions, system interactions, and technical trade-offs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Microservices</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A distributed system design where independent services specialize in specific business capabilities and communicate via well-defined contracts. Yovi adopts this pattern to enable parallel development, independent scaling, and technology diversity (Rust backend, TypeScript frontend).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GitHub</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A version control and collaboration platform built on Git. Serves as the central repository for source code, issue tracking, pull request reviews, and team coordination throughout the development lifecycle.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LLM (Large Language Model)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An AI system trained on vast text datasets capable of understanding context and generating human-like responses. Can assist with code generation, documentation, and architectural decision-making during development.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PlantUML</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A text-based diagram generation tool that converts structured descriptions into visual representations. Useful for creating sequence diagrams, component diagrams, and architecture visualizations during documentation phases.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">YEN Notation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A JSON-compatible serialization protocol that captures a complete snapshot of game state including the board configuration, current turn, active players, and game metadata. Facilitates state persistence and inter-service communication.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2646,7 +2767,7 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2026-02-15 15:50:11 +0100
+Last updated 2026-03-08 19:03:56 UTC
 </div>
 </div>
 </body>
