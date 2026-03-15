@@ -13,7 +13,7 @@
     /// # Example
     ///
     /// ```
-    ///
+    /// use gamey::{CornerBot, GameY, YBot};
     /// let bot = CornerBot;
     /// let game = GameY::new(5);
     ///
