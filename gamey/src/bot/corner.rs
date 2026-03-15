@@ -6,25 +6,22 @@
     use crate::{Coordinates, GameY, YBot};
     use rand::prelude::IndexedRandom;
 
-    /// A bot that chooses moves randomly from the available cells.
+    /// A bot that chooses moves prioritizing corners and sides.
     ///
-    /// This is the simplest possible bot implementation - it simply picks
-    /// a random empty cell on the board. While not strategic, it serves as
-    /// a useful baseline and testing tool.
+
     ///
     /// # Example
     ///
     /// ```
-    /// use gamey::{GameY, RandomBot, YBot};
     ///
-    /// let bot = RandomBot;
+    /// let bot = CornerBot;
     /// let game = GameY::new(5);
     ///
     /// // The bot will always return Some when there are available moves
     /// let chosen_move = bot.choose_move(&game);
     /// assert!(chosen_move.is_some());
     /// ```
-    pub struct CornerBot;
+pub struct CornerBot;
 
 impl YBot for CornerBot {
 
@@ -33,29 +30,31 @@ impl YBot for CornerBot {
     }
 
     fn choose_move(&self, board: &GameY) -> Option<Coordinates> {
-
         let available = board.available_cells();
+        if available.is_empty() {
+            return None;
+        }
+
         let mut best_score = i32::MIN;
         let mut best_move = None;
 
-        for cell in available {
-        let coords = Coordinates::from_index(*cell, board.board_size());
-        let mut score = 0;
+        for &cell in available {
+            let coords = Coordinates::from_index(cell, board.board_size());
+            let mut score = 0;
 
-        // Use a score to choose the best move given the free places
-        if coords.is_on_edge() {
-            score += 10;
+            if coords.is_on_edge() {
+                score += 10;
+            }
+            if score > best_score {
+                best_score = score;
+                best_move = Some(coords);
+            }
         }
 
-        if score > best_score {
-            best_score = score;
-            best_move = Some(coords);
-        }
+    
+        best_move
     }
-    //Return the best current move(Using this bot´s form of puntuation)
-    best_move
 }
-    }
 
     #[cfg(test)]
     mod tests {

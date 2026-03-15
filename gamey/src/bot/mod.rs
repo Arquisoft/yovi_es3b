@@ -12,5 +12,6 @@ pub mod corner;
 pub mod ybot;
 pub mod ybot_registry;
 pub use random::*;
+pub use corner::*;
 pub use ybot::*;
 pub use ybot_registry::*;
