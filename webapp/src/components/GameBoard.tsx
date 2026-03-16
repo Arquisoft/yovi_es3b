@@ -1,5 +1,7 @@
 import { useMemo, useState, useRef } from "react";
 import "./GameBoard.css";
+import { useAuth } from "../context/AuthContext";
+import { saveGame, resolveWinner, type Difficulty } from "./GameResultApi.ts";
 
 type Player = 1 | 2;
 type Board = Record<string, Player>;
@@ -86,10 +88,11 @@ function buildYEN(size: number, board: Record<string, 1 | 2>) {
 type GameBoardProps = {
   size?: number;
   userName?: string;
-  botId?: string; 
+  botId?: string;
+  difficulty?: Difficulty;
 };
 
-export default function GameBoard({ size = 9, userName, botId }: GameBoardProps) {
+export default function GameBoard({ size = 9, botId, difficulty = "easy" }: GameBoardProps) {
   const cells = useMemo(() => generateBoard(size), [size]);
   const [board, setBoard] = useState<Board>({});
   const [current, setCurrent] = useState<Player>(1);
@@ -98,6 +101,12 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const gameFinishedRef = useRef(false);
+  // Número de turnos de la partida
+  const [turns, setTurns] = useState(0);
+  // Hora de inicio de la partida
+  const startTimeRef = useRef(Date.now());
+  // Usuario de la partida
+  const { user } = useAuth();
 
   const positions = cells.map(({ q, r }) => hexToPixel(q, r));
   const minX = Math.min(...positions.map((p) => p.x)) - HEX_SIZE;
@@ -106,6 +115,17 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
   const maxY = Math.max(...positions.map((p) => p.y)) + HEX_SIZE;
   const pad = 24;
   const viewBox = `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`;
+
+  const handleSaveGame = async (winnerId: string) => {
+    if (!user) return;
+    await saveGame(
+        user,
+        resolveWinner(winnerId),
+        Date.now() - startTimeRef.current,
+        turns,
+        difficulty
+    );
+  };
 
   const handleClick = async (q: number, r: number) => {
     if (gameFinishedRef.current || gameOver || loadingBot || current !== 1) return;
@@ -117,10 +137,12 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
     setBoard(nextBoard);
     setCurrent(2);
     setLoadingBot(true);
+    // Sumamos un turno
+    setTurns((t) => t + 1);
 
     try {
       const API_URL = import.meta.env.VITE_GAMEY_URL ?? "http://localhost:4000";
-    const bot = botId ?? "random_bot";
+      const bot = botId ?? "random_bot";
       const yen = buildYEN(size, nextBoard);
 
       const res = await fetch(`${API_URL}/v1/ybot/choose/${bot}`, {
@@ -141,7 +163,10 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
           if (m && m[1]) winnerFromServer = m[1].trim();
         } catch {}
         setGameOver(true);
-        if (winnerFromServer) setWinner(winnerFromServer);
+        if (winnerFromServer) {
+          setWinner(winnerFromServer);
+          await handleSaveGame(winnerFromServer);
+        }
         return;
       }
 
@@ -155,6 +180,8 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
       console.log("data completo del bot:", data);
       // Read GameStatus
       const status = data?.status;
+
+      // Cuando el juego finaliza
       if (status && typeof status === "object" && "Finished" in status) {
         // status = { Finished: { winner: <id> } }
         gameFinishedRef.current = true;
@@ -162,6 +189,7 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
         const winnerId = typeof w === "number" ? String(w) : String(w ?? "");
         setWinner(winnerId);
         setGameOver(true);
+        await handleSaveGame(winnerId);
         return; // Ended, return
       }
 
@@ -176,6 +204,7 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
       ) {
         const botKey = `${coords.x},${coords.y}`; 
         setBoard((prev) => (prev[botKey] ? prev : { ...prev, [botKey]: 2 }));
+        setTurns((t) => t + 1);
       } else {
         // If no coords, nothing happens, in case we add the option to skip turns
         return;
@@ -198,6 +227,8 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
     setLoadingBot(false);
     setGameOver(false);
     setWinner(null);
+    setTurns(0);
+    startTimeRef.current = Date.now();
   };
 
   return (
@@ -205,7 +236,6 @@ export default function GameBoard({ size = 9, userName, botId }: GameBoardProps)
       <div className="game-header">
         <h1 className="game-title">Game Y</h1>
         <p className="game-subtitle">Conecta los tres lados para ganar</p>
-        <p className="success-message">Hello {userName}! Welcome!</p>
       </div>
 
       {gameOver && (
