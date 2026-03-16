@@ -4,7 +4,7 @@ import AuthPage from './AuthPage';
 import LobbyPage from './LobbyPage';
 import GamePage from './GamePage';
 import ProfilePage from './ProfilePage';
-import HistoryPage from './HistoryPage';
+import HistoryPage from './components/history/HistoryPage.tsx';
 import Navbar from './components/NavBar';
 import './App.css';
 
