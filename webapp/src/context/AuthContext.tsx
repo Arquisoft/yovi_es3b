@@ -1,12 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { auth } from '../firebase/firebase';
-
 interface AuthContextType {
     user: User | null;
     loading: boolean;
     token: string | null;
-    username: string | null;  // ← nuevo
+    username: string | null;
+    setUsername: (username: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -14,6 +11,7 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     token: null,
     username: null,
+    setUsername: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -32,13 +30,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 try {
                     const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
                     const res = await fetch(`${API_URL}/users/me`, {
-                        headers: {Authorization: `Bearer ${idToken}`}
+                        headers: { Authorization: `Bearer ${idToken}` }
                     });
                     if (res.ok) {
                         const data = await res.json();
                         setUsername(data.username);
                     } else {
-                        // Fallback: usa el displayName de Firebase si la API falla
                         setUsername(firebaseUser.displayName);
                     }
                 } catch (err) {
@@ -49,13 +46,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setToken(null);
                 setUsername(null);
             }
-            setLoading(false); // ← ahora va aquí, después de todo
+            setLoading(false);
         });
 
         return unsubscribe;
     }, []);
-    return (                                                    // ← faltaba esto
-        <AuthContext.Provider value={{user, loading, token, username}}>
+
+    return (
+        <AuthContext.Provider value={{ user, loading, token, username, setUsername }}>
             {children}
         </AuthContext.Provider>
     );
