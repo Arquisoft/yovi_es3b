@@ -42,6 +42,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Server error');
 
+            setUsername(username);
             onSuccess();
         } catch (err: any) {
             setError(err.message || 'Registration error');
