@@ -7,11 +7,11 @@ const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
 const { connectMongo } = require("./db/mongo");
 const User = require("./db/models/User");
+const Game = require("./db/models/Game");
 const { verifyToken } = require("./middleware/auth");
 
 function createApp(middleware = verifyToken) {
   const app = express();
-  const port = 3000;
 
   const metricsMiddleware = process.env.NODE_ENV === 'test'
       ? (req, res, next) => next()  // middleware vacío en tests
@@ -75,6 +75,41 @@ function createApp(middleware = verifyToken) {
       res.status(201).json({ message: `Bienvenido ${username}!`, user });
     } catch (err) {
       res.status(400).json({ error: err.message });
+    }
+  });
+
+  // Guardar partida
+  app.post("/games", middleware, async (req, res) => {
+    const { winner, durationMs, turns, difficulty } = req.body;
+    try {
+      const user = await User.findOne({ firebaseUid: req.user.uid });
+      if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+      const game = await Game.create({
+        username: user.username,
+        winner,
+        durationMs,
+        turns,
+        difficulty,
+      });
+      res.status(201).json(game);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
+// Obtener partidas del usuario autenticado
+  app.get("/games/me", middleware, async (req, res) => {
+    try {
+      const user = await User.findOne({ firebaseUid: req.user.uid });
+      if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+      const games = await Game.find({ username: user.username })
+          .sort({ createdAt: -1 })
+          .limit(50);
+      res.json(games);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   });
 

@@ -33,7 +33,7 @@ const GamePage: React.FC = () => {
   }
 
   // Una vez seleccionado, renderiza el GameBoard con el botId correspondiente
-  return <GameBoard size={9} botId={botId} />;
+  return <GameBoard size={9} botId={botId} difficulty={mode}/>;
 };
 
 export default GamePage;
