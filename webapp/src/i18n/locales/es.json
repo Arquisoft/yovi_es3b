@@ -1,0 +1,66 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "play": "Jugar",
+    "profile": "Mi Perfil",
+    "history": "Historial",
+    "logout": "Cerrar Sesión"
+  },
+  "lobby": {
+    "welcome": "Bienvenido, {{name}}"
+  },
+  "auth": {
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "login": "Iniciar sesión",
+    "loggingIn": "Iniciando sesión...",
+    "register": "Registrarse",
+    "creatingAccount": "Creando cuenta...",
+    "username": "Nombre de usuario",
+    "createAccount": "Crear cuenta",
+    "invalidCredentials": "Correo o contraseña incorrectos",
+    "fillAllFields": "Por favor rellena todos los campos",
+    "serverError": "Error del servidor",
+    "registrationError": "Error al registrarse",
+    "noAccount": "¿No tienes cuenta?",
+    "haveAccount": "¿Ya tienes cuenta?"
+  },
+  "game": {
+    "title": "Game Y",
+    "subtitle": "Conecta los tres lados para ganar",
+    "selectMode": "Selecciona un modo de juego",
+    "easy": "Modo fácil",
+    "hard": "Modo difícil",
+    "sideLeft": "Lado izquierdo",
+    "sideBottom": "Lado inferior",
+    "sideRight": "Lado derecho",
+    "player": "Jugador 1",
+    "bot": "Bot",
+    "turn": "Turno de {{player}}",
+    "newGame": "Nueva partida",
+    "gameOver": "La partida ha terminado",
+    "playerWins": "¡Ganó el Jugador!",
+    "botWins": "¡Ganó el Bot!"
+  },
+  "history": {
+    "title": "Historial de partidas",
+    "subtitle": "Últimas {{count}} partidas",
+    "loading": "Cargando partidas...",
+    "error": "Error al cargar el historial",
+    "empty": "No tienes partidas registradas",
+    "win": "Victoria",
+    "loss": "Derrota",
+    "duration": "Duración",
+    "turns": "Turnos",
+    "difficulty": "Dificultad",
+    "difficultyEasy": "Fácil",
+    "difficultyHard": "Difícil",
+    "today": "Hoy",
+    "yesterday": "Ayer"
+  },
+  "profile": {
+    "title": "Mi perfil",
+    "editProfile": "Editar perfil",
+    "changePhoto": "Cambiar foto"
+  }
+}

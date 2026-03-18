@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
     onSuccess: () => void;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
+    const { t } = useTranslation();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,33 +21,30 @@ const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
         setError(null);
 
         if (!username.trim() || !email.trim() || !password.trim()) {
-            setError('Please fill in all fields.');
+            setError(t('auth.fillAllFields'));
             return;
         }
         setLoading(true);
 
         try {
-            // 1. Crear usuario en Firebase
             const credential = await createUserWithEmailAndPassword(auth, email, password);
             const token = await credential.user.getIdToken();
 
-            // 2. Crear perfil en nuestro backend (Mongo)
             const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
             const res = await fetch(`${API_URL}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,  // JWT de Firebase
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({ username }),
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Server error');
+            if (!res.ok) throw new Error(data.error || t('auth.serverError'));
 
-            setUsername(username);
             onSuccess();
         } catch (err: any) {
-            setError(err.message || 'Registration error');
+            setError(err.message || t('auth.registrationError'));
         } finally {
             setLoading(false);
         }
@@ -53,9 +52,9 @@ const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
 
     return (
         <form onSubmit={handleSubmit} className="register-form">
-            <h2>Create account</h2>
+            <h2>{t('auth.createAccount')}</h2>
             <div className="form-group">
-                <label htmlFor="username">Username</label>
+                <label htmlFor="username">{t('auth.username')}</label>
                 <input
                     type="text"
                     id="username"
@@ -65,7 +64,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
                 />
             </div>
             <div className="form-group">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">{t('auth.email')}</label>
                 <input
                     type="email"
                     id="email"
@@ -75,7 +74,7 @@ const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
                 />
             </div>
             <div className="form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">{t('auth.password')}</label>
                 <input
                     type="password"
                     id="password"
@@ -85,10 +84,10 @@ const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
                 />
             </div>
             <button type="submit" className="submit-button" disabled={loading}>
-                {loading ? 'Creating account...' : 'Register'}
+                {loading ? t('auth.creatingAccount') : t('auth.register')}
             </button>
             {error && <div className="error-message">{error}</div>}
-            <p>Already have an account? <button type="button" onClick={onSwitchToLogin}>Log in</button></p>
+            <p>{t('auth.haveAccount')} <button type="button" onClick={onSwitchToLogin}>{t('auth.login')}</button></p>
         </form>
     );
 };
