@@ -39,6 +39,7 @@ function createApp(middleware = verifyToken) {
   });
 
   app.use(express.json());
+  app.use(detectLanguage);
 
   app.get('/users/me', middleware, async (req, res) => {
     try {
