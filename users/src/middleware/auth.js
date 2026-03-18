@@ -5,7 +5,7 @@ function createVerifyToken(adminInstance = null) {
         const authHeader = req.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ error: "Token no proporcionado" });
+            return res.status(401).json({ error: req.t('tokenNotProvided') });
         }
 
         const token = authHeader.split("Bearer ")[1];
@@ -17,7 +17,7 @@ function createVerifyToken(adminInstance = null) {
             next();
         } catch (err) {
             console.error("verifyToken error:", err.code, err.message);
-            return res.status(401).json({ error: "Token inválido o expirado" });
+            return res.status(401).json({ error: req.t('tokenInvalid') });
         }
     }
 }

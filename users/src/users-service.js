@@ -3,12 +3,14 @@ require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") }
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const fs = require('node:fs');
+const {detectLanguage} = require("./middleware/languaje")
 const YAML = require('js-yaml');
 const promBundle = require('express-prom-bundle');
 const { connectMongo } = require("./db/mongo");
 const User = require("./db/models/User");
 const Game = require("./db/models/Game");
 const { verifyToken } = require("./middleware/auth");
+
 
 function createApp(middleware = verifyToken) {
   const app = express();
@@ -45,7 +47,7 @@ function createApp(middleware = verifyToken) {
           { username: 1, gamesPlayed: 1, gamesWon: 1, gamesLost: 1, createdAt: 1 }
       );
       console.log("User.findOne is:", User.findOne)
-      if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+      if (!user) return res.status(404).json({ error: req.t('userNotFound') });
       res.json(user);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -69,10 +71,10 @@ function createApp(middleware = verifyToken) {
     try {
       const existing = await User.findOne({ firebaseUid: uid });
       if (existing) {
-        return res.status(409).json({ error: "Usuario ya registrado" });
+        return res.status(409).json({ error: req.t('userAlreadyRegistered') });
       }
       const user = await User.create({ firebaseUid: uid, username });
-      res.status(201).json({ message: `Bienvenido ${username}!`, user });
+      res.status(201).json({ message: req.t('welcomeUser', { username }) });
     } catch (err) {
       res.status(400).json({ error: err.message });
     }
