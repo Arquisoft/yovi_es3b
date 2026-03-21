@@ -97,11 +97,35 @@
 }
 
 /* ── Auth page ──────────────────────────────────────────── */
+/* ── Auth page ──────────────────────────────────────────── */
 .auth-page {
   display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.auth-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.auth-page-title {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+.auth-page-body {
+  display: flex;
+  flex: 1;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
 }
 
 /* ── Lobby ──────────────────────────────────────────────── */

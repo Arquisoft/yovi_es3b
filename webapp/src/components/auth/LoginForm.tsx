@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
     onSuccess: () => void;
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const LoginForm: React.FC<Props> = ({ onSuccess, onSwitchToRegister }) => {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -22,7 +24,7 @@ const LoginForm: React.FC<Props> = ({ onSuccess, onSwitchToRegister }) => {
             await signInWithEmailAndPassword(auth, email, password);
             onSuccess();
         } catch (err: any) {
-            setError('Invalid email or password');
+            setError(t('auth.invalidCredentials'));
         } finally {
             setLoading(false);
         }
@@ -30,9 +32,9 @@ const LoginForm: React.FC<Props> = ({ onSuccess, onSwitchToRegister }) => {
 
     return (
         <form onSubmit={handleSubmit} className="register-form">
-            <h2>Log in</h2>
+            <h2>{t('auth.login')}</h2>
             <div className="form-group">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">{t('auth.email')}</label>
                 <input
                     type="email"
                     id="email"
@@ -42,7 +44,7 @@ const LoginForm: React.FC<Props> = ({ onSuccess, onSwitchToRegister }) => {
                 />
             </div>
             <div className="form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">{t('auth.password')}</label>
                 <input
                     type="password"
                     id="password"
@@ -52,10 +54,10 @@ const LoginForm: React.FC<Props> = ({ onSuccess, onSwitchToRegister }) => {
                 />
             </div>
             <button type="submit" className="submit-button" disabled={loading}>
-                {loading ? 'Logging in...' : 'Log in'}
+                {loading ? t('auth.loggingIn') : t('auth.login')}
             </button>
             {error && <div className="error-message">{error}</div>}
-            <p>No account yet? <button type="button" onClick={onSwitchToRegister}>Register</button></p>
+            <p>{t('auth.noAccount')} <button type="button" onClick={onSwitchToRegister}>{t('auth.register')}</button></p>
         </form>
     );
 };

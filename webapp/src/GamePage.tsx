@@ -1,6 +1,7 @@
 import { useState } from "react";
 import GameBoard from "./components/board/GameBoard.tsx";
 import "./GameSetup.css";
+import { useTranslation } from "react-i18next";
 
 type Mode = "easy" | "hard" | null;
 
@@ -8,13 +9,15 @@ const BOARD_SIZES = [5, 7, 9, 11, 13] as const;
 const DEFAULT_BOARD_SIZE = 9;
 
 const GamePage: React.FC = () => {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>(null);
   const [boardSize, setBoardSize] = useState<number>(DEFAULT_BOARD_SIZE);
   const [difficulty, setDifficulty] = useState<"easy" | "hard">("easy");
 
-  const botId = mode === "easy" ? "random_bot" : "corner_bot";
+  const botId = mode === "easy" ? "random_bot" : mode === "hard" ? "corner_bot" : undefined;
 
   if (!mode) {
+    // Muestra los botones de selección de modo
     return (
       <div className="setup">
         <div className="setup__card">
