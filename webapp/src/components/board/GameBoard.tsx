@@ -9,17 +9,18 @@ import {
   hexToPixel,
   computeViewBox,
 } from "./HexGeometryUtils.ts";
+import { useTranslation } from "react-i18next";
 
 const SIDE_COLORS = ["#f0a040", "#4fb3ff", "#f05070"];
-const SIDE_NAMES = ["Lado izquierdo", "Lado inferior", "Lado derecho"];
+const SIDE_NAME_KEYS = ["game.sideLeft", "game.sideBottom", "game.sideRight"];
 const PLAYER_FILL: Record<Player, string> = { 1: "#c8c0f0", 2: "#f0b84a" };
 const PLAYER_STROKE: Record<Player, string> = { 1: "#9080d0", 2: "#c08828" };
-const PLAYER_LABEL: Record<Player, string> = { 1: "Jugador", 2: "Bot" };
-const DIFFICULTY_LABEL: Record<string, string> = {
-  easy: "🎲 Fácil",
-  hard: "🧠 Difícil",
-  extreme: "🔥 Extremo",
-  impossible: "👿 Imposible",
+const PLAYER_LABEL_KEY: Record<Player, string> = { 1: "game.player", 2: "game.bot" };
+const DIFFICULTY_LABEL_KEY: Record<string, string> = {
+  easy: "game.difficultyEasy",
+  hard: "game.difficultyHard",
+  extreme: "game.difficultyExtreme",
+  impossible: "game.difficultyImpossible",
 };
 
 const CELL_BASE = "#1a1a24";
@@ -33,12 +34,13 @@ const CELL_STROKE_CORNER = "#333348";
 // ---------------------------------------------------------------------------
 
 function SideLegend() {
+  const { t } = useTranslation();
   return (
     <div className="side-legend">
-      {SIDE_NAMES.map((name, i) => (
+      {SIDE_NAME_KEYS.map((key, i) => (
         <div key={i} className="side-legend-item">
           <div className={`side-legend-dot side-legend-dot--${i}`} />
-          <span className="side-legend-label">{name}</span>
+          <span className="side-legend-label">{t(key)}</span>
         </div>
       ))}
     </div>
@@ -46,12 +48,13 @@ function SideLegend() {
 }
 
 function WinnerBanner({ winner }: { winner: string | null }) {
+  const { t } = useTranslation();
   const playerWon = winner === "0";
   const message = winner === null
-    ? "La partida ha terminado"
+    ? t('game.gameOver')
     : playerWon
-      ? "¡Victoria!"
-      : "Has perdido";
+      ? t('game.playerWins')
+      : t('game.botWins');
 
   return (
     <div className={`game-over-banner ${playerWon ? "game-over-banner--win" : "game-over-banner--loss"}`}>
@@ -142,6 +145,7 @@ type GameBoardProps = {
 };
 
 export default function GameBoard({ size = 9, botId = "random_bot", difficulty = "easy" }: GameBoardProps) {
+  const { t } = useTranslation();
   const cells = useMemo(() => generateBoard(size), [size]);
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -163,18 +167,18 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
       <aside className="game-sidebar">
         <div className="game-sidebar__section">
           <h2 className="game-sidebar__title">Game Y</h2>
-          <p className="game-sidebar__hint">Conecta los tres lados del tablero para ganar</p>
+          <p className="game-sidebar__hint">{t('game.subtitle')}</p>
         </div>
 
         <div className="game-sidebar__section">
-          <span className="game-sidebar__label">Tablero</span>
+          <span className="game-sidebar__label">{t('game.board')}</span>
           <span className="game-sidebar__value">{size} × {size}</span>
         </div>
 
         <div className="game-sidebar__section">
-          <span className="game-sidebar__label">Dificultad</span>
+          <span className="game-sidebar__label">{t('game.difficulty')}</span>
           <span className={`game-sidebar__badge game-sidebar__badge--${difficulty}`}>
-            {DIFFICULTY_LABEL[difficulty]}
+            {t(DIFFICULTY_LABEL_KEY[difficulty])}
           </span>
         </div>
 
@@ -182,16 +186,16 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
 
         {/* Marcador */}
         <div className="game-sidebar__section">
-          <span className="game-sidebar__label">Piezas</span>
+          <span className="game-sidebar__label">{t('game.pieces')}</span>
           <div className="game-sidebar__scores">
             <div className="game-sidebar__score">
               <div className="game-sidebar__score-dot game-sidebar__score-dot--1" />
-              <span className="game-sidebar__score-name">Jugador</span>
+              <span className="game-sidebar__score-name">{t('game.player')}</span>
               <span className="game-sidebar__score-value">{p1}</span>
             </div>
             <div className="game-sidebar__score">
               <div className="game-sidebar__score-dot game-sidebar__score-dot--2" />
-              <span className="game-sidebar__score-name">Bot</span>
+              <span className="game-sidebar__score-name">{t('game.bot')}</span>
               <span className="game-sidebar__score-value">{p2}</span>
             </div>
           </div>
@@ -199,7 +203,7 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
 
         {/* Barra de progreso */}
         <div className="game-sidebar__section">
-          <span className="game-sidebar__label">Progreso</span>
+          <span className="game-sidebar__label">{t('game.progress')}</span>
           <div className="game-sidebar__progress-track">
             <div
               className="game-sidebar__progress-bar"
@@ -216,7 +220,7 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
         <div className="game-sidebar__spacer" />
 
         <button className="game-sidebar__reset-btn" onClick={resetGame}>
-          Nueva partida
+          {t('game.newGame')}
         </button>
       </aside>
 
@@ -226,7 +230,7 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
         <div className={`turn-bar ${loadingBot ? "turn-bar--thinking" : ""}`}>
           <div className={`turn-dot turn-dot--${currentPlayer}`} />
           <span className="turn-label">
-            {loadingBot ? "El bot está pensando…" : `Turno de ${PLAYER_LABEL[currentPlayer]}`}
+            {loadingBot ? t('game.botThinking') : t('game.turn', { player: t(PLAYER_LABEL_KEY[currentPlayer]) })}
           </span>
         </div>
 

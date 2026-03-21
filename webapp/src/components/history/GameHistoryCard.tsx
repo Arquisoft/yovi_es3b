@@ -61,7 +61,7 @@ const GameHistoryCard: React.FC<Props> = ({ game }) => {
                 <div className="game-card__stat game-card__stat--full">
                     <span className="game-card__stat-label">{t('history.difficulty')}</span>
                     <span className={`game-card__difficulty game-card__difficulty--${game.difficulty}`}>
-                        {{ easy: "🎲 Fácil", hard: "🧠 Difícil", extreme: "🔥 Extremo", impossible: "👿 Imposible" }[game.difficulty]}
+                        {t(`history.difficulty${game.difficulty.charAt(0).toUpperCase() + game.difficulty.slice(1)}`)}
                     </span>
                 </div>
             </div>
