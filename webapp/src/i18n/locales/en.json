@@ -40,7 +40,12 @@
     "newGame": "New game",
     "gameOver": "Game over",
     "playerWins": "Player wins!",
-    "botWins": "Bot wins!"
+    "botWins": "Bot wins!",
+    "size": "Board size",
+    "difficulty": "Difficulty",
+    "random_bot": "Random movements bot",
+    "hard_bot": "Positional strategy bot",
+    "startGame": "Start game"
   },
   "history": {
     "title": "Game history",

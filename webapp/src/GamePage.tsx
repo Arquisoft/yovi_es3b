@@ -23,16 +23,16 @@ const GamePage: React.FC = () => {
         <div className="setup__card">
           {/* Cabecera */}
           <div className="setup__header">
-            <span className="setup__tag">Nueva partida</span>
-            <h1 className="setup__title">Game Y</h1>
-            <p className="setup__subtitle">Conecta los tres lados del tablero para ganar</p>
+            <span className="setup__tag">{t('newGame')}</span>
+            <h1 className="setup__title">{t('title')}</h1>
+            <p className="setup__subtitle">{t('subtitle')}</p>
           </div>
 
           <div className="setup__divider" />
 
           {/* Tamaño */}
           <div className="setup__field">
-            <label className="setup__label">Tamaño del tablero</label>
+            <label className="setup__label">{t('size')}</label>
             <div className="setup__sizes">
               {BOARD_SIZES.map((s) => (
                 <button
@@ -50,7 +50,7 @@ const GamePage: React.FC = () => {
 
           {/* Dificultad */}
           <div className="setup__field">
-            <label className="setup__label">Dificultad</label>
+            <label className="setup__label">{t('difficulty')}</label>
             <div className="setup__diff-options">
               <button
                 className={`setup__diff-btn${difficulty === "easy" ? " setup__diff-btn--active" : ""}`}
@@ -58,8 +58,8 @@ const GamePage: React.FC = () => {
               >
                 <span className="setup__diff-icon setup__diff-icon--easy" />
                 <div className="setup__diff-text">
-                  <span className="setup__diff-name">Fácil</span>
-                  <span className="setup__diff-desc">Bot con movimientos aleatorios</span>
+                  <span className="setup__diff-name">{t('easy')}</span>
+                  <span className="setup__diff-desc">{t('random_bot')}</span>
                 </div>
               </button>
               <button
@@ -68,8 +68,8 @@ const GamePage: React.FC = () => {
               >
                 <span className="setup__diff-icon setup__diff-icon--hard" />
                 <div className="setup__diff-text">
-                  <span className="setup__diff-name">Difícil</span>
-                  <span className="setup__diff-desc">Bot con estrategia posicional</span>
+                  <span className="setup__diff-name">{t('hard')}</span>
+                  <span className="setup__diff-desc">{t('hard_bot')}</span>
                 </div>
               </button>
             </div>
@@ -79,7 +79,7 @@ const GamePage: React.FC = () => {
 
           {/* Botón de jugar */}
           <button className="setup__play-btn" onClick={() => setMode(difficulty)}>
-            Comenzar partida
+            {t('startGame')}
           </button>
         </div>
       </div>

@@ -40,7 +40,12 @@
     "newGame": "Nueva partida",
     "gameOver": "La partida ha terminado",
     "playerWins": "¡Ganó el Jugador!",
-    "botWins": "¡Ganó el Bot!"
+    "botWins": "¡Ganó el Bot!",
+    "size": "Tamaño del tablero",
+    "difficulty": "Dificultad",
+    "random_bot": "Bot con movimientos aleatorios",
+    "hard_bot": "Bot con estrategia posicional",
+    "startGame": "Comenzar partida"
   },
   "history": {
     "title": "Historial de partidas",
