@@ -1,0 +1,8 @@
+{
+  "tokenNotProvided": "Token no proporcionado",
+  "tokenInvalid": "Token inválido o expirado",
+  "userNotFound": "Usuario no encontrado",
+  "userAlreadyRegistered": "Usuario ya registrado",
+  "serverError": "Error del servidor",
+  "welcomeUser": "¡Bienvenido {{username}}!"
+}

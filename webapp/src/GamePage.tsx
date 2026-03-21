@@ -1,6 +1,7 @@
 import { useState } from "react";
 import GameBoard from "./components/board/GameBoard.tsx";
 import "./GameSetup.css";
+import { useTranslation } from "react-i18next";
 
 type Mode = "easy" | "hard" | "extreme" | "impossible" | null;
 
@@ -15,24 +16,30 @@ const BOT_MAP: Record<string, string> = {
 };
 
 const GamePage: React.FC = () => {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>(null);
   const [boardSize, setBoardSize] = useState<number>(DEFAULT_BOARD_SIZE);
   const [difficulty, setDifficulty] = useState<"easy" | "hard" | "extreme" | "impossible">("easy");
+  const [difficulty, setDifficulty] = useState<"easy" | "hard">("easy");
+
+  const botId = mode === "easy" ? "random_bot" : mode === "hard" ? "corner_bot" : undefined;
 
   if (!mode) {
     return (
       <div className="setup">
         <div className="setup__card">
+          {/* Cabecera */}
           <div className="setup__header">
-            <span className="setup__tag">Nueva partida</span>
-            <h1 className="setup__title">Game Y</h1>
-            <p className="setup__subtitle">Conecta los tres lados del tablero para ganar</p>
+            <span className="setup__tag">{t('newGame')}</span>
+            <h1 className="setup__title">{t('title')}</h1>
+            <p className="setup__subtitle">{t('subtitle')}</p>
           </div>
 
           <div className="setup__divider" />
 
+          {/* Tamaño */}
           <div className="setup__field">
-            <label className="setup__label">Tamaño del tablero</label>
+            <label className="setup__label">{t('size')}</label>
             <div className="setup__sizes">
               {BOARD_SIZES.map((s) => (
                 <button
@@ -48,8 +55,9 @@ const GamePage: React.FC = () => {
 
           <div className="setup__divider" />
 
+          {/* Dificultad */}
           <div className="setup__field">
-            <label className="setup__label">Dificultad</label>
+            <label className="setup__label">{t('difficulty')}</label>
             <div className="setup__diff-options">
               <button
                 className={`setup__diff-btn${difficulty === "easy" ? " setup__diff-btn--active" : ""}`}
@@ -57,7 +65,8 @@ const GamePage: React.FC = () => {
               >
                 <span className="setup__diff-icon setup__diff-icon--easy" />
                 <div className="setup__diff-text">
-                  <span className="setup__diff-name">🎲 Fácil</span>
+                  <span className="setup__diff-name">Fácil</span>
+                  <span className="setup__diff-desc">Bot con movimientos aleatorios</span>
                 </div>
               </button>
               <button
@@ -92,8 +101,9 @@ const GamePage: React.FC = () => {
 
           <div className="setup__divider" />
 
+          {/* Botón de jugar */}
           <button className="setup__play-btn" onClick={() => setMode(difficulty)}>
-            Comenzar partida
+            {t('startGame')}
           </button>
         </div>
       </div>
