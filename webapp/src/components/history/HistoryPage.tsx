@@ -2,6 +2,7 @@ import { useAuth } from "../../context/AuthContext.tsx";
 import {useEffect, useState} from "react";
 import GameHistoryCard from "./GameHistoryCard.tsx";
 import "./HistoryPage.css";
+import { useTranslation } from "react-i18next";
 
 // Resultado del juego para mostrar en el historial
 export type GameResult = {
@@ -14,6 +15,7 @@ export type GameResult = {
 };
 
 const HistoryPage: React.FC = () => {
+    const { t } = useTranslation();
     const { user } = useAuth();
     // Guarda las partidas registradas
     const [games, setGames] = useState<GameResult[]>([]);
@@ -32,7 +34,7 @@ const HistoryPage: React.FC = () => {
                 const res = await fetch(`${API_URL}/games/me`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                if (!res.ok) throw new Error("Error al cargar el historial");
+                if (!res.ok) throw new Error(t('history.error'));
                 const data = await res.json();
                 setGames(data);
             } catch (err: any) {
@@ -46,16 +48,16 @@ const HistoryPage: React.FC = () => {
     }, [user]);
 
     // Por si no ha acabado de cargar las partidas
-    if (loading) return <p className="history-status">Cargando partidas...</p>;
+    if (loading) return <p className="history-status">{t('history.loading')}</p>;
     // En caso de error mostramos el mensaje
     if (error) return <p className="history-status">{error}</p>;
-    if (games.length === 0) return <p className="history-status">No tienes partidas registradas</p>;
+    if (games.length === 0) return <p className="history-status">{t('history.empty')}</p>;
 
     // Creamos una card del historial por cada partida guardada
     return (
         <div className="history-page">
-            <h1 className="history-title">Historial de partidas</h1>
-            <p className="history-subtitle">Últimas {games.length} partidas</p>
+            <h1 className="history-title">{t('history.title')}</h1>
+            <p className="history-subtitle">{t('history.subtitle', { count: games.length })}</p>
             <div className="history-grid">
                 {games.map((game) => (
                     <GameHistoryCard key={game._id} game={game} />

@@ -1,0 +1,66 @@
+{
+  "nav": {
+    "home": "Home",
+    "play": "Play",
+    "profile": "My Profile",
+    "history": "History",
+    "logout": "Log Out"
+  },
+  "lobby": {
+    "welcome": "Welcome, {{name}}"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "login": "Log in",
+    "loggingIn": "Logging in...",
+    "register": "Register",
+    "creatingAccount": "Creating account...",
+    "username": "Username",
+    "createAccount": "Create account",
+    "invalidCredentials": "Invalid email or password",
+    "fillAllFields": "Please fill in all fields",
+    "serverError": "Server error",
+    "registrationError": "Registration error",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?"
+  },
+  "game": {
+    "title": "Game Y",
+    "subtitle": "Connect the three sides to win",
+    "selectMode": "Select a game mode",
+    "easy": "Easy mode",
+    "hard": "Hard mode",
+    "sideLeft": "Left side",
+    "sideBottom": "Bottom side",
+    "sideRight": "Right side",
+    "player": "Player 1",
+    "bot": "Bot",
+    "turn": "{{player}}'s turn",
+    "newGame": "New game",
+    "gameOver": "Game over",
+    "playerWins": "Player wins!",
+    "botWins": "Bot wins!"
+  },
+  "history": {
+    "title": "Game history",
+    "subtitle": "Last {{count}} games",
+    "loading": "Loading games...",
+    "error": "Error loading history",
+    "empty": "You have no recorded games",
+    "win": "Win",
+    "loss": "Loss",
+    "duration": "Duration",
+    "turns": "Turns",
+    "difficulty": "Difficulty",
+    "difficultyEasy": "Easy",
+    "difficultyHard": "Hard",
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "profile": {
+    "title": "My profile",
+    "editProfile": "Edit profile",
+    "changePhoto": "Change photo"
+  }
+}
