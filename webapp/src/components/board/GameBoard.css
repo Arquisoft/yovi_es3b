@@ -78,6 +78,16 @@
   color: #EF9F27;
 }
 
+.game-sidebar__badge--extreme {
+  background: #3D0C1A;
+  color: #F06080;
+}
+
+.game-sidebar__badge--impossible {
+  background: #2A0C3D;
+  color: #C070F0;
+}
+
 .game-sidebar__divider {
   height: 1px;
   background: var(--border);

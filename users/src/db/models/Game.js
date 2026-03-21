@@ -5,7 +5,7 @@ const gameSchema = new mongoose.Schema({
     winner:     { type: String, enum: ["player", "bot"], required: true },
     durationMs: { type: Number, required: true },
     turns:      { type: Number, required: true },
-    difficulty: { type: String, enum: ["easy", "hard"], required: true },
+    difficulty: { type: String, enum: ["easy", "hard", "extreme", "impossible"], required: true },
     createdAt:  { type: Date, default: Date.now },
 });
 

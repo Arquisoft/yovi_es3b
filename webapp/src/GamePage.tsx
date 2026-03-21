@@ -2,23 +2,27 @@ import { useState } from "react";
 import GameBoard from "./components/board/GameBoard.tsx";
 import "./GameSetup.css";
 
-type Mode = "easy" | "hard" | null;
+type Mode = "easy" | "hard" | "extreme" | "impossible" | null;
 
 const BOARD_SIZES = [5, 7, 9, 11, 13] as const;
 const DEFAULT_BOARD_SIZE = 9;
 
+const BOT_MAP: Record<string, string> = {
+  easy: "random_bot",
+  hard: "heuristic_bot",
+  extreme: "minimax_bot",
+  impossible: "montecarlo_bot",
+};
+
 const GamePage: React.FC = () => {
   const [mode, setMode] = useState<Mode>(null);
   const [boardSize, setBoardSize] = useState<number>(DEFAULT_BOARD_SIZE);
-  const [difficulty, setDifficulty] = useState<"easy" | "hard">("easy");
-
-  const botId = mode === "easy" ? "random_bot" : "corner_bot";
+  const [difficulty, setDifficulty] = useState<"easy" | "hard" | "extreme" | "impossible">("easy");
 
   if (!mode) {
     return (
       <div className="setup">
         <div className="setup__card">
-          {/* Cabecera */}
           <div className="setup__header">
             <span className="setup__tag">Nueva partida</span>
             <h1 className="setup__title">Game Y</h1>
@@ -27,7 +31,6 @@ const GamePage: React.FC = () => {
 
           <div className="setup__divider" />
 
-          {/* Tamaño */}
           <div className="setup__field">
             <label className="setup__label">Tamaño del tablero</label>
             <div className="setup__sizes">
@@ -45,7 +48,6 @@ const GamePage: React.FC = () => {
 
           <div className="setup__divider" />
 
-          {/* Dificultad */}
           <div className="setup__field">
             <label className="setup__label">Dificultad</label>
             <div className="setup__diff-options">
@@ -55,8 +57,7 @@ const GamePage: React.FC = () => {
               >
                 <span className="setup__diff-icon setup__diff-icon--easy" />
                 <div className="setup__diff-text">
-                  <span className="setup__diff-name">Fácil</span>
-                  <span className="setup__diff-desc">Bot con movimientos aleatorios</span>
+                  <span className="setup__diff-name">🎲 Fácil</span>
                 </div>
               </button>
               <button
@@ -65,8 +66,25 @@ const GamePage: React.FC = () => {
               >
                 <span className="setup__diff-icon setup__diff-icon--hard" />
                 <div className="setup__diff-text">
-                  <span className="setup__diff-name">Difícil</span>
-                  <span className="setup__diff-desc">Bot con estrategia posicional</span>
+                  <span className="setup__diff-name">🧠 Difícil</span>
+                </div>
+              </button>
+              <button
+                className={`setup__diff-btn${difficulty === "extreme" ? " setup__diff-btn--active" : ""}`}
+                onClick={() => setDifficulty("extreme")}
+              >
+                <span className="setup__diff-icon setup__diff-icon--extreme" />
+                <div className="setup__diff-text">
+                  <span className="setup__diff-name">🔥 Extremo</span>
+                </div>
+              </button>
+              <button
+                className={`setup__diff-btn${difficulty === "impossible" ? " setup__diff-btn--active" : ""}`}
+                onClick={() => setDifficulty("impossible")}
+              >
+                <span className="setup__diff-icon setup__diff-icon--impossible" />
+                <div className="setup__diff-text">
+                  <span className="setup__diff-name">👿 Imposible</span>
                 </div>
               </button>
             </div>
@@ -74,7 +92,6 @@ const GamePage: React.FC = () => {
 
           <div className="setup__divider" />
 
-          {/* Botón de jugar */}
           <button className="setup__play-btn" onClick={() => setMode(difficulty)}>
             Comenzar partida
           </button>
@@ -83,7 +100,7 @@ const GamePage: React.FC = () => {
     );
   }
 
-  return <GameBoard size={boardSize} botId={botId} difficulty={mode}/>;
+  return <GameBoard size={boardSize} botId={BOT_MAP[mode]} difficulty={mode}/>;
 };
 
 export default GamePage;

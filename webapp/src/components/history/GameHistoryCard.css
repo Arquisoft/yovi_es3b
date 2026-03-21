@@ -100,3 +100,13 @@
     background: #3D2A08;
     color: #EF9F27;
 }
+
+.game-card__difficulty--extreme {
+    background: #3D0C1A;
+    color: #F06080;
+}
+
+.game-card__difficulty--impossible {
+    background: #2A0C3D;
+    color: #C070F0;
+}

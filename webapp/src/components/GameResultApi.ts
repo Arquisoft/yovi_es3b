@@ -1,6 +1,6 @@
 import type { User } from "firebase/auth";
 
-export type Difficulty = "easy" | "hard";
+export type Difficulty = "easy" | "hard" | "extreme" | "impossible";
 export type Winner = "player" | "bot";
 
 // Extraemos la funcionalidad para guardar los resultados de la partida

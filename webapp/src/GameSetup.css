@@ -187,6 +187,16 @@
   box-shadow: 0 0 8px rgba(240, 160, 64, 0.5);
 }
 
+.setup__diff-icon--extreme {
+  background: #f05070;
+  box-shadow: 0 0 8px rgba(240, 80, 112, 0.5);
+}
+
+.setup__diff-icon--impossible {
+  background: #9050f0;
+  box-shadow: 0 0 8px rgba(144, 80, 240, 0.5);
+}
+
 .setup__diff-text {
   display: flex;
   flex-direction: column;
