@@ -20,7 +20,7 @@ const LobbyPage: React.FC = () => {
     const particlesLoaded = useCallback(async () => {}, []);
 
     if (playing) {
-        return <GameBoard size={9} botId={"random_bot"} difficulty={"easy"} />;
+        return <GameBoard botId={"random_bot"} difficulty={"easy"} />;
     }
 
     return (

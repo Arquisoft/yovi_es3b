@@ -1,39 +1,89 @@
 import { useState } from "react";
 import GameBoard from "./components/board/GameBoard.tsx";
+import "./GameSetup.css";
 
 type Mode = "easy" | "hard" | null;
 
+const BOARD_SIZES = [5, 7, 9, 11, 13] as const;
+const DEFAULT_BOARD_SIZE = 9;
+
 const GamePage: React.FC = () => {
   const [mode, setMode] = useState<Mode>(null);
+  const [boardSize, setBoardSize] = useState<number>(DEFAULT_BOARD_SIZE);
+  const [difficulty, setDifficulty] = useState<"easy" | "hard">("easy");
 
-  // Define el botId según el modo
-  const botId = mode === "easy" ? "random_bot" : mode === "hard" ? "corner_bot" : undefined;
+  const botId = mode === "easy" ? "random_bot" : "corner_bot";
 
   if (!mode) {
-    // Muestra los botones de selección de modo
     return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <h1>Selecciona un modo de juego</h1>
-        <div style={{ marginTop: "20px" }}>
-          <button
-            style={{ marginRight: "10px", padding: "10px 20px", fontSize: "16px" }}
-            onClick={() => setMode("easy")}
-          >
-            Modo fácil
-          </button>
-          <button
-            style={{ padding: "10px 20px", fontSize: "16px" }}
-            onClick={() => setMode("hard")}
-          >
-            Modo difícil
+      <div className="setup">
+        <div className="setup__card">
+          {/* Cabecera */}
+          <div className="setup__header">
+            <span className="setup__tag">Nueva partida</span>
+            <h1 className="setup__title">Game Y</h1>
+            <p className="setup__subtitle">Conecta los tres lados del tablero para ganar</p>
+          </div>
+
+          <div className="setup__divider" />
+
+          {/* Tamaño */}
+          <div className="setup__field">
+            <label className="setup__label">Tamaño del tablero</label>
+            <div className="setup__sizes">
+              {BOARD_SIZES.map((s) => (
+                <button
+                  key={s}
+                  className={`setup__size-btn${s === boardSize ? " setup__size-btn--active" : ""}`}
+                  onClick={() => setBoardSize(s)}
+                >
+                  <span className="setup__size-num">{s}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="setup__divider" />
+
+          {/* Dificultad */}
+          <div className="setup__field">
+            <label className="setup__label">Dificultad</label>
+            <div className="setup__diff-options">
+              <button
+                className={`setup__diff-btn${difficulty === "easy" ? " setup__diff-btn--active" : ""}`}
+                onClick={() => setDifficulty("easy")}
+              >
+                <span className="setup__diff-icon setup__diff-icon--easy" />
+                <div className="setup__diff-text">
+                  <span className="setup__diff-name">Fácil</span>
+                  <span className="setup__diff-desc">Bot con movimientos aleatorios</span>
+                </div>
+              </button>
+              <button
+                className={`setup__diff-btn${difficulty === "hard" ? " setup__diff-btn--active" : ""}`}
+                onClick={() => setDifficulty("hard")}
+              >
+                <span className="setup__diff-icon setup__diff-icon--hard" />
+                <div className="setup__diff-text">
+                  <span className="setup__diff-name">Difícil</span>
+                  <span className="setup__diff-desc">Bot con estrategia posicional</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div className="setup__divider" />
+
+          {/* Botón de jugar */}
+          <button className="setup__play-btn" onClick={() => setMode(difficulty)}>
+            Comenzar partida
           </button>
         </div>
       </div>
     );
   }
 
-  // Una vez seleccionado, renderiza el GameBoard con el botId correspondiente
-  return <GameBoard size={9} botId={botId} difficulty={mode}/>;
+  return <GameBoard size={boardSize} botId={botId} difficulty={mode}/>;
 };
 
 export default GamePage;

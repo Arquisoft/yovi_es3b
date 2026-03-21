@@ -1,51 +1,330 @@
-/* ── Layout principal ───────────────────────────────────── */
+/* ── Layout principal: sidebar + tablero ───────────────── */
 .game-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 3.5rem);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  gap: 1rem;
+  align-items: stretch;
 }
 
-/* ── Cabecera ───────────────────────────────────────────── */
-.game-header {
-  text-align: center;
+/* ── Sidebar ───────────────────────────────────────────── */
+.game-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.8rem 1.4rem;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+}
+
+.game-sidebar__title {
+  font-family: var(--font-ui);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0;
+  text-shadow: 0 0 30px var(--accent-glow);
+}
+
+.game-sidebar__hint {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  line-height: 1.5;
+}
+
+.game-sidebar__section {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  margin-bottom: 1rem;
 }
 
-.game-title {
-  font-family: var(--font-ui);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text);
-  /* Sutil resplandor en el título */
-  text-shadow: 0 0 40px var(--accent-glow);
-}
-
-.game-subtitle {
+.game-sidebar__label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
 
-/* ── Leyenda de lados ───────────────────────────────────── */
+.game-sidebar__value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.game-sidebar__badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.game-sidebar__badge--easy {
+  background: #0C2A3D;
+  color: #85B7EB;
+}
+
+.game-sidebar__badge--hard {
+  background: #3D2A08;
+  color: #EF9F27;
+}
+
+.game-sidebar__divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.4rem 0 1rem;
+}
+
+/* Marcador */
+.game-sidebar__scores {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.game-sidebar__score {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  background: var(--bg-raised);
+  border-radius: 4px;
+}
+
+.game-sidebar__score-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.game-sidebar__score-dot--1 {
+  background: var(--player-1);
+  box-shadow: 0 0 6px var(--player-1);
+}
+
+.game-sidebar__score-dot--2 {
+  background: var(--player-2);
+  box-shadow: 0 0 6px var(--player-2);
+}
+
+.game-sidebar__score-name {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  flex: 1;
+}
+
+.game-sidebar__score-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Barra de progreso */
+.game-sidebar__progress-track {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-raised);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.game-sidebar__progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--player-1));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.game-sidebar__progress-text {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.game-sidebar__spacer {
+  flex: 1;
+}
+
+.game-sidebar__reset-btn {
+  width: 100%;
+  padding: 0.65rem;
+  font-size: 0.65rem;
+  border-color: var(--border);
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.game-sidebar__reset-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--text);
+}
+
+/* ── Zona central ──────────────────────────────────────── */
+.game-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 2rem;
+  gap: 1rem;
+  position: relative;
+}
+
+/* ── Barra de turno ────────────────────────────────────── */
+.turn-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 1.2rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.turn-bar--thinking {
+  animation: pulse-border 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: var(--border); }
+  50% { border-color: var(--player-2); box-shadow: 0 0 12px rgba(240, 184, 74, 0.15); }
+}
+
+.turn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.turn-dot--1 {
+  background: var(--player-1);
+  box-shadow: 0 0 8px var(--player-1);
+}
+
+.turn-dot--2 {
+  background: var(--player-2);
+  box-shadow: 0 0 8px var(--player-2);
+}
+
+.turn-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Banner de victoria/derrota ────────────────────────── */
+.game-over-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  animation: banner-in 0.35s ease both;
+}
+
+@keyframes banner-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.game-over-banner--win {
+  background: #0F3D2E;
+  border-color: #1D9E75;
+}
+
+.game-over-banner--loss {
+  background: #3D1515;
+  border-color: #E24B4A;
+}
+
+.game-over-banner__icon {
+  font-size: 1.1rem;
+}
+
+.game-over-banner--win .game-over-banner__icon { color: #5DCAA5; }
+.game-over-banner--loss .game-over-banner__icon { color: #F09595; }
+
+.game-over-banner__text {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.game-over-banner--win .game-over-banner__text { color: #5DCAA5; }
+.game-over-banner--loss .game-over-banner__text { color: #F09595; }
+
+/* ── Contenedor del tablero ────────────────────────────── */
+.board-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow:
+    0 0 0 1px var(--border-soft),
+    0 8px 40px rgba(0, 0, 0, 0.5),
+    0 0 80px rgba(124, 106, 247, 0.04);
+  transition: opacity 0.3s;
+}
+
+.board-container--finished {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.board-svg {
+  width: min(65vw, 540px);
+  height: auto;
+  display: block;
+  transform: scaleY(-1);
+  transform-origin: center;
+}
+
+/* ── Celdas SVG ────────────────────────────────────────── */
+.hex-cell {
+  cursor: pointer;
+}
+
+.hex-cell--occupied {
+  cursor: default;
+}
+
+.hex-polygon {
+  transition: fill 0.12s;
+}
+
+/* ── Leyenda de lados ──────────────────────────────────── */
 .side-legend {
   display: flex;
-  gap: 1.4rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .side-legend-item {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .side-legend-dot {
@@ -60,73 +339,49 @@
 
 .side-legend-label {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
 }
 
-/* ── Contenedor del tablero ─────────────────────────────── */
-.board-container {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 12px;
-  box-shadow:
-          0 0 0 1px var(--border-soft),
-          0 8px 40px rgba(0, 0, 0, 0.5),
-          0 0 60px rgba(124, 106, 247, 0.04);
-}
-.board-svg {
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .game-page {
+    flex-direction: column;
+  }
+
+  .game-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+
+  .game-sidebar__section {
+    margin-bottom: 0;
+  }
+
+  .game-sidebar__hint,
+  .game-sidebar__divider,
+  .game-sidebar__spacer {
+    display: none;
+  }
+
+  .game-sidebar .side-legend {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .game-sidebar__reset-btn {
+    width: auto;
+    padding: 0.5rem 1.2rem;
+  }
+
+  .board-svg {
     width: min(90vw, 540px);
-  height: auto;
-  display: block;
-  transform: scaleY(-1);
-  transform-origin: center;
+  }
 }
-
-/* ── Celdas SVG ─────────────────────────────────────────── */
-.hex-cell {
-  cursor: pointer;
-}
-.hex-cell--occupied {
-  cursor: default;
-}
-.hex-polygon {
-  transition: fill 0.12s;
-}
-
-/* ── Indicador de turno ─────────────────────────────────── */
-.turn-indicator {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.turn-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.turn-dot--1 {
-  background: var(--player-1);
-  box-shadow: 0 0 8px var(--player-1);
-}
-.turn-dot--2 {
-  background: var(--player-2);
-  box-shadow: 0 0 8px var(--player-2);
-}
-
-.turn-label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-/* ── Botón nueva partida ────────────────────────────────── */
-.reset-button {
-  /* hereda el botón base de index.css */
-} 
