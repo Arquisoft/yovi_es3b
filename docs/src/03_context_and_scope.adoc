@@ -163,5 +163,8 @@ YOVI is not responsible for:
 
 === Use Cases
 
-image::UseCasesYovi.png[Use Case Diagram]
+The users can use the application only once the have created an account using a username, email and password. 
+Once in the app they can play the YGame, see their match history and edit their profile.
+
+image::useCasesYovi.png[Use Case Diagram]
 

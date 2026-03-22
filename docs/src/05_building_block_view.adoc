@@ -67,18 +67,37 @@ In the best case you will get away with examples or simple signatures.
 ****
 endif::arc42help[]
 
-_**<Overview Diagram>**_
+ image::overviewDiagramLevel1.png[Overview Diagram Level 1]
 
 Motivation::
 
-_<text explanation>_
+The system is divided into a React-based web application and a Rust-based game engine to clearly separate user interface concerns from core game logic.
+
+The Web App is responsible for rendering the UI and managing user interactions, while persistence is handled via the backend service.
+
+The Game Engine encapsulates the game rules and bot logic, allowing for high performance and reusability.
+
+This separation improves maintainability, scalability, and enables independent development of UI and game logic.
 
 
 Contained Building Blocks::
-_<Description of contained building block (black boxes)>_
+[cols="1,2", options="header"]
+|===
+| Name | Responsibility
 
-Important Interfaces::
-_<Description of important interfaces>_
+| Web App (React / Vite / TypeScript)
+| Provides the user interface, handles user interactions, and communicates with the backend service via REST APIs.
+
+| Users Service (Node.js / Express)
+| Acts as the backend API, managing user data, authentication, and coordinating communication between the frontend, database, and game engine.
+
+| Game Engine (Rust)
+| Implements core game logic, rules, and bot behavior, processing game-related computations.
+
+| Database
+| Stores persistent data such as user accounts, game state, and scores.
+
+|===
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -102,7 +121,7 @@ Its headline is the name of the black box.
 ****
 endif::arc42help[]
 
-==== <Name black box 1>
+==== Webapp
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -120,35 +139,130 @@ according the the following black box template:
 ****
 endif::arc42help[]
 
-_<Purpose/Responsibility>_
+Purpose/Responsibility
+Provides the user interface of the system. It handles user interactions, renders the game board, and communicates with the backend service to retrieve and update data.
 
-_<Interface(s)>_
+=====Interface(s)
 
-_<(Optional) Quality/Performance Characteristics>_
+REST API calls to the Users Service:
+POST /login – user authentication
+GET /user – retrieve user data
+POST /gamey/choose – send player actions and return the bots´ moves
+Receives JSON responses containing user and game state data and sends YEN.
 
-_<(Optional) Directory/File Location>_
+=====Quality/Performance Characteristics
 
-_<(Optional) Fulfilled Requirements>_
+Responsive UI with low latency interaction
+Cross-browser compatibility
+Fast rendering using modern frontend tooling (Vite)
 
-_<(optional) Open Issues/Problems/Risks>_
+=====Directory/File Location
+/webapp
 
+=====Fulfilled Requirements
 
+User interaction and gameplay visualization
+Display of game state and results
 
+=====Open Issues/Problems/Risks
 
-==== <Name black box 2>
+Performance limitations for complex UI updates
+Dependency on backend availability
+==== Users Service (Node.js / Express)
 
-_<black box template>_
+Purpose/Responsibility
+Acts as the central backend service. It manages user-related functionality, handles authentication, and coordinates communication between the frontend, database, and game engine.
 
-==== <Name black box n>
+=====Interface(s)
 
-_<black box template>_
+REST API exposed to Web App:
+Authentication endpoints (/login, /register)
+Game-related endpoints (/game/move, /game/state)
+Internal communication:
+Database queries (CRUD operations)
+Calls to Game Engine for game logic processing
 
+=====Quality/Performance Characteristics
 
-==== <Name interface 1>
+Stateless service for scalability
+Handles concurrent requests efficiently
+Moderate latency depending on game engine processing
 
-...
+=====Directory/File Location
+/users
 
-==== <Name interface m>
+=====Fulfilled Requirements
+
+User management and authentication
+Game session handling
+Coordination of system components
+
+=====Open Issues/Problems/Risks
+
+Single point of failure if not replicated
+Performance bottleneck under high load
+==== Game Engine (Rust)
+
+Purpose/Responsibility
+Implements the core game logic, including rules, state transitions, and bot behavior. It processes game actions and computes the resulting game state.
+
+=====Interface(s)
+
+Receives requests from Users Service:
+Input: current game state + player move
+Output: updated game state and bot actions
+Can be exposed via:
+FFI / WebAssembly / API (depending on implementation)
+
+=====Quality/Performance Characteristics
+
+High performance and low-level efficiency
+Deterministic and reliable computation
+Suitable for complex game logic and AI
+
+=====Directory/File Location
+/gamey
+
+=====Fulfilled Requirements
+
+Game rules enforcement
+Bot/AI decision making
+Game state updates
+
+=====Open Issues/Problems/Risks
+
+Integration complexity with Node.js service
+Debugging can be harder across language boundaries
+==== Database
+
+=====Purpose/Responsibility
+Provides persistent storage for the system, including user data, game states, and scores.
+
+=====Interface(s)
+
+Accessed by Users Service via database queries (e.g., SQL or NoSQL queries)
+Supports CRUD operations:
+Create/update user data
+Store and retrieve game state
+
+=====Quality/Performance Characteristics
+
+Data consistency and reliability
+Scalable depending on chosen database system
+Performance depends on query optimization
+
+=====Directory/File Location
+External system (not part of source directories)
+
+=====Fulfilled Requirements
+
+Persistent storage of users and game data
+Retrieval of historical and current game information
+
+=====Open Issues/Problems/Risks
+
+Potential performance bottlenecks with large datasets
+Requires backup and data integrity strategies
 
 
 
