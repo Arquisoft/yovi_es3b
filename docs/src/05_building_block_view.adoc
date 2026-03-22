@@ -67,9 +67,9 @@ In the best case you will get away with examples or simple signatures.
 ****
 endif::arc42help[]
 
- image::overviewDiagramLevel1.png[Overview Diagram Level 1]
+image::overviewDiagramLevel1.png[Overview Diagram Level 1]
 
-Motivation::
+**Motivation**
 
 The system is divided into a React-based web application and a Rust-based game engine to clearly separate user interface concerns from core game logic.
 
@@ -77,7 +77,7 @@ The Web App is responsible for rendering the UI and managing user interactions, 
 
 The Game Engine encapsulates the game rules and bot logic, allowing for high performance and reusability.
 
-This separation improves maintainability, scalability, and enables independent development of UI and game logic.
+This separation improves maintainability, scalability, and enables independent development of UI and game logic. 
 
 
 Contained Building Blocks::
@@ -142,7 +142,7 @@ endif::arc42help[]
 Purpose/Responsibility
 Provides the user interface of the system. It handles user interactions, renders the game board, and communicates with the backend service to retrieve and update data.
 
-=====Interface(s)
+**Interface(s)**
 
 REST API calls to the Users Service:
 POST /login – user authentication
@@ -150,21 +150,21 @@ GET /user – retrieve user data
 POST /gamey/choose – send player actions and return the bots´ moves
 Receives JSON responses containing user and game state data and sends YEN.
 
-=====Quality/Performance Characteristics
+**Quality/Performance Characteristics**
 
 Responsive UI with low latency interaction
 Cross-browser compatibility
 Fast rendering using modern frontend tooling (Vite)
 
-=====Directory/File Location
+**Directory/File Location**
 /webapp
 
-=====Fulfilled Requirements
+**Fulfilled Requirements**
 
 User interaction and gameplay visualization
 Display of game state and results
 
-=====Open Issues/Problems/Risks
+**Open Issues/Problems/Risks**
 
 Performance limitations for complex UI updates
 Dependency on backend availability
@@ -173,7 +173,7 @@ Dependency on backend availability
 Purpose/Responsibility
 Acts as the central backend service. It manages user-related functionality, handles authentication, and coordinates communication between the frontend, database, and game engine.
 
-=====Interface(s)
+**Interface(s)**
 
 REST API exposed to Web App:
 Authentication endpoints (/login, /register)
@@ -182,22 +182,22 @@ Internal communication:
 Database queries (CRUD operations)
 Calls to Game Engine for game logic processing
 
-=====Quality/Performance Characteristics
+**Quality/Performance Characteristics**
 
 Stateless service for scalability
 Handles concurrent requests efficiently
 Moderate latency depending on game engine processing
 
-=====Directory/File Location
+**Directory/File Location**
 /users
 
-=====Fulfilled Requirements
+**Fulfilled Requirements**
 
 User management and authentication
 Game session handling
 Coordination of system components
 
-=====Open Issues/Problems/Risks
+**Open Issues/Problems/Risks**
 
 Single point of failure if not replicated
 Performance bottleneck under high load
@@ -206,7 +206,7 @@ Performance bottleneck under high load
 Purpose/Responsibility
 Implements the core game logic, including rules, state transitions, and bot behavior. It processes game actions and computes the resulting game state.
 
-=====Interface(s)
+**Interface(s)**
 
 Receives requests from Users Service:
 Input: current game state + player move
@@ -214,52 +214,52 @@ Output: updated game state and bot actions
 Can be exposed via:
 FFI / WebAssembly / API (depending on implementation)
 
-=====Quality/Performance Characteristics
+**Quality/Performance Characteristics**
 
 High performance and low-level efficiency
 Deterministic and reliable computation
 Suitable for complex game logic and AI
 
-=====Directory/File Location
+**Directory/File Location**
 /gamey
 
-=====Fulfilled Requirements
+**Fulfilled Requirements**
 
 Game rules enforcement
 Bot/AI decision making
 Game state updates
 
-=====Open Issues/Problems/Risks
+**Open Issues/Problems/Risks**
 
 Integration complexity with Node.js service
 Debugging can be harder across language boundaries
 ==== Database
 
-=====Purpose/Responsibility
+**Purpose/Responsibility**
 Provides persistent storage for the system, including user data, game states, and scores.
 
-=====Interface(s)
+**Interface(s)**
 
 Accessed by Users Service via database queries (e.g., SQL or NoSQL queries)
 Supports CRUD operations:
 Create/update user data
 Store and retrieve game state
 
-=====Quality/Performance Characteristics
+**Quality/Performance Characteristics**
 
 Data consistency and reliability
 Scalable depending on chosen database system
 Performance depends on query optimization
 
-=====Directory/File Location
+**Directory/File Location**
 External system (not part of source directories)
 
-=====Fulfilled Requirements
+**Fulfilled Requirements**
 
 Persistent storage of users and game data
 Retrieval of historical and current game information
 
-=====Open Issues/Problems/Risks
+**Open Issues/Problems/Risks**
 
 Potential performance bottlenecks with large datasets
 Requires backup and data integrity strategies
@@ -279,7 +279,7 @@ Leave out normal, simple, boring or standardized parts of your system
 ****
 endif::arc42help[]
 
-==== White Box _<building block 1>_
+==== White Box Web App – Game Board Component
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -288,52 +288,69 @@ ifdef::arc42help[]
 ****
 endif::arc42help[]
 
-_<white box template>_
+**Diagram**
 
-==== White Box _<building block 2>_
+image::gameBoardDiagram.png[GameBoard Diagram Level 2]
 
+**Purpose/Responsibility**
+Renders the visual game board, updates state based on player actions, and communicates moves to the Users Service.
 
-_<white box template>_
+**Interface(s)**
 
-...
+Receives game state from Gamey (JSON)
+Sends player moves back via Backend API
 
-==== White Box _<building block m>_
+**Quality/Performance Characteristics**
 
+Responsive UI
+Low latency updates
+Reactive updates via React state management
 
-_<white box template>_
+**Directory/File Location**
+webapp/src/components/GameBoard.tsx (or similar)
 
+**Fulfilled Requirements**
+
+Visual display of the game board
+Handles player interactions
+
+**Open Issues/Problems/Risks**
+
+Complex rendering for larger boards may affect performance
+
+==== White Box Gamey – Bots
+
+**Diagram**
+
+image::gameyBotsDiagram.png[Bots Diagram Level 2]
+
+**Purpose/Responsibility**
+Implements AI decision-making for the game, generating moves based on the current game state.
+
+**Interface(s)**
+
+Input: current game state
+Output: selected move
+Exposed via the Backend API
+
+**Quality/Performance Characteristics**
+
+Efficient computation for AI moves
+Deterministic behavior for testing
+
+**Directory/File Location**
+gamey/src/bot/
+
+**Fulfilled Requirements**
+
+Automates bot moves in the game
+Ensures challenge for players
+
+**Open Issues/Problems/Risks**
+
+Scaling to multiple bots simultaneously may increase processing time
 
 
 === Level 3
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you can specify the inner structure of (some) building blocks from level 2 as white boxes.
-
-When you need more detailed levels of your architecture please copy this
-part of arc42 for additional levels.
-****
-endif::arc42help[]
-
-==== White Box <_building block x.1_>
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Specifies the internal structure of _building block x.1_.
-****
-endif::arc42help[]
-
-_<white box template>_
-
-
-==== White Box <_building block x.2_>
-
-_<white box template>_
-
-
-
-==== White Box <_building block y.1_>
-
-_<white box template>_
+Not needed for this version yet.
