@@ -315,7 +315,7 @@ Low latency updates
 Reactive updates via React state management
 
 **Directory/File Location: **
-webapp/src/components/GameBoard.tsx (or similar)
+webapp/src/components/GameBoard.tsx
 
 **Fulfilled Requirements**
 
