@@ -50,6 +50,36 @@ In any case the tree should include links to the scenarios of the following sect
 ****
 endif::arc42help[]
 
+[plantuml, quality-tree, svg, opts="inline"]
+----
+@startmindmap
+* Quality
+** Usability
+*** [[#scenario-U1]] U1 – The UI adapts clearly to different board sizes
+*** [[#scenario-U2]] U2 – A new user can start a game in under 2 minutes
+*** [[#scenario-U3]] U3 – Game history is accessible in at most 3 clicks
+** Reliability
+*** [[#scenario-R1]] R1 – The system saves match results even if connection drops
+*** [[#scenario-R2]] R2 – User login works 99.9% of the time
+*** [[#scenario-R3]] R3 – The bot always makes a valid move within the rules
+** Performance
+*** [[#scenario-P1]] P1 – The board renders in under 1 second for any supported size
+*** [[#scenario-P2]] P2 – The bot responds in under 2 seconds on any difficulty level
+*** [[#scenario-P3]] P3 – Match history loads in under 3 seconds
+** Security
+*** [[#scenario-S1]] S1 – Passwords are stored encrypted (e.g. bcrypt)
+*** [[#scenario-S2]] S2 – A user can only access their own match history
+*** [[#scenario-S3]] S3 – Sessions expire after a period of inactivity
+** Maintainability
+*** [[#scenario-M1]] M1 – Adding a new bot difficulty requires no changes outside the bot module
+*** [[#scenario-M2]] M2 – Board size logic is configurable without code changes
+*** [[#scenario-M3]] M3 – The codebase follows a consistent layered architecture
+** Portability
+*** [[#scenario-Po1]] Po1 – The game runs on modern browsers without installation
+*** [[#scenario-Po2]] Po2 – The backend can be deployed on any standard cloud provider
+@endmindmap
+----
+
 === Quality Scenarios
 
 ifdef::arc42help[]
@@ -77,3 +107,190 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 Tabular or free form text.
 ****
 endif::arc42help[]
+
+[[scenario-U1]]
+.U1 – UI adapts to different board sizes
+[cols="1,3"]
+|===
+| Source      | Player
+| Stimulus    | Starts a game with a non-default board size
+| Environment | Any modern browser, any screen resolution
+| Response    | The board and all UI elements render correctly without overflow or distortion
+| Measure     | No layout breakage for any supported board size
+|===
+
+[[scenario-U2]]
+.U2 – New user starts a game quickly
+[cols="1,3"]
+|===
+| Source      | First-time user
+| Stimulus    | Visits the app for the first time
+| Environment | Normal runtime conditions
+| Response    | The user can register, configure and start a game
+| Measure     | The entire flow takes under 2 minutes
+|===
+
+[[scenario-U3]]
+.U3 – Game history is easy to reach
+[cols="1,3"]
+|===
+| Source      | Logged-in player
+| Stimulus    | Wants to check their past matches
+| Environment | Normal runtime conditions
+| Response    | The history screen is displayed
+| Measure     | Reachable in at most 3 clicks from any screen
+|===
+
+[[scenario-R1]]
+.R1 – Match results are saved despite connection drops
+[cols="1,3"]
+|===
+| Source      | System / Network
+| Stimulus    | Connection drops while a match is finishing
+| Environment | Unstable network conditions
+| Response    | Match result is persisted once connection is restored
+| Measure     | No match data is lost due to temporary disconnection
+|===
+
+[[scenario-R2]]
+.R2 – Login availability
+[cols="1,3"]
+|===
+| Source      | Registered player
+| Stimulus    | Attempts to log in
+| Environment | Normal and peak load conditions
+| Response    | Login succeeds with correct credentials
+| Measure     | System available for login 99.9% of the time
+|===
+
+[[scenario-R3]]
+.R3 – Bot always plays a valid move
+[cols="1,3"]
+|===
+| Source      | Game engine
+| Stimulus    | It is the bot's turn
+| Environment | Any board size, any difficulty, any game state
+| Response    | The bot selects and plays a legal move
+| Measure     | Zero illegal moves produced across all difficulty levels
+|===
+
+[[scenario-P1]]
+.P1 – Board renders quickly
+[cols="1,3"]
+|===
+| Source      | Player
+| Stimulus    | Starts or joins a game
+| Environment | Normal load, any supported board size
+| Response    | The board is fully rendered and interactive
+| Measure     | Render time under 1 second
+|===
+
+[[scenario-P2]]
+.P2 – Bot responds without delay
+[cols="1,3"]
+|===
+| Source      | Game engine
+| Stimulus    | Player completes their turn
+| Environment | Any difficulty level
+| Response    | The bot calculates and plays its move
+| Measure     | Response time under 2 seconds
+|===
+
+[[scenario-P3]]
+.P3 – Match history loads fast
+[cols="1,3"]
+|===
+| Source      | Logged-in player
+| Stimulus    | Opens their match history
+| Environment | Any number of past matches stored
+| Response    | History list is displayed
+| Measure     | Load time under 3 seconds
+|===
+
+[[scenario-S1]]
+.S1 – Passwords are stored securely
+[cols="1,3"]
+|===
+| Source      | New or existing user
+| Stimulus    | Registers or changes their password
+| Environment | Normal runtime conditions
+| Response    | Password is hashed before storage
+| Measure     | No plain-text passwords stored (e.g. bcrypt with salt)
+|===
+
+[[scenario-S2]]
+.S2 – Users can only see their own history
+[cols="1,3"]
+|===
+| Source      | Logged-in player
+| Stimulus    | Requests match history
+| Environment | Multi-user environment
+| Response    | Only that user's own matches are returned
+| Measure     | No match data from other users is ever exposed
+|===
+
+[[scenario-S3]]
+.S3 – Sessions expire after inactivity
+[cols="1,3"]
+|===
+| Source      | System
+| Stimulus    | User is inactive for a configured period
+| Environment | Any logged-in session
+| Response    | Session is invalidated and user must log in again
+| Measure     | Session expires within the configured timeout window
+|===
+
+[[scenario-M1]]
+.M1 – New bot difficulty is easy to add
+[cols="1,3"]
+|===
+| Source      | Developer
+| Stimulus    | Adds a new bot difficulty level
+| Environment | Development environment
+| Response    | New bot is integrated without modifying other modules
+| Measure     | Zero changes required outside the bot module
+|===
+
+[[scenario-M2]]
+.M2 – Board size is configurable
+[cols="1,3"]
+|===
+| Source      | Developer / Operator
+| Stimulus    | Changes the supported board size range
+| Environment | Development or configuration environment
+| Response    | New size is supported across the application
+| Measure     | No code changes required, only configuration
+|===
+
+[[scenario-M3]]
+.M3 – Consistent layered architecture
+[cols="1,3"]
+|===
+| Source      | Developer
+| Stimulus    | Reviews or extends the codebase
+| Environment | Development environment
+| Response    | Code structure follows the defined layers consistently
+| Measure     | No cross-layer violations found in architecture review
+|===
+
+[[scenario-Po1]]
+.Po1 – Runs in modern browsers
+[cols="1,3"]
+|===
+| Source      | Player
+| Stimulus    | Opens the app in a modern browser
+| Environment | Chrome, Firefox, Edge, Safari (latest versions)
+| Response    | App loads and functions correctly
+| Measure     | All core features work without any installation
+|===
+
+[[scenario-Po2]]
+.Po2 – Backend deployable on standard cloud
+[cols="1,3"]
+|===
+| Source      | Operator
+| Stimulus    | Deploys the backend to a cloud provider
+| Environment | Any standard cloud platform (AWS, GCP, Azure, etc.)
+| Response    | Backend starts and operates correctly
+| Measure     | No provider-specific dependencies required
+|===

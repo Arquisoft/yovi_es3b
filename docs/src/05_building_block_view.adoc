@@ -146,15 +146,21 @@ Provides the user interface of the system. It handles user interactions, renders
 **Interface(s)**
 
 REST API calls to the Users Service:
+
 POST /login – user authentication
+
 GET /user – retrieve user data
+
 POST /ybot/choose – send player actions and return the bots´ moves
+
 Receives JSON responses containing user and game state data and sends YEN.
 
 **Quality/Performance Characteristics**
 
 Responsive UI with low latency interaction
+
 Cross-browser compatibility
+
 Fast rendering using modern frontend tooling (Vite)
 
 **Directory/File Location: **
@@ -163,11 +169,13 @@ Fast rendering using modern frontend tooling (Vite)
 **Fulfilled Requirements**
 
 User interaction and gameplay visualization
+
 Display of game state and results
 
 **Open Issues/Problems/Risks**
 
 Performance limitations for complex UI updates
+
 Dependency on backend availability
 
 ==== Users Service (Node.js / Express)
@@ -179,17 +187,18 @@ Acts as the central backend service. It manages user-related functionality, hand
 **Interface(s)**
 
 REST API exposed to Web App:
+
 Authentication endpoints (/login, /register)
-Game-related endpoints (/game/move, /game/state)
+
 Internal communication:
+
 Database queries (CRUD operations)
-Calls to Game Engine for game logic processing
 
 **Quality/Performance Characteristics**
 
 Stateless service for scalability
+
 Handles concurrent requests efficiently
-Moderate latency depending on game engine processing
 
 **Directory/File Location: **
 /users
@@ -197,12 +206,11 @@ Moderate latency depending on game engine processing
 **Fulfilled Requirements**
 
 User management and authentication
-Game session handling
-Coordination of system components
 
 **Open Issues/Problems/Risks**
 
 Single point of failure if not replicated
+
 Performance bottleneck under high load
 
 ==== Game Engine (Rust)
@@ -213,16 +221,18 @@ Implements the core game logic, including rules, state transitions, and bot beha
 
 **Interface(s)**
 
-Receives requests from Users Service:
+Receives requests from Webapp:
+
 Input: current game state + player move
+
 Output: updated game state and bot actions
-Can be exposed via:
-FFI / WebAssembly / API (depending on implementation)
 
 **Quality/Performance Characteristics**
 
 High performance and low-level efficiency
+
 Deterministic and reliable computation
+
 Suitable for complex game logic and AI
 
 **Directory/File Location: **
@@ -231,12 +241,15 @@ Suitable for complex game logic and AI
 **Fulfilled Requirements**
 
 Game rules enforcement
+
 Bot/AI decision making
+
 Game state updates
 
 **Open Issues/Problems/Risks**
 
 Integration complexity with Node.js service
+
 Debugging can be harder across language boundaries
 
 ==== Database
@@ -248,14 +261,19 @@ Provides persistent storage for the system, including user data, game states, an
 **Interface(s)**
 
 Accessed by Users Service via database queries (e.g., SQL or NoSQL queries)
+
 Supports CRUD operations:
+
 Create/update user data
+
 Store and retrieve game state
 
 **Quality/Performance Characteristics**
 
 Data consistency and reliability
+
 Scalable depending on chosen database system
+
 Performance depends on query optimization
 
 **Directory/File Location**
@@ -264,11 +282,13 @@ External system (not part of source directories)
 **Fulfilled Requirements**
 
 Persistent storage of users and game data
+
 Retrieval of historical and current game information
 
 **Open Issues/Problems/Risks**
 
 Potential performance bottlenecks with large datasets
+
 Requires backup and data integrity strategies
 
 
@@ -306,12 +326,15 @@ Renders the visual game board, updates state based on player actions, and commun
 **Interface(s)**
 
 Receives game state from Gamey (JSON)
+
 Sends player moves back via Backend API
 
 **Quality/Performance Characteristics**
 
 Responsive UI
+
 Low latency updates
+
 Reactive updates via React state management
 
 **Directory/File Location: **
@@ -320,6 +343,7 @@ webapp/src/components/GameBoard.tsx
 **Fulfilled Requirements**
 
 Visual display of the game board
+
 Handles player interactions
 
 **Open Issues/Problems/Risks**
@@ -339,12 +363,15 @@ Implements AI decision-making for the game, generating moves based on the curren
 **Interface(s)**
 
 Input: current game state
+
 Output: selected move
+
 Exposed via the Backend API
 
 **Quality/Performance Characteristics**
 
 Efficient computation for AI moves
+
 Deterministic behavior for testing
 
 **Directory/File Location: **
@@ -353,6 +380,7 @@ gamey/src/bot/
 **Fulfilled Requirements**
 
 Automates bot moves in the game
+
 Ensures challenge for players
 
 **Open Issues/Problems/Risks**
