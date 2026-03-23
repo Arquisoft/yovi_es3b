@@ -482,10 +482,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#section-runtime-view">6. Runtime View</a>
 <ul class="sectlevel2">
-<li><a href="#_runtime_scenario_1">6.1. &lt;Runtime Scenario 1&gt;</a></li>
-<li><a href="#_runtime_scenario_2">6.2. &lt;Runtime Scenario 2&gt;</a></li>
-<li><a href="#">6.3. &#8230;&#8203;</a></li>
-<li><a href="#_runtime_scenario_n">6.4. &lt;Runtime Scenario n&gt;</a></li>
+<li><a href="#_single_player_game_initialization">6.1. Single Player Game Initialization</a></li>
+<li><a href="#_player_move_and_bot_response">6.2. Player Move and Bot Response</a></li>
 </ul>
 </li>
 <li><a href="#section-deployment-view">7. Deployment View</a>
@@ -1385,9 +1383,13 @@ YEN notation for representing game states.</p>
 </div>
 <div class="sect2">
 <h3 id="_use_cases">3.5. Use Cases</h3>
+<div class="paragraph">
+<p>The users can use the application only once the have created an account using a username, email and password.
+Once in the app they can play the YGame, see their match history and edit their profile.</p>
+</div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/UseCasesYovi.png" alt="Use Case Diagram">
+<img src="./images/useCasesYovi.png" alt="Use Case Diagram">
 </div>
 </div>
 <div style="page-break-after: always;"></div>
@@ -1558,25 +1560,61 @@ In the best case you will get away with examples or simple signatures.</p>
 </div>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/overviewDiagramLevel1.png" alt="Overview Diagram Level 1">
+</div>
+</div>
 <div class="paragraph">
-<p><em><strong>&lt;Overview Diagram&gt;</strong></em></p>
+<p><strong>Motivation</strong></p>
+</div>
+<div class="paragraph">
+<p>The system is divided into a React-based web application and a Rust-based game engine to clearly separate user interface concerns from core game logic.</p>
+</div>
+<div class="paragraph">
+<p>The Web App is responsible for rendering the UI and managing user interactions, while persistence is handled via the backend service.</p>
+</div>
+<div class="paragraph">
+<p>The Game Engine encapsulates the game rules and bot logic, allowing for high performance and reusability.</p>
+</div>
+<div class="paragraph">
+<p>This separation improves maintainability, scalability, and enables independent development of UI and game logic.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Motivation</dt>
-<dd>
-<p><em>&lt;text explanation&gt;</em></p>
-</dd>
 <dt class="hdlist1">Contained Building Blocks</dt>
-<dd>
-<p><em>&lt;Description of contained building block (black boxes)&gt;</em></p>
-</dd>
-<dt class="hdlist1">Important Interfaces</dt>
-<dd>
-<p><em>&lt;Description of important interfaces&gt;</em></p>
-</dd>
 </dl>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Web App (React / Vite / TypeScript)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provides the user interface, handles user interactions, and communicates with the backend service via REST APIs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Users Service (Node.js / Express)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acts as the backend API, managing user data, authentication, and coordinating communication between the frontend, database, and game engine.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game Engine (Rust)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implements core game logic, rules, and bot behavior, processing game-related computations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stores persistent data such as user accounts, game state, and scores.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -1615,7 +1653,7 @@ Its headline is the name of the black box.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_name_black_box_1">5.1.1. &lt;Name black box 1&gt;</h4>
+<h4 id="_webapp">5.1.1. Webapp</h4>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -1647,45 +1685,237 @@ according the the following black box template:</p>
 </div>
 </div>
 <div class="paragraph">
-<p><em>&lt;Purpose/Responsibility&gt;</em></p>
+<p><strong>Purpose/Responsibility</strong></p>
 </div>
 <div class="paragraph">
-<p><em>&lt;Interface(s)&gt;</em></p>
+<p>Provides the user interface of the system. It handles user interactions, renders the game board, and communicates with the backend service to retrieve and update data.</p>
 </div>
 <div class="paragraph">
-<p><em>&lt;(Optional) Quality/Performance Characteristics&gt;</em></p>
+<p><strong>Interface(s)</strong></p>
 </div>
 <div class="paragraph">
-<p><em>&lt;(Optional) Directory/File Location&gt;</em></p>
+<p>REST API calls to the Users Service:</p>
 </div>
 <div class="paragraph">
-<p><em>&lt;(Optional) Fulfilled Requirements&gt;</em></p>
+<p>POST /login – user authentication</p>
 </div>
 <div class="paragraph">
-<p><em>&lt;(optional) Open Issues/Problems/Risks&gt;</em></p>
+<p>GET /user – retrieve user data</p>
+</div>
+<div class="paragraph">
+<p>POST /ybot/choose – send player actions and return the bots´ moves</p>
+</div>
+<div class="paragraph">
+<p>Receives JSON responses containing user and game state data and sends YEN.</p>
+</div>
+<div class="paragraph">
+<p><strong>Quality/Performance Characteristics</strong></p>
+</div>
+<div class="paragraph">
+<p>Responsive UI with low latency interaction</p>
+</div>
+<div class="paragraph">
+<p>Cross-browser compatibility</p>
+</div>
+<div class="paragraph">
+<p>Fast rendering using modern frontend tooling (Vite)</p>
+</div>
+<div class="paragraph">
+<p><strong>Directory/File Location: </strong>
+/webapp</p>
+</div>
+<div class="paragraph">
+<p><strong>Fulfilled Requirements</strong></p>
+</div>
+<div class="paragraph">
+<p>User interaction and gameplay visualization</p>
+</div>
+<div class="paragraph">
+<p>Display of game state and results</p>
+</div>
+<div class="paragraph">
+<p><strong>Open Issues/Problems/Risks</strong></p>
+</div>
+<div class="paragraph">
+<p>Performance limitations for complex UI updates</p>
+</div>
+<div class="paragraph">
+<p>Dependency on backend availability</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_name_black_box_2">5.1.2. &lt;Name black box 2&gt;</h4>
+<h4 id="_users_service_node_js_express">5.1.2. Users Service (Node.js / Express)</h4>
 <div class="paragraph">
-<p><em>&lt;black box template&gt;</em></p>
+<p><strong>Purpose/Responsibility</strong></p>
+</div>
+<div class="paragraph">
+<p>Acts as the central backend service. It manages user-related functionality, handles authentication, and coordinates communication between the frontend, database, and game engine.</p>
+</div>
+<div class="paragraph">
+<p><strong>Interface(s)</strong></p>
+</div>
+<div class="paragraph">
+<p>REST API exposed to Web App:</p>
+</div>
+<div class="paragraph">
+<p>Authentication endpoints (/login, /register)</p>
+</div>
+<div class="paragraph">
+<p>Internal communication:</p>
+</div>
+<div class="paragraph">
+<p>Database queries (CRUD operations)</p>
+</div>
+<div class="paragraph">
+<p><strong>Quality/Performance Characteristics</strong></p>
+</div>
+<div class="paragraph">
+<p>Stateless service for scalability</p>
+</div>
+<div class="paragraph">
+<p>Handles concurrent requests efficiently</p>
+</div>
+<div class="paragraph">
+<p><strong>Directory/File Location: </strong>
+/users</p>
+</div>
+<div class="paragraph">
+<p><strong>Fulfilled Requirements</strong></p>
+</div>
+<div class="paragraph">
+<p>User management and authentication</p>
+</div>
+<div class="paragraph">
+<p>Game session handling</p>
+</div>
+<div class="paragraph">
+<p>Coordination of system components</p>
+</div>
+<div class="paragraph">
+<p><strong>Open Issues/Problems/Risks</strong></p>
+</div>
+<div class="paragraph">
+<p>Single point of failure if not replicated</p>
+</div>
+<div class="paragraph">
+<p>Performance bottleneck under high load</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_name_black_box_n">5.1.3. &lt;Name black box n&gt;</h4>
+<h4 id="_game_engine_rust_2">5.1.3. Game Engine (Rust)</h4>
 <div class="paragraph">
-<p><em>&lt;black box template&gt;</em></p>
+<p><strong>Purpose/Responsibility</strong></p>
+</div>
+<div class="paragraph">
+<p>Implements the core game logic, including rules, state transitions, and bot behavior. It processes game actions and computes the resulting game state.</p>
+</div>
+<div class="paragraph">
+<p><strong>Interface(s)</strong></p>
+</div>
+<div class="paragraph">
+<p>Receives requests from Webapp:</p>
+</div>
+<div class="paragraph">
+<p>Input: current game state + player move</p>
+</div>
+<div class="paragraph">
+<p>Output: updated game state and bot actions</p>
+</div>
+<div class="paragraph">
+<p><strong>Quality/Performance Characteristics</strong></p>
+</div>
+<div class="paragraph">
+<p>High performance and low-level efficiency</p>
+</div>
+<div class="paragraph">
+<p>Deterministic and reliable computation</p>
+</div>
+<div class="paragraph">
+<p>Suitable for complex game logic and AI</p>
+</div>
+<div class="paragraph">
+<p><strong>Directory/File Location: </strong>
+/gamey</p>
+</div>
+<div class="paragraph">
+<p><strong>Fulfilled Requirements</strong></p>
+</div>
+<div class="paragraph">
+<p>Game rules enforcement</p>
+</div>
+<div class="paragraph">
+<p>Bot/AI decision making</p>
+</div>
+<div class="paragraph">
+<p>Game state updates</p>
+</div>
+<div class="paragraph">
+<p><strong>Open Issues/Problems/Risks</strong></p>
+</div>
+<div class="paragraph">
+<p>Integration complexity with Node.js service</p>
+</div>
+<div class="paragraph">
+<p>Debugging can be harder across language boundaries</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_name_interface_1">5.1.4. &lt;Name interface 1&gt;</h4>
+<h4 id="_database">5.1.4. Database</h4>
 <div class="paragraph">
-<p>&#8230;&#8203;</p>
+<p><strong>Purpose/Responsibility</strong></p>
 </div>
+<div class="paragraph">
+<p>Provides persistent storage for the system, including user data, game states, and scores.</p>
 </div>
-<div class="sect3">
-<h4 id="_name_interface_m">5.1.5. &lt;Name interface m&gt;</h4>
-
+<div class="paragraph">
+<p><strong>Interface(s)</strong></p>
+</div>
+<div class="paragraph">
+<p>Accessed by Users Service via database queries (e.g., SQL or NoSQL queries)</p>
+</div>
+<div class="paragraph">
+<p>Supports CRUD operations:</p>
+</div>
+<div class="paragraph">
+<p>Create/update user data</p>
+</div>
+<div class="paragraph">
+<p>Store and retrieve game state</p>
+</div>
+<div class="paragraph">
+<p><strong>Quality/Performance Characteristics</strong></p>
+</div>
+<div class="paragraph">
+<p>Data consistency and reliability</p>
+</div>
+<div class="paragraph">
+<p>Scalable depending on chosen database system</p>
+</div>
+<div class="paragraph">
+<p>Performance depends on query optimization</p>
+</div>
+<div class="paragraph">
+<p><strong>Directory/File Location</strong>
+External system (not part of source directories)</p>
+</div>
+<div class="paragraph">
+<p><strong>Fulfilled Requirements</strong></p>
+</div>
+<div class="paragraph">
+<p>Persistent storage of users and game data</p>
+</div>
+<div class="paragraph">
+<p>Retrieval of historical and current game information</p>
+</div>
+<div class="paragraph">
+<p><strong>Open Issues/Problems/Risks</strong></p>
+</div>
+<div class="paragraph">
+<p>Potential performance bottlenecks with large datasets</p>
+</div>
+<div class="paragraph">
+<p>Requires backup and data integrity strategies</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1703,7 +1933,7 @@ Leave out normal, simple, boring or standardized parts of your system</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_white_box_building_block_1">5.2.1. White Box <em>&lt;building block 1&gt;</em></h4>
+<h4 id="_white_box_web_app_game_board_component">5.2.1. White Box Web App – Game Board Component</h4>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -1712,64 +1942,124 @@ Leave out normal, simple, boring or standardized parts of your system</p>
 </div>
 </div>
 <div class="paragraph">
-<p><em>&lt;white box template&gt;</em></p>
+<p><strong>Diagram</strong></p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/gameBoardDiagram.png" alt="GameBoard Diagram Level 2">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Purpose/Responsibility</strong></p>
+</div>
+<div class="paragraph">
+<p>Renders the visual game board, updates state based on player actions, and communicates moves to the Users Service.</p>
+</div>
+<div class="paragraph">
+<p><strong>Interface(s)</strong></p>
+</div>
+<div class="paragraph">
+<p>Receives game state from Gamey (JSON)</p>
+</div>
+<div class="paragraph">
+<p>Sends player moves back via Backend API</p>
+</div>
+<div class="paragraph">
+<p><strong>Quality/Performance Characteristics</strong></p>
+</div>
+<div class="paragraph">
+<p>Responsive UI</p>
+</div>
+<div class="paragraph">
+<p>Low latency updates</p>
+</div>
+<div class="paragraph">
+<p>Reactive updates via React state management</p>
+</div>
+<div class="paragraph">
+<p><strong>Directory/File Location: </strong>
+webapp/src/components/GameBoard.tsx</p>
+</div>
+<div class="paragraph">
+<p><strong>Fulfilled Requirements</strong></p>
+</div>
+<div class="paragraph">
+<p>Visual display of the game board</p>
+</div>
+<div class="paragraph">
+<p>Handles player interactions</p>
+</div>
+<div class="paragraph">
+<p><strong>Open Issues/Problems/Risks</strong></p>
+</div>
+<div class="paragraph">
+<p>Complex rendering for larger boards may affect performance</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_white_box_building_block_2">5.2.2. White Box <em>&lt;building block 2&gt;</em></h4>
+<h4 id="_white_box_gamey_bots">5.2.2. White Box Gamey – Bots</h4>
 <div class="paragraph">
-<p><em>&lt;white box template&gt;</em></p>
+<p><strong>Diagram</strong></p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/gameyBotsDiagram.png" alt="Bots Diagram Level 2">
+</div>
 </div>
 <div class="paragraph">
-<p>&#8230;&#8203;</p>
+<p><strong>Purpose/Responsibility</strong></p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_white_box_building_block_m">5.2.3. White Box <em>&lt;building block m&gt;</em></h4>
 <div class="paragraph">
-<p><em>&lt;white box template&gt;</em></p>
+<p>Implements AI decision-making for the game, generating moves based on the current game state.</p>
+</div>
+<div class="paragraph">
+<p><strong>Interface(s)</strong></p>
+</div>
+<div class="paragraph">
+<p>Input: current game state</p>
+</div>
+<div class="paragraph">
+<p>Output: selected move</p>
+</div>
+<div class="paragraph">
+<p>Exposed via the Backend API</p>
+</div>
+<div class="paragraph">
+<p><strong>Quality/Performance Characteristics</strong></p>
+</div>
+<div class="paragraph">
+<p>Efficient computation for AI moves</p>
+</div>
+<div class="paragraph">
+<p>Deterministic behavior for testing</p>
+</div>
+<div class="paragraph">
+<p><strong>Directory/File Location: </strong>
+gamey/src/bot/</p>
+</div>
+<div class="paragraph">
+<p><strong>Fulfilled Requirements</strong></p>
+</div>
+<div class="paragraph">
+<p>Automates bot moves in the game</p>
+</div>
+<div class="paragraph">
+<p>Ensures challenge for players</p>
+</div>
+<div class="paragraph">
+<p><strong>Open Issues/Problems/Risks</strong></p>
+</div>
+<div class="paragraph">
+<p>Scaling to multiple bots simultaneously may increase processing time</p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_level_3">5.3. Level 3</h3>
-<div class="sidebarblock arc42help">
-<div class="content">
 <div class="paragraph">
-<p>Here you can specify the inner structure of (some) building blocks from level 2 as white boxes.</p>
-</div>
-<div class="paragraph">
-<p>When you need more detailed levels of your architecture please copy this
-part of arc42 for additional levels.</p>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_white_box_building_block_x_1">5.3.1. White Box &lt;_building block x.1_&gt;</h4>
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<p>Specifies the internal structure of <em>building block x.1</em>.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p><em>&lt;white box template&gt;</em></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_white_box_building_block_x_2">5.3.2. White Box &lt;_building block x.2_&gt;</h4>
-<div class="paragraph">
-<p><em>&lt;white box template&gt;</em></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_white_box_building_block_y_1">5.3.3. White Box &lt;_building block y.1_&gt;</h4>
-<div class="paragraph">
-<p><em>&lt;white box template&gt;</em></p>
+<p>Not needed for this version yet.</p>
 </div>
 <div style="page-break-after: always;"></div>
-</div>
 </div>
 </div>
 </div>
@@ -1839,37 +2129,76 @@ You will mainly capture scenarios in your documentation to communicate your arch
 </div>
 </div>
 <div class="sect2">
-<h3 id="_runtime_scenario_1">6.1. &lt;Runtime Scenario 1&gt;</h3>
-<div class="ulist">
-<ul>
-<li>
-<p><em>&lt;insert runtime diagram or textual description of the scenario&gt;</em></p>
-</li>
-<li>
-<p><em>&lt;insert description of the notable aspects of the interactions between the
-building block instances depicted in this diagram.&gt;</em></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>It is possible to use a sequence diagram:</p>
-</div>
+<h3 id="_single_player_game_initialization">6.1. Single Player Game Initialization</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/Sequence%20diagram.png" alt="Sequence diagram" width="332" height="335">
+<img src="./images/Game%20Initialization%20Sequence%20with%20Difficulty.png" alt="Game Initialization Sequence with Difficulty" width="740" height="426">
 </div>
+</div>
+<div class="paragraph">
+<p><strong>Description</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The user opens the Web App and chooses to join a game.</p>
+</li>
+<li>
+<p>The Web App prompts the user to select a difficulty level.</p>
+</li>
+<li>
+<p>The user selects the desired difficulty.</p>
+</li>
+<li>
+<p>The Web App sends a request to Gamey to start a new game, including player info and difficulty.</p>
+</li>
+<li>
+<p>The Game Engine initializes bot players according to the chosen difficulty.</p>
+</li>
+<li>
+<p>Bots report readiness to the Game Engine.</p>
+</li>
+<li>
+<p>Gamey sends the initial game state and board to the Web App.</p>
+</li>
+<li>
+<p>The Web App renders the initial board for the user.</p>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_runtime_scenario_2">6.2. &lt;Runtime Scenario 2&gt;</h3>
-
+<h3 id="_player_move_and_bot_response">6.2. Player Move and Bot Response</h3>
+<div class="imageblock">
+<div class="content">
+<img src="./images/Player%20move%20sequence%20(Web%20App%20→%20Gamey).png" alt="Player move sequence (Web App → Gamey)" width="633" height="365">
 </div>
-<div class="sect2">
-<h3 id="">6.3. &#8230;&#8203;</h3>
-
 </div>
-<div class="sect2">
-<h3 id="_runtime_scenario_n">6.4. &lt;Runtime Scenario n&gt;</h3>
+<div class="paragraph">
+<p><strong>Description</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The user performs a move in the Web App.</p>
+</li>
+<li>
+<p>The Web App sends the game state directly to the Game Engine (Gamey).</p>
+</li>
+<li>
+<p>The Game Engine selects the appropriate bot.</p>
+</li>
+<li>
+<p>The bot computes the next move.</p>
+</li>
+<li>
+<p>The result is returned directly back to the Web App.</p>
+</li>
+<li>
+<p>The UI updates with the new game state.</p>
+</li>
+</ol>
+</div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -2767,7 +3096,7 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2026-03-08 19:03:56 UTC
+Last updated 2026-02-15 15:50:11 +0100
 </div>
 </div>
 </body>
