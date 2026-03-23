@@ -30,6 +30,9 @@ use crate::{
     GameYError,
     RandomBot,
     CornerBot,
+    HeuristicBot,
+    MinimaxBot,
+    MonteCarloBot,
     YBotRegistry,
 };
 
@@ -48,7 +51,10 @@ pub fn create_router(state: AppState) -> Router {
 pub fn create_default_state() -> AppState {
     let bots = YBotRegistry::new()
         .with_bot(Arc::new(RandomBot))
-        .with_bot(Arc::new(CornerBot));
+        .with_bot(Arc::new(CornerBot))
+        .with_bot(Arc::new(HeuristicBot))
+        .with_bot(Arc::new(MinimaxBot))
+        .with_bot(Arc::new(MonteCarloBot));
     AppState::new(bots)
 }
 

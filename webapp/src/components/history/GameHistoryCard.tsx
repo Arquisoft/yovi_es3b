@@ -2,6 +2,8 @@ import type { GameResult } from "./HistoryPage.tsx";
 import "./GameHistoryCard.css";
 import { useTranslation } from "react-i18next";
 
+// Función auxuliar para formatear la duración de la partida
+// Recibimos milisegundos y devolvemos minutos y segundos
 function formatDuration(ms: number): string {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -24,16 +26,22 @@ function formatDate(isoString: string, t: (key: string) => string, locale: strin
     return date.toLocaleDateString(locale, { day: "numeric", month: "short" }) + `, ${time}`;
 }
 
+// Recibimos el resultado del juego, definido en la página del historial
 type Props = {
     game: GameResult;
 };
 
+// Carta individual del historial
+// Mostramos estilos diferentes para partidas ganadas o perdidas
+// El div de estadísticas muestra duración, turnos y dificultad
+// Header muestra Victoria o derrota y la fecha
 const GameHistoryCard: React.FC<Props> = ({ game }) => {
     const { t, i18n } = useTranslation();
     const isWin = game.winner === "player";
     const locale = i18n.language.startsWith('es') ? 'es-ES' : 'en-GB';
 
     return (
+        // Aplicamos un estilo diferente para partidas ganadas y perdidas
         <div className={`game-card ${isWin ? "game-card--win" : "game-card--loss"}`}>
             <div className="game-card__header">
                 <span className={`game-card__result ${isWin ? "game-card__result--win" : "game-card__result--loss"}`}>
@@ -53,7 +61,7 @@ const GameHistoryCard: React.FC<Props> = ({ game }) => {
                 <div className="game-card__stat game-card__stat--full">
                     <span className="game-card__stat-label">{t('history.difficulty')}</span>
                     <span className={`game-card__difficulty game-card__difficulty--${game.difficulty}`}>
-                        {game.difficulty === "easy" ? t('history.difficultyEasy') : t('history.difficultyHard')}
+                        {t(`history.difficulty${game.difficulty.charAt(0).toUpperCase() + game.difficulty.slice(1)}`)}
                     </span>
                 </div>
             </div>

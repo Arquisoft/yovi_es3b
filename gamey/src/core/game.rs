@@ -83,6 +83,11 @@ impl GameY {
         &self.available_cells
     }
 
+    /// Devuelve el jugador que ocupa una casilla, o None si está vacía
+    pub fn cell_owner(&self, coords: &Coordinates) -> Option<PlayerId> {
+        self.board_map.get(coords).map(|(_, p)| *p)
+    }
+
     /// Returns the total number of cells on the board.
     pub fn total_cells(&self) -> u32 {
         (self.board_size * (self.board_size + 1)) / 2

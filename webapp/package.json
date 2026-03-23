@@ -17,6 +17,8 @@
     "start:all": "concurrently \"npm run dev\" \"npm --prefix ../users start\""
   },
   "dependencies": {
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
     "firebase": "^12.10.0",
     "i18next": "^25.8.18",
     "i18next-browser-languagedetector": "^8.2.1",

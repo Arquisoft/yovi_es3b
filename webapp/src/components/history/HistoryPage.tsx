@@ -10,7 +10,7 @@ export type GameResult = {
     winner: "player" | "bot";
     durationMs: number;
     turns: number;
-    difficulty: "easy" | "hard";
+    difficulty: "easy" | "hard" | "extreme" | "impossible";
     createdAt: string;
 };
 
