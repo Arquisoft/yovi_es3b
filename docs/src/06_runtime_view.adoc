@@ -6,7 +6,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 ifdef::arc42help[]
 [role="arc42help"]
-****
+****    
 .Contents
 The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios from the following areas:
 
@@ -43,10 +43,10 @@ endif::arc42help[]
 
 [plantuml,"Game Initialization Sequence with Difficulty",png]
 ----
-actor User
+actor User #87CEFA
 participant "Web App" as Web #87CEFA
 participant "Game Engine (Gamey)" as Gamey #87CEFA
-participant "Bot"
+participant "Bot" #87CEFA
 
 User -> Web: Open app / Join game
 Web --> User: Prompt to select difficulty
@@ -73,10 +73,10 @@ Web --> User: Render initial board
 
 [plantuml,"Player move sequence (Web App → Gamey)",png]
 ----
-actor User
+actor User #87CEFA
 participant "Web App" as Web #87CEFA
 participant "Game Engine (Gamey)" as Gamey #87CEFA
-participant "Bot"
+participant "Bot" #87CEFA
 
 User -> Web: Make move
 Web -> Gamey: POST /gamey/choose (send game state in YEN)
@@ -84,7 +84,6 @@ Gamey -> Bot: choose_move(game_state)
 Bot --> Gamey: Coordinates
 Gamey --> Web: MoveResponse (JSON)
 Web --> User: Update board
-
 ----
 **Description**
 

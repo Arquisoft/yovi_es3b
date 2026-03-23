@@ -139,7 +139,8 @@ according the the following black box template:
 ****
 endif::arc42help[]
 
-Purpose/Responsibility
+**Purpose/Responsibility**
+
 Provides the user interface of the system. It handles user interactions, renders the game board, and communicates with the backend service to retrieve and update data.
 
 **Interface(s)**
@@ -147,7 +148,7 @@ Provides the user interface of the system. It handles user interactions, renders
 REST API calls to the Users Service:
 POST /login – user authentication
 GET /user – retrieve user data
-POST /gamey/choose – send player actions and return the bots´ moves
+POST /ybot/choose – send player actions and return the bots´ moves
 Receives JSON responses containing user and game state data and sends YEN.
 
 **Quality/Performance Characteristics**
@@ -156,7 +157,7 @@ Responsive UI with low latency interaction
 Cross-browser compatibility
 Fast rendering using modern frontend tooling (Vite)
 
-**Directory/File Location**
+**Directory/File Location: **
 /webapp
 
 **Fulfilled Requirements**
@@ -168,9 +169,11 @@ Display of game state and results
 
 Performance limitations for complex UI updates
 Dependency on backend availability
+
 ==== Users Service (Node.js / Express)
 
-Purpose/Responsibility
+**Purpose/Responsibility**
+
 Acts as the central backend service. It manages user-related functionality, handles authentication, and coordinates communication between the frontend, database, and game engine.
 
 **Interface(s)**
@@ -188,7 +191,7 @@ Stateless service for scalability
 Handles concurrent requests efficiently
 Moderate latency depending on game engine processing
 
-**Directory/File Location**
+**Directory/File Location: **
 /users
 
 **Fulfilled Requirements**
@@ -201,9 +204,11 @@ Coordination of system components
 
 Single point of failure if not replicated
 Performance bottleneck under high load
+
 ==== Game Engine (Rust)
 
-Purpose/Responsibility
+**Purpose/Responsibility**
+
 Implements the core game logic, including rules, state transitions, and bot behavior. It processes game actions and computes the resulting game state.
 
 **Interface(s)**
@@ -220,7 +225,7 @@ High performance and low-level efficiency
 Deterministic and reliable computation
 Suitable for complex game logic and AI
 
-**Directory/File Location**
+**Directory/File Location: **
 /gamey
 
 **Fulfilled Requirements**
@@ -233,9 +238,11 @@ Game state updates
 
 Integration complexity with Node.js service
 Debugging can be harder across language boundaries
+
 ==== Database
 
 **Purpose/Responsibility**
+
 Provides persistent storage for the system, including user data, game states, and scores.
 
 **Interface(s)**
@@ -293,6 +300,7 @@ endif::arc42help[]
 image::gameBoardDiagram.png[GameBoard Diagram Level 2]
 
 **Purpose/Responsibility**
+
 Renders the visual game board, updates state based on player actions, and communicates moves to the Users Service.
 
 **Interface(s)**
@@ -306,7 +314,7 @@ Responsive UI
 Low latency updates
 Reactive updates via React state management
 
-**Directory/File Location**
+**Directory/File Location: **
 webapp/src/components/GameBoard.tsx (or similar)
 
 **Fulfilled Requirements**
@@ -325,6 +333,7 @@ Complex rendering for larger boards may affect performance
 image::gameyBotsDiagram.png[Bots Diagram Level 2]
 
 **Purpose/Responsibility**
+
 Implements AI decision-making for the game, generating moves based on the current game state.
 
 **Interface(s)**
@@ -338,7 +347,7 @@ Exposed via the Backend API
 Efficient computation for AI moves
 Deterministic behavior for testing
 
-**Directory/File Location**
+**Directory/File Location: **
 gamey/src/bot/
 
 **Fulfilled Requirements**
