@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from './context/AuthContext';
+import { useTranslation, Trans } from 'react-i18next';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import './LobbyPage.css';
 import GameBoard from "./components/board/GameBoard.tsx";
-import {PARTICLES_CONFIG} from "./lobbyParticlesConfig.ts";
+import { PARTICLES_CONFIG } from "./lobbyParticlesConfig.ts";
 
 const LobbyPage: React.FC = () => {
     const { username } = useAuth();
+    const { t } = useTranslation();
     const [engineReady, setEngineReady] = useState(false);
     const [playing, setPlaying] = useState(false);
 
@@ -18,6 +20,15 @@ const LobbyPage: React.FC = () => {
     }, []);
 
     const particlesLoaded = useCallback(async () => {}, []);
+
+    // Etiqueta personalizada para el enlace i18n a Wikipedia del juego
+    const transComponents = {
+        gameLink: React.createElement('a', {
+            href: 'https://es.wikipedia.org/wiki/Y_(juego)',
+            target: '_blank',
+            rel: 'noopener noreferrer'
+        })
+    };
 
     if (playing) {
         return <GameBoard botId={"random_bot"} difficulty={"easy"} />;
@@ -38,17 +49,15 @@ const LobbyPage: React.FC = () => {
                 <span className="lobby-game-name">Game Y</span>
 
                 <h1 className="lobby-title">
-                    Bienvenido,{' '}
+                    {t('lobby.welcome')}{' '}
                     <span className="lobby-title__username">{username ?? '...'}</span>
                 </h1>
 
                 <p className="lobby-description">
-                    YOVI es nuestra versión web de{' '}
-                    <a href="https://es.wikipedia.org/wiki/Y_(juego)" target="_blank" rel="noopener noreferrer">
-                        Game Y
-                    </a>
-                    , un juego de tablero clásico desarrollado por estudiantes de
-                    Ingeniería Informática de la Universidad de Oviedo.
+                    <Trans
+                        i18nKey="lobby.description"
+                        components={transComponents}
+                    />
                 </p>
 
                 <div className="lobby-footer">
@@ -56,7 +65,7 @@ const LobbyPage: React.FC = () => {
                         className="lobby-btn-primary"
                         onClick={() => setPlaying(true)}
                     >
-                        ▶&nbsp;&nbsp;Partida rápida
+                        {'▶\u00a0\u00a0'}{t('lobby.quickGame')}
                     </button>
                     <a
                         href="https://arquisoft.github.io/yovi_es3b/"
@@ -64,7 +73,7 @@ const LobbyPage: React.FC = () => {
                         rel="noopener noreferrer"
                         className="lobby-docs-link"
                     >
-                        Documentación oficial →
+                        {t('lobby.officialDocs')}{' \u2192'}
                     </a>
                 </div>
             </div>

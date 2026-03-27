@@ -7,7 +7,10 @@
     "logout": "Cerrar Sesión"
   },
   "lobby": {
-    "welcome": "Bienvenido, {{name}}"
+    "welcome": "Bienvenido, ",
+    "description": "YOVI es nuestra versión web de <gameLink>Game Y</gameLink>, un juego de tablero clásico desarrollado por estudiantes de Ingeniería Informática de la Universidad de Oviedo.",
+    "quickGame": "Partida rápida",
+    "officialDocs": "Documentación oficial"
   },
   "auth": {
     "email": "Correo electrónico",
