@@ -4,25 +4,109 @@ info:
   version: 1.0.0
   description: API for managing users
 paths:
-  /createuser:
-    post:
-      summary: Creates a new user
-      description: Creates a new user with the given username.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - username
-              properties:
-                username:
-                  type: string
-                  example: "testuser"
+  /users/me:
+    get:
+      summary: Returns current session user
+      description: Given firebase ID from the auth middleware, returns the profile info for that user
+      security:
+        - bearerAuth: []
       responses:
         '200':
-          description: User created successfully
+          description: User found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "64a7f3bc2e4e2a001f3d1234"
+                  username:
+                    type: string
+                    example: "testuser"
+                  gamesPlayed:
+                    type: integer
+                    example: 10
+                  gamesWon:
+                    type: integer
+                    example: 6
+                  gamesLost:
+                    type: integer
+                    example: 4
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-01-15T10:30:00Z"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "userNotFound"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /users:
+    get:
+      summary: Returns top 50 users by wins
+      description: Returns a ranked list of up to 50 users sorted by games won in descending order
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: List of users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "64a7f3bc2e4e2a001f3d1234"
+                    username:
+                      type: string
+                      example: "testuser"
+                    gamesPlayed:
+                      type: integer
+                      example: 10
+                    gamesWon:
+                      type: integer
+                      example: 6
+                    gamesLost:
+                      type: integer
+                      example: 4
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+  /register:
+    post:
+      summary: Creates a new user given the name and id
+      description: Creates a new user given the name and Firebase id and returns a welcome message
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '201':
+          description: Returns the message "Welcome <userName>"
           content:
             application/json:
               schema:
@@ -30,6 +114,143 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Hello testuser! welcome to the course!"
+                    example: "Welcome Pablo"
+        '409':
+          description: There is already an existing user with the same id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User already registered"
         '400':
-          description: Error creating user
+          description: There is an unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal error"
+  /games:
+    post:
+      summary: Saves game result
+      description: Saves the winner, duration, number of turns and difficulty of a game
+        linked to a user by id
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '201':
+          description: Returns game data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "64a7f3bc2e4e2a001f3d1234"
+                  username:
+                    type: string
+                    example: "testuser"
+                  winner:
+                    type: string
+                    example: "user", "bot"
+                  durationMs:
+                    type: integer
+                    example: 12000
+                  turns:
+                    type: integer
+                    example: 15
+                  difficulty:
+                    type: string
+                    example: "hard"
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-01-15T10:30:00Z"
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: "2024-01-15T10:30:00Z"
+        '409':
+          description: There is already an existing user with the same id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User already registered"
+        '400':
+          description: There is an unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal error"
+  /games/me:
+    post:
+      summary: Retrieves user games
+      description: Returns the lastest 50 games from a user given the user id
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Returns the last games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "64a7f3bc2e4e2a001f3d1234"
+                    username:
+                      type: string
+                      example: "testuser"
+                    durationMs:
+                      type: integer
+                      example: 10000
+                    turns:
+                      type: integer
+                      example: 17
+                    difficulty:
+                      type: string
+                      example: "extreme"
+        '404':
+          description: There is no user with that id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
+        '500':
+          description: There is an unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
