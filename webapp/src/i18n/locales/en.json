@@ -7,7 +7,10 @@
     "logout": "Log Out"
   },
   "lobby": {
-    "welcome": "Welcome, {{name}}"
+    "welcome": "Welcome, ",
+    "description": "YOVI is our web version of <gameLink>Game Y</gameLink>, a classic board game developed by Computer Engineering students at the University of Oviedo.",
+    "quickGame": "Quick game",
+    "officialDocs": "Official documentation"
   },
   "auth": {
     "email": "Email",
