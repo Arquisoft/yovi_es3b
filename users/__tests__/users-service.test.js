@@ -16,6 +16,13 @@ vi.mock('../src/db/models/Game.js', () => ({
     }
 }))
 
+vi.mock('../src/middleware/languaje.js', () => ({
+    detectLanguage: (req, res, next) => {
+        req.t = (key) => key
+        next()
+    }
+}))
+
 let User
 let createApp
 let appWithAuth
