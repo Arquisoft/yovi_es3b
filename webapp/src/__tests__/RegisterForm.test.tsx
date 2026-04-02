@@ -14,6 +14,13 @@ vi.mock('firebase/auth', () => ({
   createUserWithEmailAndPassword: vi.fn()
 }))
 
+// Mock para i18n
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key
+  })
+}))
+
 describe('RegisterForm', () => {
   afterEach(() => {
     vi.restoreAllMocks()
@@ -31,7 +38,7 @@ describe('RegisterForm', () => {
     await user.click(screen.getByRole('button', { name: /register/i }))
 
     expect(
-        screen.getByText(/please fill in all fields/i)
+        screen.getByText('auth.fillAllFields')
     ).toBeInTheDocument()
   })
 
