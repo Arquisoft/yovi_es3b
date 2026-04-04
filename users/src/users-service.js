@@ -47,7 +47,7 @@ export function createApp(middleware = verifyToken) {
     try {
       const user = await User.findOne(
           { firebaseUid: req.user.uid },
-          { username: 1, gamesPlayed: 1, gamesWon: 1, gamesLost: 1, createdAt: 1 }
+          { username: 1, gamesPlayed: 1, gamesWon: 1, gamesLost: 1, createdAt: 1, photoURL: 1 }
       )
       if (!user) return res.status(404).json({ error: req.t('userNotFound') })
       res.json(user)
@@ -114,6 +114,9 @@ export function createApp(middleware = verifyToken) {
       res.status(500).json({ error: err.message })
     }
   })
+
+  // ------------- PERFIL ------------------
+
 
   return app
 }
