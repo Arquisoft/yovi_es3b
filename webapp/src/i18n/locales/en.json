@@ -8,7 +8,7 @@
   },
   "lobby": {
     "welcome": "Welcome, ",
-    "description": "YOVI is our web version of <gameLink>Game Y</gameLink>, a classic board game developed by Computer Engineering students at the University of Oviedo.",
+    "description": "YOVI is our web version of <gameLink>Game Y</gameLink>, a classic board game, developed by Computer Engineering students at the University of Oviedo.",
     "quickGame": "Quick game",
     "officialDocs": "Official documentation"
   },
@@ -79,6 +79,12 @@
   "profile": {
     "title": "My profile",
     "editProfile": "Edit profile",
-    "changePhoto": "Change photo"
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveError": "An error occurred while saving your profile",
+    "usernameRequired": "Username cannot be empty",
+    "chooseAvatar": "Choose your avatar",
+    "username": "New username"
   }
 }

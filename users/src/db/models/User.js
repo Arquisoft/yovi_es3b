@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
     gamesPlayed:  { type: Number, default: 0 },
     gamesWon:     { type: Number, default: 0 },
     gamesLost:    { type: Number, default: 0 },
-    createdAt:    { type: Date, default: Date.now }
+    createdAt:    { type: Date, default: Date.now },
+    photoURL:     {type: String, default:"avatar_1.png"}
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -8,6 +8,8 @@ interface AuthContextType {
     token: string | null;
     username: string | null;
     setUsername: (username: string) => void;
+    photoURL: string | null;
+    setPhotoURL: (p: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,6 +18,8 @@ const AuthContext = createContext<AuthContextType>({
     token: null,
     username: null,
     setUsername: () => {},
+    photoURL: null,
+    setPhotoURL: () => {}
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -23,6 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [photoURL, setPhotoURL] = useState<string|null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -39,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     if (res.ok) {
                         const data = await res.json();
                         setUsername(data.username);
+                        setPhotoURL(data.photoURL);
                     } else {
                         setUsername(firebaseUser.displayName);
                     }
@@ -57,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, token, username, setUsername }}>
+        <AuthContext.Provider value={{ user, loading, token, username, setUsername, photoURL, setPhotoURL}}>
             {children}
         </AuthContext.Provider>
     );
