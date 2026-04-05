@@ -9,6 +9,7 @@
 
 pub mod choose;
 pub mod error;
+pub mod play;
 pub mod state;
 pub mod version;
 
@@ -40,6 +41,7 @@ use crate::{
 pub fn create_router(state: AppState) -> Router {
     Router::new()
         .route("/status", get(status))
+        .route("/play", post(play::play))
         .route(
             "/{api_version}/ybot/choose/{bot_id}",
             post(choose::choose),
