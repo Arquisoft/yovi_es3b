@@ -1,0 +1,9 @@
+export const AVATARS = [
+    "avatar_1.png",
+    "avatar_2.png",
+    "avatar_3.png",
+    "avatar_4.png",
+    "avatar_5.png",
+    "avatar_6.png",
+    "avatar_7.png"
+];

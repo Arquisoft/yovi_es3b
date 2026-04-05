@@ -4,7 +4,5 @@
   "userNotFound": "Usuario no encontrado",
   "userAlreadyRegistered": "Usuario ya registrado",
   "serverError": "Error del servidor",
-  "welcomeUser": "¡Bienvenido {{username}}!",
-  "profile.editProfile": "Editar perfil",
-  "profile.changePhoto": "Cambiar foto"
+  "welcomeUser": "¡Bienvenido {{username}}!"
 }

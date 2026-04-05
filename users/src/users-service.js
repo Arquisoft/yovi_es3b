@@ -116,7 +116,22 @@ export function createApp(middleware = verifyToken) {
   })
 
   // ------------- PERFIL ------------------
+  app.put('/users/me/profile', middleware, async (req, res) => {
+    const { uid } = req.user
+    const { username, photoURL } = req.body
 
+    try {
+      const user = await User.findOneAndUpdate(
+          { firebaseUid: uid },
+          { $set: { ...(username && { username }), ...(photoURL && { photoURL }) } },
+          { new: true, projection: { username: 1, photoURL: 1 } }
+      )
+      if (!user) return res.status(404).json({ error: 'Usuario no encontrado' })
+      res.json(user)
+    } catch (err) {
+      res.status(400).json({ error: err.message })
+    }
+  })
 
   return app
 }
