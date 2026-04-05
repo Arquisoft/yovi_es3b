@@ -160,3 +160,7 @@ YOVI is not responsible for:
 * User statistics.
 * Suggested moves returned by the game engine.
 
+=== Use Cases
+
+image::UseCasesYovi.png[Use Case Diagram]
+
