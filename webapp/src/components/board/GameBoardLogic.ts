@@ -155,9 +155,10 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty) {
             console.error("Bot error:", err);
             alert(`Error al obtener el movimiento del bot: ${String(err?.message ?? err)}`);
         } finally {
-            setCurrentPlayer(1);
-            setLoadingBot(false);
-        }
+            if (!gameFinishedRef.current) {
+        setCurrentPlayer(1);
+        setLoadingBot(false);
+    }
     };
 
     // ---- reset board -----------------------------------------------
