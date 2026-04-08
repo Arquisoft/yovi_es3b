@@ -3,7 +3,6 @@ import {useAuth} from "../../context/AuthContext.tsx";
 import {useTranslation} from "react-i18next";
 import "./EditProfile.css"
 import {AVATARS} from "./avatars.ts";
-import ProfilePage from "../../ProfilePage.tsx";
 
 interface EditProfileProps {
     onCancel: () => void;
@@ -12,7 +11,6 @@ interface EditProfileProps {
 const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
     const { t } = useTranslation();
     const { username, photoURL, setUsername, setPhotoURL, token } = useAuth();
-    const [editing, setEditing] = useState(true);
     const [newUsername, setNewUsername] = useState(username ?? "");
     const [newPhoto, setNewPhoto] = useState(photoURL ?? AVATARS[0]);
     const [error, setError] = useState<string | null>(null);
@@ -42,7 +40,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
             }
             setUsername(newUsername.trim());
             setPhotoURL(newPhoto);
-            setEditing(false);
+            onCancel();
         } catch (err) {
             setError(t('profile.saveError'));
         } finally {
@@ -50,15 +48,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
         }
     };
 
-    if (!editing && !loading){
-        return <ProfilePage/>;
-    }
+
 
     return (
         <div className="profile-page">
             <h1>{t('profile.title')}</h1>
             <div className="profile-wrap">
-                {editing && (
+
                     <div className="profile-edit-form">
                         <div className="form-group">
                             <label htmlFor="username">{t('profile.username')}</label>
@@ -102,7 +98,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
                             </button>
                         </div>
                     </div>
-                )}
+
             </div>
         </div>
     );
