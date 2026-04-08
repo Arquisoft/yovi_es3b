@@ -37,6 +37,8 @@ paths:
                     type: string
                     format: date-time
                     example: "2024-01-15T10:30:00Z"
+        '401':
+          description: Unauthorized – missing or invalid token
         '404':
           description: User not found
           content:
@@ -88,6 +90,8 @@ paths:
                     gamesLost:
                       type: integer
                       example: 4
+        '401':
+          description: Unauthorized – missing or invalid token
         '500':
           description: Internal server error
           content:
@@ -115,6 +119,8 @@ paths:
                   message:
                     type: string
                     example: "Welcome Pablo"
+        '401':
+          description: Unauthorized – missing or invalid token
         '409':
           description: There is already an existing user with the same id
           content:
@@ -125,7 +131,7 @@ paths:
                   error:
                     type: string
                     example: "User already registered"
-        '400':
+        '500':
           description: There is an unexpected error
           content:
             application/json:
@@ -176,6 +182,8 @@ paths:
                     type: string
                     format: date-time
                     example: "2024-01-15T10:30:00Z"
+        '401':
+          description: Unauthorized – missing or invalid token
         '409':
           description: There is already an existing user with the same id
           content:
@@ -186,7 +194,7 @@ paths:
                   error:
                     type: string
                     example: "User already registered"
-        '400':
+        '500':
           description: There is an unexpected error
           content:
             application/json:
@@ -227,6 +235,8 @@ paths:
                     difficulty:
                       type: string
                       example: "extreme"
+        '401':
+          description: Unauthorized – missing or invalid token
         '404':
           description: There is no user with that id
           content:
@@ -247,7 +257,77 @@ paths:
                   error:
                     type: string
                     example: "Internal error"
-
+  /users/me/profile:
+    put:
+      summary: Updates current user profile
+      description: Updates the authenticated user's profile information.
+        Allows partial updates of username and/or photoURL.
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "NuevoNombre"
+                photoURL:
+                  type: string
+                  example: "avatar_3.png"
+              minProperties: 1
+            examples:
+              updateUsername:
+                summary: Update username only
+                value:
+                  username: "NuevoNombre"
+              updatePhotoURL:
+                summary: Update photoURL only
+                value:
+                  photoURL: "avatar_2.png"
+              updateBoth:
+                summary: Update both username and photoURL
+                value:
+                  username: "NuevoNombre"
+                  photoURL: "avatar_2.png"
+      responses:
+        '200':
+          description: User profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: "NuevoNombre"
+                  photoURL:
+                    type: string
+                    example: "avatar_2.png"
+        '401':
+          description: Unauthorized – missing or invalid token
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Usuario no encontrado"
+        '500':
+          description: Error while updating user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
 components:
   securitySchemes:
     bearerAuth:

@@ -78,7 +78,7 @@ export function createApp(middleware = verifyToken) {
       await User.create({ firebaseUid: uid, username })
       res.status(201).json({ message: req.t('welcomeUser', { username }) })
     } catch (err) {
-      res.status(400).json({ error: err.message })
+      res.status(500).json({ error: err.message })
     }
   })
 
@@ -97,7 +97,7 @@ export function createApp(middleware = verifyToken) {
       })
       res.status(201).json(game)
     } catch (err) {
-      res.status(400).json({ error: err.message })
+      res.status(500).json({ error: err.message })
     }
   })
 
@@ -129,7 +129,7 @@ export function createApp(middleware = verifyToken) {
       if (!user) return res.status(404).json({ error: 'Usuario no encontrado' })
       res.json(user)
     } catch (err) {
-      res.status(400).json({ error: err.message })
+      res.status(500).json({ error: err.message })
     }
   })
 
