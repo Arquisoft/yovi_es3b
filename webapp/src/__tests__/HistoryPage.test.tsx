@@ -3,12 +3,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import "@testing-library/jest-dom";
 import HistoryPage from "../components/history/HistoryPage.tsx";
 
+
+let mockLanguage = "es"
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
     // Para el format de la fecha
     i18n: {
-      language: "es",
+      language: mockLanguage,
     },
   }),
 }));
@@ -138,5 +140,54 @@ describe("HistoryPage", () => {
     // Verificar que existen 3 cards
     const gameCards = document.querySelectorAll(".game-card");
     expect(gameCards).toHaveLength(3);
+  });
+
+  test("renders duration under one minute in seconds", async () => {
+    const gameData = {
+      _id: "1",
+      winner: "player",
+      durationMs: 45_000,
+      turns: 5,
+      difficulty: "easy",
+      createdAt: new Date().toISOString(),
+    };
+
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => [gameData],
+    });
+
+    renderHistoryPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("history.win")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("45s")).toBeInTheDocument();
+  });
+
+  test("uses English locale when i18n language is en", async () => {
+    const gameData = {
+      _id: "1",
+      winner: "player",
+      durationMs: 100_000,
+      turns: 10,
+      difficulty: "medium",
+      createdAt: new Date().toISOString(),
+    };
+
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => [gameData],
+    });
+
+    mockLanguage="en"
+    renderHistoryPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("history.win")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/history\.today/)).toBeInTheDocument();
   });
 });
