@@ -3,25 +3,28 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import "@testing-library/jest-dom";
 import HistoryPage from "../components/history/HistoryPage.tsx";
 
+
+let mockLanguage = "es"
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
     // Para el format de la fecha
     i18n: {
-      language: "es",
+      language: mockLanguage,
     },
   }),
 }));
 
+let mockUser :object | null = {username: "TestUser",
+  photoURL: "avatar_1.png",
+  token: "fake-token",
+  user: {
+    getIdToken: vi.fn().mockResolvedValue("fake-token"),
+  },
+};
+
 vi.mock("../context/AuthContext", () => ({
-  useAuth: () => ({
-    username: "TestUser",
-    photoURL: "avatar_1.png",
-    token: "fake-token",
-    user: {
-      getIdToken: vi.fn().mockResolvedValue("fake-token"),
-    },
-  }),
+  useAuth: () => (mockUser),
 }));
 
 const renderHistoryPage = () => render(<HistoryPage />);
@@ -139,4 +142,78 @@ describe("HistoryPage", () => {
     const gameCards = document.querySelectorAll(".game-card");
     expect(gameCards).toHaveLength(3);
   });
+
+  test("renders duration under one minute in seconds", async () => {
+    const gameData = {
+      _id: "1",
+      winner: "player",
+      durationMs: 45_000,
+      turns: 5,
+      difficulty: "easy",
+      createdAt: new Date().toISOString(),
+    };
+
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => [gameData],
+    });
+
+    renderHistoryPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("history.win")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("45s")).toBeInTheDocument();
+  });
+
+  test("uses English locale when i18n language is en", async () => {
+    const gameData = {
+      _id: "1",
+      winner: "player",
+      durationMs: 100_000,
+      turns: 10,
+      difficulty: "medium",
+      createdAt: new Date().toISOString(),
+    };
+
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => [gameData],
+    });
+
+    mockLanguage="en"
+    renderHistoryPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("history.win")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/history\.today/)).toBeInTheDocument();
+  });
+
+  test("shows error message when API responds with non-ok status", async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: false,
+    });
+
+    renderHistoryPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("history.error")).toBeInTheDocument();
+    });
+
+    const errorMessage = await screen.findByText("history.error");
+    expect(errorMessage).toHaveClass("history-status");
+  });
+
+
+  test("does not fetch games when user is not available", () => {
+    mockUser = {};
+    renderHistoryPage();
+
+    expect(screen.getByText("history.loading")).toBeInTheDocument();
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
 });
