@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import {fireEvent, render, screen, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import '@testing-library/jest-dom'
@@ -16,16 +16,21 @@ vi.mock('react-i18next', () => ({
 const mockSetUsername = vi.fn()
 const mockSetPhotoURL = vi.fn()
 
+let mockUsername: string | null = 'TestUser';
+let mockPhotoURL: string | null = 'avatar_1.png';
+
 // Mock de datos de usuario
+
 vi.mock('../context/AuthContext', () => ({
     useAuth: () => ({
-        username: 'TestUser',
-        photoURL: 'avatar_1.png',
+        username: mockUsername,
+        photoURL: mockPhotoURL,
         token: 'fake-token',
         setUsername: mockSetUsername,
         setPhotoURL: mockSetPhotoURL,
     }),
-}))
+}));
+
 
 // Mock de tres avatares
 vi.mock('../components/profile/avatars', () => ({
@@ -49,6 +54,8 @@ describe('EditProfile', () => {
 
     afterEach(() => {
         vi.restoreAllMocks()
+        mockUsername = 'TestUser';
+        mockPhotoURL = 'avatar_1.png';
     })
 
     test('renders EditProfile page with current username pre-filled', () => {
@@ -326,4 +333,28 @@ describe('ProfilePage', () => {
             expect(screen.getByText('TestUser')).toBeInTheDocument()
         })
     })
+
+
+    test('uses default avatar when photoURL is null', () => {
+        mockPhotoURL = null;
+
+        renderProfilePage();
+
+        const img = screen.getByRole('img');
+        expect(img).toHaveAttribute('src', '/avatars/avatar_1.png');
+    });
+
+    test('sets default avatar on image error', () => {
+        mockPhotoURL = 'broken.png';
+        mockUsername = null;
+
+        renderProfilePage();
+        const img = screen.getByRole('img');
+        expect(img).toHaveAttribute('src', '/avatars/broken.png');
+
+        // simulamos error
+        fireEvent.error(img);
+        // efecto del onError
+        expect(img).toHaveAttribute('src', '/avatars/avatar_1.png');
+    });
 })

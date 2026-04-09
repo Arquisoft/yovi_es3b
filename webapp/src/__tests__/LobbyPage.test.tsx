@@ -21,9 +21,11 @@ vi.mock("react-i18next", () => ({
   ),
 }));
 
+let mockUsername: string | null = 'TestUser';
+
 vi.mock("../context/AuthContext", () => ({
   useAuth: () => ({
-    username: "TestUser",
+    username: mockUsername,
     photoURL: "avatar_1.png",
     token: "fake-token",
   }),
@@ -89,13 +91,21 @@ describe("LobbyPage", () => {
   });
 
     test("link to documentation is present with text 'officialDocs'", async () => {
-        renderLobby();
+      renderLobby();
 
-        const docsLink = screen.getByRole("link", { name: /officialDocs/ });
-        expect(docsLink).toHaveAttribute(
-            "href",
-            "https://arquisoft.github.io/yovi_es3b/",
-        );
-        expect(docsLink).toHaveClass( "lobby-docs-link")
+      const docsLink = screen.getByRole("link", { name: /officialDocs/ });
+      expect(docsLink).toHaveAttribute(
+          "href",
+          "https://arquisoft.github.io/yovi_es3b/",
+      );
+      expect(docsLink).toHaveClass( "lobby-docs-link")
     });
+
+    test('expect default username(...) when username is not present', () => {
+      mockUsername = null;
+      renderLobby();
+
+      const title = screen.getByRole("heading");
+      expect(title).toHaveTextContent("lobby.welcome ...");
+    })
 });
