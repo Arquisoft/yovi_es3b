@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema({
     firebaseUid:  { type: String, required: true, unique: true },
@@ -10,4 +10,4 @@ const userSchema = new mongoose.Schema({
     photoURL:     {type: String, default:"avatar_1.png"}
 });
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model('User', userSchema)

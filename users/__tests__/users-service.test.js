@@ -1,5 +1,9 @@
 import { describe, it, expect, afterEach, beforeAll, vi } from 'vitest'
 import request from 'supertest'
+import mongoose from "mongoose";
+import {connectMongo} from "../src/db/mongo";
+import {createVerifyToken} from "../src/middleware/auth";
+import {detectLanguage} from "../src/middleware/languaje";
 
 vi.mock('../src/db/models/User.js', () => ({
     default: {
@@ -403,4 +407,131 @@ describe('PUT /users/me/profile', () => {
 
         expect(res.status).toBe(500);
     });
+})
+
+describe('connectMongo', () => {
+    it('connects to mongo with default URL', async () => {
+        // Para observar la función connect y comprobar que se ha llamado
+        const connectSpy = vi.spyOn(mongoose, 'connect').mockResolvedValue(undefined)
+
+        delete process.env.MONGO_URL
+        await connectMongo()
+
+        expect(connectSpy).toHaveBeenCalledWith(
+            'mongodb://localhost:27017/yovi'
+        )
+    })
+
+    it('connects using MONGO_URL env variable', async () => {
+        const connectSpy = vi.spyOn(mongoose, 'connect').mockResolvedValue(undefined)
+        process.env.MONGO_URL = 'mongodb://custom:27017/test'
+
+        await connectMongo()
+
+        expect(connectSpy).toHaveBeenCalledWith(
+            'mongodb://custom:27017/test'
+        )
+    })
+})
+
+describe('verifyToken middleware', () => {
+    const mockReq = (headers = {}) => ({
+        headers,
+        t: (key) => key,
+    })
+
+    // Si no ponemos mock da error porque firebase no se inicializa
+    const mockAdmin = {
+        auth: () => ({
+            verifyIdToken: vi.fn()
+        })
+    }
+
+    // Para tener status y json en la res
+    const mockRes = () => {
+        const res = {}
+        res.status = vi.fn().mockReturnValue(res)
+        res.json = vi.fn().mockReturnValue(res)
+        return res
+    }
+
+    it('returns 401 when Authorization header is missing', async () => {
+        const verifyToken = createVerifyToken(mockAdmin)
+        const req = mockReq({})
+        const res = mockRes()
+        const next = vi.fn()
+
+        await verifyToken(req, res, next)
+
+        expect(res.status).toHaveBeenCalledWith(401)
+        expect(next).not.toHaveBeenCalled()
+    })
+
+    it('returns 401 when header does not start with Bearer token', async () => {
+        const verifyToken = createVerifyToken(mockAdmin)
+        const req = mockReq({ authorization: 'Basic abc123' })
+        const res = mockRes()
+        const next = vi.fn()
+
+        await verifyToken(req, res, next)
+
+        expect(res.status).toHaveBeenCalledWith(401)
+    })
+
+    it('calls next() and sets req.user when token is valid', async () => {
+        const decodedToken = { uid: 'test-uid-123', email: 'test@test.com' }
+
+        // Mock para la funcion verifyIdToken que usa Auth.js
+        const adminWithValidToken = {
+            auth: () => ({
+                verifyIdToken: vi.fn().mockResolvedValue(decodedToken)
+            })
+        }
+
+        const verifyToken = createVerifyToken(adminWithValidToken)
+        const req = mockReq({ authorization: 'Bearer valid-token' })
+        const res = mockRes()
+        const next = vi.fn()
+
+        await verifyToken(req, res, next)
+
+        expect(next).toHaveBeenCalled()
+        expect(req.user).toEqual(decodedToken)
+        expect(res.status).not.toHaveBeenCalled()
+    })
+
+    it('returns 401 when token verification fails (fake or bad token)', async () => {
+        const adminWithBadToken = {
+            auth: () => ({
+                verifyIdToken: vi.fn().mockRejectedValue(
+                    new Error('invalid token')
+                )
+            })
+        }
+
+        const verifyToken = createVerifyToken(adminWithBadToken)
+        const req = mockReq({ authorization: 'Bearer bad-token' })
+        const res = mockRes()
+        const next = vi.fn()
+
+        await verifyToken(req, res, next)
+
+        expect(res.status).toHaveBeenCalledWith(401)
+        expect(res.json).toHaveBeenCalledWith({ error: 'tokenInvalid' })
+        expect(next).not.toHaveBeenCalled()
+    })
+})
+
+// languaje.test.js
+describe('detectLanguage middleware', () => {
+    it('sets req.t as a function that returns locals text by languaje', () => {
+        const req = { headers: {} }
+        const res = {}
+        const next = vi.fn()
+
+        detectLanguage(req, res, next)
+
+        expect(typeof req.t).toBe('function')
+        expect(next).toHaveBeenCalled()
+    })
 })

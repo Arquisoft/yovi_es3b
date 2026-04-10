@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 
 const gameSchema = new mongoose.Schema({
     username:   { type: String, required: true },
@@ -9,4 +9,4 @@ const gameSchema = new mongoose.Schema({
     createdAt:  { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Game", gameSchema);
+export default mongoose.model('Game', gameSchema)
