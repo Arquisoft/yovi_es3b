@@ -56,19 +56,87 @@ image::08-concepts-EN.drawio.png["Possible topics for crosscutting concepts"]
 See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
 ****
 endif::arc42help[]
+=== Domain Concepts
 
-=== _<Concept 1>_
+The system’s domain revolves around the board game Y, 
+encompassing gameplay mechanics, user interactions, and data persistence. 
+Core concepts include the game board, represented as a graph structure, and moves, 
+which describe the placement of a piece by either a player or the AI. 
+The win condition is defined as connecting all three sides with the player’s moves, and difficulty 
+levels dictate the complexity of AI behavior.
 
-_<explanation>_
+The domain model includes users identified by their Firebase UID, game sessions which store information such as ID, 
+state, difficulty, and result, individual moves that record position, player, and coordinates, and game history, 
+which keeps a list of sessions per user along with relevant details.
 
+Key domain processes involve starting a game session with a chosen AI difficulty, 
+executing player moves on the board, allowing the bot to respond with its own moves,
+checking for a win condition after each move, and storing the results in the user’s game history. 
+The authenticated flow begins with the user logging into the application, playing a complete game, 
+saving the results at the end, and retrieving their history to review previously played sessions.
 
+=== Safety & Security
 
-=== _<Concept 2>_
+Security is a primary cross-cutting concern and is largely handled via Firebase, 
+complemented by backend enforcement. Authentication is managed through Firebase Authentication using JWTs, 
+supporting email and password and allowing for future extension to OAuth providers. 
+Backend authorization validates Firebase ID tokens on every protected request, ensuring that only authenticated users 
+can interact with the system, and no passwords are stored on the backend.
 
-_<explanation>_
+Validation and integrity are enforced in the backend by checking game moves to prevent 
+illegal actions, verifying request payloads, and ensuring that no tampering occurs that could 
+compromise the state of the system.
 
-...
+=== Architecture & Design Patterns
 
-=== _<Concept n>_
+The system follows a client-server architecture with a stateless backend implemented in Rust.
+Several design patterns are applied to enhance modularity and maintainability, including a layered architecture,
+the strategy pattern to manage AI difficulty levels, a middleware pattern for JWT authentication, 
+and a component-based architecture in React for the frontend.
 
-_<explanation>_
+React handles the UI and user interaction, Rust implements the game logic, Node.js manages user data persistence, 
+and Firebase provides authentication services. This division ensures that each layer focuses on 
+its responsibilities while maintaining clean interfaces between them.
+
+=== Under-the-hood (Technical Concepts)
+
+The database stores game history and user references based on Firebase UID. 
+The system communicates through a REST API using JSON over HTTP, and all authenticated requests include a 
+Firebase ID token. Business rules are enforced in the backend, ensuring that only legal moves are allowed, 
+the correct turn order is maintained, and win condition logic is accurately evaluated. Rust allows efficient handling of 
+multiple concurrent game sessions and provides performance benefits through lightweight state management and optimized AI 
+computations for each difficulty level.
+
+=== User Interface & Experience
+
+The UI is built with React using modular components for the game board, history, and authentication. 
+Users experience instant feedback on moves, clear win and loss states, and smooth transitions between screens. 
+Ergonomics are prioritized with simple game controls and minimal interactions required to start playing. 
+Global state management includes maintaining the authentication session through Firebase, allowing consistent user 
+experience across components.
+
+=== Development Concepts
+
+The system’s build and configuration processes are streamlined with React’s build pipeline and Rust builds managed 
+via Cargo. Testing is performed at multiple levels, including unit tests for game logic and UI components, 
+as well as integration tests for API endpoints and authentication. The modular design of both frontend and 
+backend allows the addition of new game modes or features without impacting existing functionality.
+
+=== Operation & Administration
+
+The frontend is deployed as a static hosting application on Azure, 
+providing fast load times and easy scalability. 
+The backend runs as a cloud service on an Azure VM and can optionally be containerized with Docker for portability. 
+Backend logs track requests and errors, while Firebase provides authentication monitoring. API requests and errors are 
+traced to support debugging and operational insight.
+
+The backend is stateless with respect to persistent storage. 
+During gameplay, each backend instance maintains temporary in-memory game sessions to process moves, 
+evaluate game state, and respond with bot actions. Once a game ends, all results are stored in the database, 
+allowing backend instances to remain horizontally scalable and resilient. Frontend and backend components can scale 
+independently, optimizing resource usage and ensuring system availability even if partial failures occur, 
+such as temporary issues with authentication services.
+
+Key design decisions highlight the rationale behind technology choices: Firebase simplifies authentication management, 
+Rust ensures high-performance and memory-safe game logic, React enables interactive and reusable UI components, 
+and the stateless backend design promotes scalability, simplicity, and overall system resilience.
