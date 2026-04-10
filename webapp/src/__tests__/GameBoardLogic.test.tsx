@@ -3,9 +3,13 @@ import {renderHook, waitFor} from '@testing-library/react'
 import { useGameY, buildYEN, type Board } from '../components/board/GameBoardLogic'
 import {act} from "react";
 
-vi.mock('../../context/AuthContext', () => ({
-    useAuth: () => ({ user: { uid: 'test-uid' } })
-}))
+vi.mock("../../context/AuthContext", () => ({
+    useAuth: () => ({
+        username: 'TestName',
+        photoURL: "avatar_1.png",
+        token: "fake-token",
+    }),
+}));
 
 vi.mock('../GameResultApi', () => ({
     saveGame: vi.fn().mockResolvedValue(undefined),

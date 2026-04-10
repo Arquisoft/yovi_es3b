@@ -8,9 +8,13 @@ vi.mock('react-i18next', () => ({
     useTranslation: () => ({ t: (key: string) => key })
 }))
 
-vi.mock('../../context/AuthContext', () => ({
-    useAuth: () => ({ user: { uid: 'test-uid' } })
-}))
+vi.mock("../../context/AuthContext", () => ({
+    useAuth: () => ({
+        username: 'TestName',
+        photoURL: "avatar_1.png",
+        token: "fake-token",
+    }),
+}));
 
 vi.mock('../GameResultApi', () => ({
     saveGame: vi.fn().mockResolvedValue(undefined),
