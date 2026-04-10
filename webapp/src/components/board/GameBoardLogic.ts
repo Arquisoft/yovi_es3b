@@ -8,7 +8,7 @@ export type Board = Record<string, Player>;
 
 // YEN serialisation — converts the board state to the format the bot API
 // expects: rows of B (player 1), R (bot), or . (empty), joined by "/"
-function buildYEN(size: number, board: Board) {
+export function buildYEN(size: number, board: Board) {
     // Casillas ocupadas
     // Player 1 -> B
     // Player 2 -> R
