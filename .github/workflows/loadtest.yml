@@ -1,0 +1,35 @@
+name: Load Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  loadtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Create credentials file
+        run: |
+          mkdir -p loadtest/src/test/resources
+          echo "${{ secrets.GATLING_CREDENTIALS }}" > loadtest/src/test/resources/credentials.csv
+
+      - name: Run load test
+        env:
+          TARGET_URL: http://${{ secrets.DEPLOY_HOST }}:3000
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        run: |
+          cd loadtest
+          mvn gatling:test
+
+      - name: Upload Gatling report
+        uses: actions/upload-artifact@v4
+        with:
+          name: gatling-report
+          path: loadtest/target/gatling/**/index.html
