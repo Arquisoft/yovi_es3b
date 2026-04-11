@@ -1,6 +1,6 @@
 // Simula varios turnos por delante y elige la mejor jugada
 
-use crate::{Coordinates, GameY, GameStatus, Movement, PlayerId, YBot};
+use crate::{Coordinates, GameStatus, GameY, Movement, PlayerId, YBot};
 use std::collections::HashSet;
 
 pub struct MinimaxBot;
@@ -53,7 +53,10 @@ impl YBot for MinimaxBot {
         for (_, coords) in &candidates {
             // Simulamos nuestra jugada
             let mut clone = board.clone();
-            let mv = Movement::Placement { player: me, coords: *coords };
+            let mv = Movement::Placement {
+                player: me,
+                coords: *coords,
+            };
             if clone.add_move(mv).is_err() {
                 continue;
             }
@@ -79,6 +82,29 @@ impl YBot for MinimaxBot {
     }
 }
 
+// Processa un candidato y retorna su evaluacion
+fn evaluate_move(
+    board: &GameY,
+    cell: u32,
+    depth: u32,
+    alpha: i32,
+    beta: i32,
+    current_player: PlayerId,
+    me: PlayerId,
+    maximizing: bool,
+) -> Option<i32> {
+    let coords = Coordinates::from_index(cell, board.board_size());
+    let mut clone = board.clone();
+    let mv = Movement::Placement {
+        player: current_player,
+        coords,
+    };
+    if clone.add_move(mv).is_err() {
+        return None;
+    }
+    Some(minimax(&clone, depth - 1, alpha, beta, !maximizing, me))
+}
+
 // maximizing = true cuando es nuestro turno, mejor movimiento
 // false cuando es turno del rival
 fn minimax(
@@ -89,22 +115,24 @@ fn minimax(
     maximizing: bool,
     me: PlayerId,
 ) -> i32 {
-    // caso base: juego terminado o profundidad agotada
+    // Caso base: juego terminado
     if let GameStatus::Finished { winner } = board.status() {
         return if *winner == me { 10_000 } else { -10_000 };
     }
+
+    // Caso base: profundidad agotada
     if depth == 0 {
         return evaluate_board(board, me);
     }
 
+    // Caso base: tablero lleno
     let available = board.available_cells();
     if available.is_empty() {
         return evaluate_board(board, me);
     }
 
+    // Preparar candidatos ordenados
     let current_player = if maximizing { me } else { other(me) };
-
-    // Ordenar candidatos con el heuristico para la poda
     let mut candidates: Vec<(i32, u32)> = available
         .iter()
         .map(|&cell| {
@@ -114,49 +142,53 @@ fn minimax(
         })
         .collect();
 
+    // Procesar rama maximización
     if maximizing {
         candidates.sort_by(|a, b| b.0.cmp(&a.0));
-    } else {
-        candidates.sort_by(|a, b| a.0.cmp(&b.0));
-    }
-
-    if maximizing {
         let mut max_eval = i32::MIN;
         for (_, cell) in &candidates {
-            let coords = Coordinates::from_index(*cell, board.board_size());
-            let mut clone = board.clone();
-            let mv = Movement::Placement { player: current_player, coords };
-            if clone.add_move(mv).is_err() {
-                continue;
-            }
-
-            let eval = minimax(&clone, depth - 1, alpha, beta, false, me);
-            max_eval = max_eval.max(eval);
-            alpha = alpha.max(eval);
-            if beta <= alpha {
-                break; // poda beta
+            if let Some(eval) = evaluate_move(
+                board,
+                *cell,
+                depth,
+                alpha,
+                beta,
+                current_player,
+                me,
+                maximizing,
+            ) {
+                max_eval = max_eval.max(eval);
+                alpha = alpha.max(eval);
+                if beta <= alpha {
+                    break; // poda beta
+                }
             }
         }
-        max_eval
-    } else {
-        let mut min_eval = i32::MAX;
-        for (_, cell) in &candidates {
-            let coords = Coordinates::from_index(*cell, board.board_size());
-            let mut clone = board.clone();
-            let mv = Movement::Placement { player: current_player, coords };
-            if clone.add_move(mv).is_err() {
-                continue;
-            }
+        return max_eval;
+    }
 
-            let eval = minimax(&clone, depth - 1, alpha, beta, true, me);
+    // Procesar rama minimización
+    candidates.sort_by(|a, b| a.0.cmp(&b.0));
+    let mut min_eval = i32::MAX;
+    for (_, cell) in &candidates {
+        if let Some(eval) = evaluate_move(
+            board,
+            *cell,
+            depth,
+            alpha,
+            beta,
+            current_player,
+            me,
+            maximizing,
+        ) {
             min_eval = min_eval.min(eval);
             beta = beta.min(eval);
             if beta <= alpha {
-                break; // poda alfa
+                break;
             }
         }
-        min_eval
     }
+    min_eval
 }
 
 // Evaluacion estatica del tablerose usa cuando se alcanza la profundidad máxima
@@ -197,9 +229,15 @@ fn evaluate_player(board: &GameY, player: PlayerId) -> i32 {
             }
             group_size += 1;
 
-            if current.touches_side_a() { touches_a = true; }
-            if current.touches_side_b() { touches_b = true; }
-            if current.touches_side_c() { touches_c = true; }
+            if current.touches_side_a() {
+                touches_a = true;
+            }
+            if current.touches_side_b() {
+                touches_b = true;
+            }
+            if current.touches_side_c() {
+                touches_c = true;
+            }
 
             for neighbor in board.get_neighbors(&current) {
                 if board.cell_owner(&neighbor) == Some(player) && !visited.contains(&neighbor) {
@@ -213,7 +251,7 @@ fn evaluate_player(board: &GameY, player: PlayerId) -> i32 {
 
         // Puntuamos según los lados que toca y el tamaño del grupo
         score += match sides {
-            3 => 5000,   // conecta los 3 lados
+            3 => 5000, // conecta los 3 lados
             2 => 200 + group_size * 10,
             1 => 50 + group_size * 5,
             _ => group_size * 2,
@@ -229,16 +267,24 @@ fn quick_heuristic(board: &GameY, coords: &Coordinates, player: PlayerId) -> i32
     let mut h = 0i32;
 
     // Vecinos propios
-    let friendly = neighbors.iter().filter(|n| board.cell_owner(n) == Some(player)).count();
+    let friendly = neighbors
+        .iter()
+        .filter(|n| board.cell_owner(n) == Some(player))
+        .count();
     h += friendly as i32 * 10;
 
     // Vecinos del rival
     let rival = other(player);
-    let enemy = neighbors.iter().filter(|n| board.cell_owner(n) == Some(rival)).count();
+    let enemy = neighbors
+        .iter()
+        .filter(|n| board.cell_owner(n) == Some(rival))
+        .count();
     h += enemy as i32 * 8;
 
     // Bonus por borde
-    if coords.is_on_edge() { h += 5; }
+    if coords.is_on_edge() {
+        h += 5;
+    }
 
     // Bonus por cercanía al centro
     let dist = coords.distance_to_center(board.board_size());
@@ -248,7 +294,11 @@ fn quick_heuristic(board: &GameY, coords: &Coordinates, player: PlayerId) -> i32
 }
 
 fn other(player: PlayerId) -> PlayerId {
-    if player.id() == 0 { PlayerId::new(1) } else { PlayerId::new(0) }
+    if player.id() == 0 {
+        PlayerId::new(1)
+    } else {
+        PlayerId::new(0)
+    }
 }
 
 #[cfg(test)]
@@ -271,9 +321,18 @@ mod tests {
         let mut game = GameY::new(2);
 
         let moves = vec![
-            Movement::Placement { player: PlayerId::new(0), coords: Coordinates::new(1, 0, 0) },
-            Movement::Placement { player: PlayerId::new(1), coords: Coordinates::new(0, 1, 0) },
-            Movement::Placement { player: PlayerId::new(0), coords: Coordinates::new(0, 0, 1) },
+            Movement::Placement {
+                player: PlayerId::new(0),
+                coords: Coordinates::new(1, 0, 0),
+            },
+            Movement::Placement {
+                player: PlayerId::new(1),
+                coords: Coordinates::new(0, 1, 0),
+            },
+            Movement::Placement {
+                player: PlayerId::new(0),
+                coords: Coordinates::new(0, 0, 1),
+            },
         ];
         for mv in moves {
             game.add_move(mv).unwrap();
@@ -289,25 +348,35 @@ mod tests {
 
         // Player 0 juega arriba
         game.add_move(Movement::Placement {
-            player: PlayerId::new(0), coords: Coordinates::new(2, 0, 0),
-        }).unwrap();
+            player: PlayerId::new(0),
+            coords: Coordinates::new(2, 0, 0),
+        })
+        .unwrap();
 
         // Bot (player 1) coloca en lado A y lado B
         game.add_move(Movement::Placement {
-            player: PlayerId::new(1), coords: Coordinates::new(0, 0, 2),
-        }).unwrap();
+            player: PlayerId::new(1),
+            coords: Coordinates::new(0, 0, 2),
+        })
+        .unwrap();
 
         game.add_move(Movement::Placement {
-            player: PlayerId::new(0), coords: Coordinates::new(1, 1, 0),
-        }).unwrap();
+            player: PlayerId::new(0),
+            coords: Coordinates::new(1, 1, 0),
+        })
+        .unwrap();
 
         game.add_move(Movement::Placement {
-            player: PlayerId::new(1), coords: Coordinates::new(0, 1, 1),
-        }).unwrap();
+            player: PlayerId::new(1),
+            coords: Coordinates::new(0, 1, 1),
+        })
+        .unwrap();
 
         game.add_move(Movement::Placement {
-            player: PlayerId::new(0), coords: Coordinates::new(1, 0, 1),
-        }).unwrap();
+            player: PlayerId::new(0),
+            coords: Coordinates::new(1, 0, 1),
+        })
+        .unwrap();
 
         // El bot debería encontrar la jugada ganadora si existe
         let bot = MinimaxBot;

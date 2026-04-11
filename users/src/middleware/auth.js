@@ -4,7 +4,7 @@ function createVerifyToken(adminInstance = null) {
     return async function verifyToken(req, res, next) {
         const authHeader = req.headers.authorization;
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (!authHeader?.startsWith("Bearer ")) {
             return res.status(401).json({ error: req.t('tokenNotProvided') });
         }
 

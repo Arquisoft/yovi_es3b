@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import path from 'path'
+import path from 'node:path'
 import { fileURLToPath } from 'url'
 import fs from 'node:fs'
 import express from 'express'
