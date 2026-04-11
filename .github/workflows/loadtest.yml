@@ -23,7 +23,7 @@ jobs:
       - name: Run load test
         env:
           TARGET_URL: http://${{ secrets.DEPLOY_HOST }}:3000
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
         run: |
           cd loadtest
           mvn gatling:test
