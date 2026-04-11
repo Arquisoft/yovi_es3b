@@ -6,6 +6,10 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       reporter: ['text', 'lcov'],
+      exclude: [
+          'src/i18n/i18n.js',
+          'src/firebase/admin.js'
+      ]
     },
   },
 })

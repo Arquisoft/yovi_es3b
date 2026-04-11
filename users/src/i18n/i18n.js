@@ -1,6 +1,6 @@
 const i18next = require('i18next');
 const Backend = require('i18next-fs-backend');
-const path = require('path');
+const path = require('node:path');
 
 i18next
     .use(Backend)
