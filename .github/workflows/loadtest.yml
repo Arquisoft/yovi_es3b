@@ -32,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gatling-report
-          path: loadtest/target/gatling/**/index.html
+          path: loadtest/target/gatling/
