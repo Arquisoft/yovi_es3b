@@ -124,6 +124,33 @@ fn get_sides_touched_by_player(board: &GameY, player: PlayerId) -> (bool, bool, 
     (a, b, c)
 }
 
+// Marca un grupo de piezas conectadas como visitadas usando BFS
+fn mark_group_as_visited(
+    board: &GameY,
+    start_idx: usize,
+    friendly_neighbors: &[&Coordinates],
+    visited: &mut Vec<bool>,
+) {
+    let mut stack = vec![start_idx];
+    while let Some(current) = stack.pop() {
+        if visited[current] {
+            continue;
+        }
+        visited[current] = true;
+
+        for j in 0..friendly_neighbors.len() {
+            if !visited[j] && are_neighbors(board, friendly_neighbors[current], friendly_neighbors[j]) {
+                stack.push(j);
+            }
+        }
+    }
+}
+
+// Comprueba si dos casillas son adyacentes
+fn are_neighbors(board: &GameY, a: &Coordinates, b: &Coordinates) -> bool {
+    board.get_neighbors(a).contains(b)
+}
+
 // Cuenta cuántos grupos distintos de piezas del usuario rodean esta casilla.
 // Si hay 2 o más, se coloca aquí
 fn count_distinct_friendly_groups(
@@ -150,28 +177,10 @@ fn count_distinct_friendly_groups(
             continue;
         }
         groups += 1;
-        // Marcamos todas las piezas adyacentes conectadas a este
-        let mut stack = vec![i];
-        while let Some(current) = stack.pop() {
-            if visited[current] {
-                continue;
-            }
-            visited[current] = true;
-
-            for j in 0..friendly_neighbors.len() {
-                if !visited[j] && are_neighbors(board, friendly_neighbors[current], friendly_neighbors[j]) {
-                    stack.push(j);
-                }
-            }
-        }
+        mark_group_as_visited(board, i, &friendly_neighbors, &mut visited);
     }
 
     groups
-}
-
-// Comprueba si dos casillas son adyacentes
-fn are_neighbors(board: &GameY, a: &Coordinates, b: &Coordinates) -> bool {
-    board.get_neighbors(a).contains(b)
 }
 
 // Detecta si el rival tiene algún grupo adyacente a esta casilla que ya toca 2 lados.

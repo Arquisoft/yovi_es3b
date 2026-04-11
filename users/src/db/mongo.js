@@ -6,5 +6,3 @@ export async function connectMongo() {
     await mongoose.connect(url);
     console.log("[users] Mongo connected:", url);
 }
-
-module.exports = { connectMongo };
