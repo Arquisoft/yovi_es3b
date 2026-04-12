@@ -21,7 +21,7 @@ pub struct PlayQuery {
     pub bot_id: Option<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct PlayResponse {
     pub coords: Coordinates,
 }

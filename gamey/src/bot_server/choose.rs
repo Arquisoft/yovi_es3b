@@ -1,7 +1,6 @@
 
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
     Json,
 };
 use serde::{Deserialize, Serialize};
@@ -133,9 +132,8 @@ pub async fn choose(
 
 #[cfg(test)]
 mod tests {
-     use super::*;
-    use crate::PlayerId;
     use super::*;
+    use crate::PlayerId;
 
     #[test]
     fn test_move_response_creation() {
