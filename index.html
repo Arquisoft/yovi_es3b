@@ -484,6 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_single_player_game_initialization">6.1. Single Player Game Initialization</a></li>
 <li><a href="#_player_move_and_bot_response">6.2. Player Move and Bot Response</a></li>
+<li><a href="#_view_match_history">6.3. View Match History</a></li>
 </ul>
 </li>
 <li><a href="#section-deployment-view">7. Deployment View</a>
@@ -494,9 +495,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#section-concepts">8. Cross-cutting Concepts</a>
 <ul class="sectlevel2">
-<li><a href="#_concept_1">8.1. <em>&lt;Concept 1&gt;</em></a></li>
-<li><a href="#_concept_2">8.2. <em>&lt;Concept 2&gt;</em></a></li>
-<li><a href="#_concept_n">8.3. <em>&lt;Concept n&gt;</em></a></li>
+<li><a href="#_domain_concepts">8.1. Domain Concepts</a></li>
+<li><a href="#_safety_security">8.2. Safety &amp; Security</a></li>
+<li><a href="#_architecture_design_patterns">8.3. Architecture &amp; Design Patterns</a></li>
+<li><a href="#_under_the_hood_technical_concepts">8.4. Under-the-hood (Technical Concepts)</a></li>
+<li><a href="#_user_interface_experience">8.5. User Interface &amp; Experience</a></li>
+<li><a href="#_development_concepts">8.6. Development Concepts</a></li>
+<li><a href="#_operation_administration">8.7. Operation &amp; Administration</a></li>
 </ul>
 </li>
 <li><a href="#section-design-decisions">9. Architecture Decisions</a>
@@ -1475,91 +1480,8 @@ descriptions, and code comments — is <strong>English</strong>.</p>
 <div class="sect1">
 <h2 id="section-building-block-view">5. Building Block View</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<div class="title">Content</div>
-<p>The building block view shows the static decomposition of the system into building blocks (modules, components, subsystems, classes, interfaces, packages, libraries, frameworks, layers, partitions, tiers, functions, macros, operations, data structures, &#8230;&#8203;) as well as their dependencies (relationships, associations, &#8230;&#8203;)</p>
-</div>
-<div class="paragraph">
-<p>This view is mandatory for every architecture documentation.
-In analogy to a house this is the <em>floor plan</em>.</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>Maintain an overview of your source code by making its structure understandable through
-abstraction.</p>
-</div>
-<div class="paragraph">
-<p>This allows you to communicate with your stakeholder on an abstract level without disclosing implementation details.</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>The building block view is a hierarchical collection of black boxes and white boxes
-(see figure below) and their descriptions.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="./images/05_building_blocks-EN.png" alt="Hierarchy of building blocks">
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Level 1</strong> is the white box description of the overall system together with black
-box descriptions of all contained building blocks.</p>
-</div>
-<div class="paragraph">
-<p><strong>Level 2</strong> zooms into some building blocks of level 1.
-Thus it contains the white box description of selected building blocks of level 1, together with black box descriptions of their internal building blocks.</p>
-</div>
-<div class="paragraph">
-<p><strong>Level 3</strong> zooms into selected building blocks of level 2, and so on.</p>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-5/">Building Block View</a> in the arc42 documentation.</p>
-</div>
-</div>
-</div>
 <div class="sect2">
 <h3 id="_whitebox_overall_system">5.1. Whitebox Overall System</h3>
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<p>Here you describe the decomposition of the overall system using the following white box template. It contains</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>an overview diagram</p>
-</li>
-<li>
-<p>a motivation for the decomposition</p>
-</li>
-<li>
-<p>black box descriptions of the contained building blocks. For these we offer you alternatives:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>use <em>one</em> table for a short and pragmatic overview of all contained building blocks and their interfaces</p>
-</li>
-<li>
-<p>use a list of black box descriptions of the building blocks according to the black box template (see below).
-Depending on your choice of tool this list could be sub-chapters (in text files), sub-pages (in a Wiki) or nested elements (in a modeling tool).</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>(optional:) important interfaces, that are not explained in the black box templates of a building block, but are very important for understanding the white box.
-Since there are so many ways to specify interfaces why do not provide a specific template for them.
- In the worst case you have to specify and describe syntax, semantics, protocols, error handling,
- restrictions, versions, qualities, necessary compatibilities and many things more.
-In the best case you will get away with examples or simple signatures.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
 <div class="imageblock">
 <div class="content">
 <img src="./images/overviewDiagramLevel1.png" alt="Overview Diagram Level 1">
@@ -1615,43 +1537,6 @@ In the best case you will get away with examples or simple signatures.</p>
 </tr>
 </tbody>
 </table>
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<p>Insert your explanations of black boxes from level 1:</p>
-</div>
-<div class="paragraph">
-<p>If you use tabular form you will only describe your black boxes with name and
-responsibility according to the following schema:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top"><strong>Name</strong></th>
-<th class="tableblock halign-left valign-top"><strong>Responsibility</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;black box 1&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"> <em>&lt;Text&gt;</em></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>&lt;black box 2&gt;</em></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"> <em>&lt;Text&gt;</em></p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>If you use a list of black box descriptions then you fill in a separate black box template for every important building block .
-Its headline is the name of the black box.</p>
-</div>
-</div>
-</div>
 <div class="sect3">
 <h4 id="_webapp">5.1.1. Webapp</h4>
 <div class="sidebarblock arc42help">
@@ -1784,12 +1669,6 @@ according the the following black box template:</p>
 </div>
 <div class="paragraph">
 <p>User management and authentication</p>
-</div>
-<div class="paragraph">
-<p>Game session handling</p>
-</div>
-<div class="paragraph">
-<p>Coordination of system components</p>
 </div>
 <div class="paragraph">
 <p><strong>Open Issues/Problems/Risks</strong></p>
@@ -2199,6 +2078,36 @@ You will mainly capture scenarios in your documentation to communicate your arch
 </li>
 </ol>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_view_match_history">6.3. View Match History</h3>
+<div class="imageblock">
+<div class="content">
+<img src="./images/Match%20history%20sequence%20(WebApp%20→%20Game.js).png" alt="Match history sequence (WebApp → Game" width="429" height="305">
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Description</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>After logging in, the user accesses the history section from the navigation bar.</p>
+</li>
+<li>
+<p>The WebApp requests the user&#8217;s match history from the users module.</p>
+</li>
+<li>
+<p>Game.js retrieves all past matches associated with the user.</p>
+</li>
+<li>
+<p>The data is returned to the WebApp in JSON format.</p>
+</li>
+<li>
+<p>The interface displays the list of previously played matches of the player.</p>
+</li>
+</ol>
+</div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -2206,139 +2115,117 @@ You will mainly capture scenarios in your documentation to communicate your arch
 <div class="sect1">
 <h2 id="section-deployment-view">7. Deployment View</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<div class="title">Content</div>
-<p>The deployment view describes:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>technical infrastructure used to execute your system, with infrastructure elements like geographical locations, environments, computers, processors, channels and net topologies as well as other infrastructure elements and</p>
-</li>
-<li>
-<p>mapping of (software) building blocks to that infrastructure elements.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Often systems are executed in different environments, e.g. development environment, test environment, production environment. In such cases you should document all relevant environments.</p>
-</div>
-<div class="paragraph">
-<p>Especially document a deployment view if your software is executed as distributed system with more than one computer, processor, server or container or when you design and construct your own hardware processors and chips.</p>
-</div>
-<div class="paragraph">
-<p>From a software perspective it is sufficient to capture only those elements of an infrastructure that are needed to show a deployment of your building blocks. Hardware architects can go beyond that and describe an infrastructure to any level of detail they need to capture.</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>Software does not run without hardware.
-This underlying infrastructure can and will influence a system and/or some
-cross-cutting concepts. Therefore, there is a need to know the infrastructure.</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>Maybe a highest level deployment diagram is already contained in section 3.2. as
-technical context with your own infrastructure as ONE black box. In this section one can
-zoom into this black box using additional deployment diagrams:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>UML offers deployment diagrams to express that view. Use it, probably with nested diagrams,
-when your infrastructure is more complex.</p>
-</li>
-<li>
-<p>When your (hardware) stakeholders prefer other kinds of diagrams rather than a deployment diagram, let them use any kind that is able to show nodes and channels of the infrastructure.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-7/">Deployment View</a> in the arc42 documentation.</p>
-</div>
-</div>
-</div>
 <div class="sect2">
 <h3 id="_infrastructure_level_1">7.1. Infrastructure Level 1</h3>
-<div class="sidebarblock arc42help">
+<div class="imageblock text-center">
 <div class="content">
-<div class="paragraph">
-<p>Describe (usually in a combination of diagrams, tables, and text):</p>
+<img src="./images/Infrastructure-Level1.jpg" alt="Infrastructure Level 1 Diagram">
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>distribution of a system to multiple locations, environments, computers, processors, .., as well as physical connections between them</p>
-</li>
-<li>
-<p>important justifications or motivations for this deployment structure</p>
-</li>
-<li>
-<p>quality and/or performance features of this infrastructure</p>
-</li>
-<li>
-<p>mapping of software artifacts to elements of this infrastructure</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>For multiple environments or alternative deployments please copy and adapt this section of arc42 for all relevant environments.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p><em><strong>&lt;Overview Diagram&gt;</strong></em></p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Motivation</dt>
 <dd>
-<p><em>&lt;explanation in text form&gt;</em></p>
+<p>The system is deployed on a single Azure virtual machine, using Docker Compose to orchestrate all six services. This decision simplifies deployment and management for a small team while maintaining service isolation through containers. MongoDB runs as a container with a persistent volume so game and user data survives container restarts. Authentication is delegated to Firebase (Google Cloud) to avoid managing credentials manually. Monitoring is handled by a Prometheus + Grafana stack deployed alongside the application services.</p>
 </dd>
 <dt class="hdlist1">Quality and/or Performance Features</dt>
 <dd>
-<p><em>&lt;explanation in text form&gt;</em></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Availability</strong>: The Azure server runs 24/7. Docker Compose restarts containers automatically on failure. MongoDB data is persisted in a named Docker volume (<code>mongo_data</code>), so data is not lost on redeployment.</p>
+</li>
+<li>
+<p><strong>Observability</strong>: The <code>users</code> service exposes Prometheus-format metrics via <code>express-prom-bundle</code> at <code>/metrics</code>. Prometheus scrapes these metrics and Grafana provides dashboards for visualization, provisioned automatically via configuration files.</p>
+</li>
+<li>
+<p><strong>Security</strong>: Communication between the browser and the backend uses JWT tokens signed by Firebase. Sensitive variables (Firebase keys, MongoDB URL) are managed as GitHub Actions secrets and injected at deploy time via <code>appleboy/ssh-action</code>. The <code>mongo</code> container is not exposed externally — only accessible within the <code>monitor-net</code> internal network.</p>
+</li>
+<li>
+<p><strong>Scalability</strong>: The microservices architecture allows each service to be scaled independently if needed in the future.</p>
+</li>
+</ul>
+</div>
 </dd>
 <dt class="hdlist1">Mapping of Building Blocks to Infrastructure</dt>
-<dd>
-<p><em>&lt;description of the mapping&gt;</em></p>
-</dd>
 </dl>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Software Component</th>
+<th class="tableblock halign-left valign-top">Docker Container</th>
+<th class="tableblock halign-left valign-top">Exposed Port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">React Frontend (Vite + Nginx)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>webapp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Users and Games API (Node.js + Express)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>users</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game Engine and Bots (Rust + Axum)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gamey</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database (MongoDB 7)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mongo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">internal only</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics collection</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prometheus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9090</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics visualization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grafana</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9091</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_infrastructure_level_2">7.2. Infrastructure Level 2</h3>
-<div class="sidebarblock arc42help">
+<div class="sect3">
+<h4 id="_azure_virtual_machine">7.2.1. Azure Virtual Machine</h4>
+<div class="paragraph">
+<p>The VM runs Ubuntu 24.04 LTS. Docker Engine and Docker Compose are installed directly on the machine. SSH access for deployments is restricted via public/private key pair, with the private key stored as a GitHub Actions secret (<code>DEPLOY_KEY</code>). All containers share the internal <code>monitor-net</code> bridge network, which allows inter-service communication by container name (e.g. <code>users</code> connects to MongoDB as <code>mongodb://mongo:27017/yovi</code> and reaches the game engine at <code><a href="http://gamey:4000" class="bare">http://gamey:4000</a></code>). The <code>mongo</code> container is the only service not exposed externally. A named volume <code>mongo_data</code> persists database contents across deployments.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_cicd_pipeline_github_actions">7.2.2. CI/CD Pipeline (GitHub Actions)</h4>
+<div class="imageblock text-center">
 <div class="content">
-<div class="paragraph">
-<p>Here you can include the internal structure of (some) infrastructure elements from level 1.</p>
+<img src="./images/githubactions.jpg" alt="GitHub Actions CI/CD Pipeline">
+</div>
 </div>
 <div class="paragraph">
-<p>Please copy the structure from level 1 for each selected element.</p>
+<p>The pipeline is triggered when a release is published on GitHub. Unit tests for Node.js services (webapp and users) run in parallel via a matrix strategy, and Rust tests run concurrently. E2E tests run after all unit tests pass, with a real MongoDB 7 instance spun up as a GitHub Actions service and Firebase credentials injected as environment variables. Docker images are built and pushed to GitHub Container Registry (<code>ghcr.io/arquisoft/yovi_es3b-*</code>). The three Docker images are built in parallel after E2E tests pass. Finally, the server fetches the latest <code>docker-compose.yml</code> from the master branch and pulls the new images.</p>
 </div>
+<div class="paragraph">
+<p>The <code>webapp</code> image is built with all <code>VITE_*</code> variables injected as build arguments (API URL, Gamey URL, and Firebase configuration), since Vite embeds environment variables at build time and they cannot be changed at runtime.</p>
+</div>
+<div class="paragraph">
+<p>Firebase Admin credentials (<code>FIREBASE_PROJECT_ID</code>, <code>FIREBASE_CLIENT_EMAIL</code>, <code>FIREBASE_PRIVATE_KEY</code>) are transferred to the remote server via the <code>envs</code> parameter of <code>appleboy/ssh-action</code> so the <code>users</code> container can verify Firebase tokens at runtime.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_infrastructure_element_1">7.2.1. <em>&lt;Infrastructure Element 1&gt;</em></h4>
+<h4 id="_monitoring_stack">7.2.3. Monitoring Stack</h4>
 <div class="paragraph">
-<p><em>&lt;diagram + explanation&gt;</em></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_infrastructure_element_2">7.2.2. <em>&lt;Infrastructure Element 2&gt;</em></h4>
-<div class="paragraph">
-<p><em>&lt;diagram + explanation&gt;</em></p>
-</div>
-<div class="paragraph">
-<p>&#8230;&#8203;</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_infrastructure_element_n">7.2.3. <em>&lt;Infrastructure Element n&gt;</em></h4>
-<div class="paragraph">
-<p><em>&lt;diagram + explanation&gt;</em></p>
+<p>Prometheus is configured via <code>users/monitoring/prometheus/</code> and scrapes metrics from the <code>users</code> service at <code>/metrics</code>. Grafana reads from Prometheus and is provisioned automatically via <code>users/monitoring/grafana/provisioning/</code>. Both services are part of the <code>monitor-net</code> network. Grafana is accessible on port 9091 of the Azure VM (internally mapped from Grafana&#8217;s default port 3000).</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
@@ -2348,124 +2235,105 @@ when your infrastructure is more complex.</p>
 <div class="sect1">
 <h2 id="section-concepts">8. Cross-cutting Concepts</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
+<div class="sect2">
+<h3 id="_domain_concepts">8.1. Domain Concepts</h3>
 <div class="paragraph">
-<div class="title">Content</div>
-<p>This section describes overall, principal regulations and solution ideas that are relevant in multiple parts (= cross-cutting) of your system.
-Such concepts are often related to multiple building blocks.
-They can include many different topics, such as</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>models, especially domain models</p>
-</li>
-<li>
-<p>architecture or design patterns</p>
-</li>
-<li>
-<p>rules for using specific technology</p>
-</li>
-<li>
-<p>principal, often technical decisions of an overarching (= cross-cutting) nature</p>
-</li>
-<li>
-<p>implementation rules</p>
-</li>
-</ul>
+<p>The system’s domain revolves around the board game Y,
+encompassing gameplay mechanics, user interactions, and data persistence.
+Core concepts include the game board, represented as a graph structure, and moves,
+which describe the placement of a piece by either a player or the AI.
+The win condition is defined as connecting all three sides with the player’s moves, and difficulty
+levels dictate the complexity of AI behavior.</p>
 </div>
 <div class="paragraph">
-<div class="title">Motivation</div>
-<p>Concepts form the basis for <em>conceptual integrity</em> (consistency, homogeneity) of the architecture.
-Thus, they are an important contribution to achieve inner qualities of your system.</p>
+<p>The domain model includes users identified by their Firebase UID, game sessions which store information such as ID,
+state, difficulty, and result, individual moves that record position, player, and coordinates, and game history,
+which keeps a list of sessions per user along with relevant details.</p>
 </div>
 <div class="paragraph">
-<p>Some of these concepts cannot be assigned to individual building blocks, e.g. security or safety.</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>The form can be varied:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>concept papers with any kind of structure</p>
-</li>
-<li>
-<p>cross-cutting model excerpts or scenarios using notations of the architecture views</p>
-</li>
-<li>
-<p>sample implementations, especially for technical concepts</p>
-</li>
-<li>
-<p>reference to typical usage of standard frameworks (e.g. using Hibernate for object/relational mapping)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<div class="title">Structure</div>
-<p>A potential (but not mandatory) structure for this section could be:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Domain concepts</p>
-</li>
-<li>
-<p>User Experience concepts (UX)</p>
-</li>
-<li>
-<p>Safety and security concepts</p>
-</li>
-<li>
-<p>Architecture and design patterns</p>
-</li>
-<li>
-<p>"Under-the-hood"</p>
-</li>
-<li>
-<p>development concepts</p>
-</li>
-<li>
-<p>operational concepts</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Note: it might be difficult to assign individual concepts to one specific topic
-on this list.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="./images/08-concepts-EN.drawio.png" alt="Possible topics for crosscutting concepts">
-</div>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-8/">Concepts</a> in the arc42 documentation.</p>
-</div>
+<p>Key domain processes involve starting a game session with a chosen AI difficulty,
+executing player moves on the board, allowing the bot to respond with its own moves,
+checking for a win condition after each move, and storing the results in the user’s game history.
+The authenticated flow begins with the user logging into the application, playing a complete game,
+saving the results at the end, and retrieving their history to review previously played sessions.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_concept_1">8.1. <em>&lt;Concept 1&gt;</em></h3>
+<h3 id="_safety_security">8.2. Safety &amp; Security</h3>
 <div class="paragraph">
-<p><em>&lt;explanation&gt;</em></p>
+<p>Security is a primary cross-cutting concern and is largely handled via Firebase,
+complemented by backend enforcement. Authentication is managed through Firebase Authentication using JWTs,
+supporting email and password and allowing for future extension to OAuth providers.
+Backend authorization validates Firebase ID tokens on every protected request, ensuring that only authenticated users
+can interact with the system, and no passwords are stored on the backend.</p>
+</div>
+<div class="paragraph">
+<p>Validation and integrity are enforced in the backend by checking game moves to prevent
+illegal actions, verifying request payloads, and ensuring that no tampering occurs that could
+compromise the state of the system.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_concept_2">8.2. <em>&lt;Concept 2&gt;</em></h3>
+<h3 id="_architecture_design_patterns">8.3. Architecture &amp; Design Patterns</h3>
 <div class="paragraph">
-<p><em>&lt;explanation&gt;</em></p>
+<p>The system follows a client-server architecture with a stateless backend implemented in Rust.
+Several design patterns are applied to enhance modularity and maintainability, including a layered architecture,
+the strategy pattern to manage AI difficulty levels, a middleware pattern for JWT authentication,
+and a component-based architecture in React for the frontend.</p>
 </div>
 <div class="paragraph">
-<p>&#8230;&#8203;</p>
+<p>React handles the UI and user interaction, Rust implements the game logic, Node.js manages user data persistence,
+and Firebase provides authentication services. This division ensures that each layer focuses on
+its responsibilities while maintaining clean interfaces between them.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_concept_n">8.3. <em>&lt;Concept n&gt;</em></h3>
+<h3 id="_under_the_hood_technical_concepts">8.4. Under-the-hood (Technical Concepts)</h3>
 <div class="paragraph">
-<p><em>&lt;explanation&gt;</em></p>
+<p>The database stores game history and user references based on Firebase UID.
+The system communicates through a REST API using JSON over HTTP, and all authenticated requests include a
+Firebase ID token. Business rules are enforced in the backend, ensuring that only legal moves are allowed,
+the correct turn order is maintained, and win condition logic is accurately evaluated. Rust allows efficient handling of
+multiple concurrent game sessions and provides performance benefits through lightweight state management and optimized AI
+computations for each difficulty level.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_user_interface_experience">8.5. User Interface &amp; Experience</h3>
+<div class="paragraph">
+<p>The UI is built with React using modular components for the game board, history, and authentication.
+Users experience instant feedback on moves, clear win and loss states, and smooth transitions between screens.
+Ergonomics are prioritized with simple game controls and minimal interactions required to start playing.
+Global state management includes maintaining the authentication session through Firebase, allowing consistent user
+experience across components.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_development_concepts">8.6. Development Concepts</h3>
+<div class="paragraph">
+<p>The system’s build and configuration processes are streamlined with React’s build pipeline and Rust builds managed
+via Cargo. Testing is performed at multiple levels, including unit tests for game logic and UI components,
+as well as integration tests for API endpoints and authentication. The modular design of both frontend and
+backend allows the addition of new game modes or features without impacting existing functionality.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_operation_administration">8.7. Operation &amp; Administration</h3>
+<div class="paragraph">
+<p>The frontend is deployed as a static hosting application on Azure,
+providing fast load times and easy scalability.
+The backend runs as a cloud service on an Azure VM, optionally containerized using Docker for portability.
+Backend logs track requests and errors, while Firebase provides authentication monitoring. API requests and errors are
+traced to facilitate debugging and operational insight.</p>
+</div>
+<div class="paragraph">
+<p>The stateless backend architecture allows horizontal scaling,
+and Firebase automatically handles authentication scaling.
+Frontend and backend components can scale independently, optimizing resource usage and ensuring resilience to
+partial failures, such as when authentication services experience issues but gameplay continues uninterrupted.
+Key design decisions highlight the rationale behind technology choices: Firebase simplifies authentication management,
+Rust ensures high-performance and memory-safe game logic, React enables interactive and reusable UI components, and the
+stateless backend promotes scalability, simplicity, and overall system resilience.</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
@@ -2774,57 +2642,11 @@ The database needed to store user profiles and authentication data and persist g
 <div class="sect1">
 <h2 id="section-quality-scenarios">10. Quality Requirements</h2>
 <div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<div class="title">Content</div>
-<p>This section contains all quality requirements as quality tree with scenarios. The most important ones have already been described in section 1.2. (quality goals)</p>
-</div>
-<div class="paragraph">
-<p>Here you can also capture quality requirements with lesser priority,
-which will not create high risks when they are not fully achieved.</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>Since quality requirements will have a lot of influence on architectural
-decisions you should know for every stakeholder what is really important to them,
-concrete and measurable.</p>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-10/">Quality Requirements</a> in the arc42 documentation.</p>
-</div>
-</div>
-</div>
 <div class="sect2">
 <h3 id="_quality_tree">10.1. Quality Tree</h3>
-<div class="sidebarblock arc42help">
+<div class="imageblock">
 <div class="content">
-<div class="paragraph">
-<div class="title">Content</div>
-<p>The quality tree (as defined in ATAM – Architecture Tradeoff Analysis Method) with quality/evaluation scenarios as leafs.</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>The tree structure with priorities provides an overview for a sometimes large number of quality requirements.</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>The quality tree is a high-level overview of the quality goals and requirements:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>tree-like refinement of the term "quality". Use "quality" or "usefulness" as a root</p>
-</li>
-<li>
-<p>a mind map with quality categories as main branches</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>In any case the tree should include links to the scenarios of the following section.</p>
-</div>
+<svg contentStyleType='text/css' data-diagram-type='MINDMAP' preserveAspectRatio='none' version='1.1' viewBox='0 0 873 1001' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns='http://www.w3.org/2000/svg' zoomAndPan='magnify' width="873" height="1001"><defs/><g><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='63.5723' x='10' y='480.875'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='43.5723' x='20' y='505.4082'>Quality</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='72.9033' x='123.5723' y='77.6094'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='52.9033' x='133.5723' y='102.1426'>Usability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='415.2949' x='246.4756' y='20'/><a xlink:actuate='onRequest' xlink:href='#scenario-U1' href='#scenario-U1' xlink:show='new' target='_top' xlink:title='#scenario-U1' title='#scenario-U1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='256.4756' y='44.5332'>#scenario-U1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='308.1436' x='343.627' y='44.5332'>U1 - The UI adapts clearly to different board sizes</text><path d='M196.4756,96.4141 L206.4756,96.4141 C221.4756,96.4141 221.4756,38.8047 236.4756,38.8047 L246.4756,38.8047' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='434.7568' x='246.4756' y='77.6094'/><a xlink:actuate='onRequest' xlink:href='#scenario-U2' href='#scenario-U2' xlink:show='new' target='_top' xlink:title='#scenario-U2' title='#scenario-U2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='256.4756' y='102.1426'>#scenario-U2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='327.6055' x='343.627' y='102.1426'>U2 - A new user can start a game in under 2 minutes</text><path d='M196.4756,96.4141 L206.4756,96.4141 C221.4756,96.4141 221.4756,96.4141 236.4756,96.4141 L246.4756,96.4141' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='418.3574' x='246.4756' y='135.2188'/><a xlink:actuate='onRequest' xlink:href='#scenario-U3' href='#scenario-U3' xlink:show='new' target='_top' xlink:title='#scenario-U3' title='#scenario-U3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='256.4756' y='159.752'>#scenario-U3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='311.2061' x='343.627' y='159.752'>U3 - Game history is accessible in at most 3 clicks</text><path d='M196.4756,96.4141 L206.4756,96.4141 C221.4756,96.4141 221.4756,154.0234 236.4756,154.0234 L246.4756,154.0234' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,96.4141 113.5723,96.4141 L123.5723,96.4141' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='79.9102' x='123.5723' y='250.4375'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='59.9102' x='133.5723' y='274.9707'>Reliability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='493.0947' x='253.4824' y='192.8281'/><a xlink:actuate='onRequest' xlink:href='#scenario-R1' href='#scenario-R1' xlink:show='new' target='_top' xlink:title='#scenario-R1' title='#scenario-R1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='263.4824' y='217.3613'>#scenario-R1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='385.9434' x='350.6338' y='217.3613'>R1 - The system saves match results even if connection drops</text><path d='M203.4824,269.2422 L213.4824,269.2422 C228.4824,269.2422 228.4824,211.6328 243.4824,211.6328 L253.4824,211.6328' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='353.8057' x='253.4824' y='250.4375'/><a xlink:actuate='onRequest' xlink:href='#scenario-R2' href='#scenario-R2' xlink:show='new' target='_top' xlink:title='#scenario-R2' title='#scenario-R2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='263.4824' y='274.9707'>#scenario-R2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='246.6543' x='350.6338' y='274.9707'>R2 - User login works 99.9% of the time</text><path d='M203.4824,269.2422 L213.4824,269.2422 C228.4824,269.2422 228.4824,269.2422 243.4824,269.2422 L253.4824,269.2422' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='456.5225' x='253.4824' y='308.0469'/><a xlink:actuate='onRequest' xlink:href='#scenario-R3' href='#scenario-R3' xlink:show='new' target='_top' xlink:title='#scenario-R3' title='#scenario-R3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='263.4824' y='332.5801'>#scenario-R3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='349.3711' x='350.6338' y='332.5801'>R3 - The bot always makes a valid move within the rules</text><path d='M203.4824,269.2422 L213.4824,269.2422 C228.4824,269.2422 228.4824,326.8516 243.4824,326.8516 L253.4824,326.8516' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,269.2422 113.5723,269.2422 L123.5723,269.2422' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='100.1445' x='123.5723' y='423.2656'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='80.1445' x='133.5723' y='447.7988'>Performance</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='507.9492' x='273.7168' y='365.6563'/><a xlink:actuate='onRequest' xlink:href='#scenario-P1' href='#scenario-P1' xlink:show='new' target='_top' xlink:title='#scenario-P1' title='#scenario-P1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='283.7168' y='390.1895'>#scenario-P1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='401.5703' x='370.0957' y='390.1895'>P1 - The board renders in under 1 second for any supported size</text><path d='M223.7168,442.0703 L233.7168,442.0703 C248.7168,442.0703 248.7168,384.4609 263.7168,384.4609 L273.7168,384.4609' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='500.1631' x='273.7168' y='423.2656'/><a xlink:actuate='onRequest' xlink:href='#scenario-P2' href='#scenario-P2' xlink:show='new' target='_top' xlink:title='#scenario-P2' title='#scenario-P2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='283.7168' y='447.7988'>#scenario-P2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='393.7842' x='370.0957' y='447.7988'>P2 - The bot responds in under 2 seconds on any difficulty level</text><path d='M223.7168,442.0703 L233.7168,442.0703 C248.7168,442.0703 248.7168,442.0703 263.7168,442.0703 L273.7168,442.0703' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='378.7432' x='273.7168' y='480.875'/><a xlink:actuate='onRequest' xlink:href='#scenario-P3' href='#scenario-P3' xlink:show='new' target='_top' xlink:title='#scenario-P3' title='#scenario-P3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='283.7168' y='505.4082'>#scenario-P3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='272.3643' x='370.0957' y='505.4082'>P3 - Match history loads in under 3 seconds</text><path d='M223.7168,442.0703 L233.7168,442.0703 C248.7168,442.0703 248.7168,499.6797 263.7168,499.6797 L273.7168,499.6797' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,442.0703 113.5723,442.0703 L123.5723,442.0703' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='70.5723' x='123.5723' y='596.0938'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='50.5723' x='133.5723' y='620.627'>Security</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='415.2881' x='244.1445' y='538.4844'/><a xlink:actuate='onRequest' xlink:href='#scenario-S1' href='#scenario-S1' xlink:show='new' target='_top' xlink:title='#scenario-S1' title='#scenario-S1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='254.1445' y='563.0176'>#scenario-S1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='308.9092' x='340.5234' y='563.0176'>S1 - Passwords are stored encrypted (e.g. bcrypt)</text><path d='M194.1445,614.8984 L204.1445,614.8984 C219.1445,614.8984 219.1445,557.2891 234.1445,557.2891 L244.1445,557.2891' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='427.7363' x='244.1445' y='596.0938'/><a xlink:actuate='onRequest' xlink:href='#scenario-S2' href='#scenario-S2' xlink:show='new' target='_top' xlink:title='#scenario-S2' title='#scenario-S2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='254.1445' y='620.627'>#scenario-S2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='321.3574' x='340.5234' y='620.627'>S2 - A user can only access their own match history</text><path d='M194.1445,614.8984 L204.1445,614.8984 C219.1445,614.8984 219.1445,614.8984 234.1445,614.8984 L244.1445,614.8984' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='394.2949' x='244.1445' y='653.7031'/><a xlink:actuate='onRequest' xlink:href='#scenario-S3' href='#scenario-S3' xlink:show='new' target='_top' xlink:title='#scenario-S3' title='#scenario-S3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='254.1445' y='678.2363'>#scenario-S3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='287.916' x='340.5234' y='678.2363'>S3 - Sessions expire after a period of inactivity</text><path d='M194.1445,614.8984 L204.1445,614.8984 C219.1445,614.8984 219.1445,672.5078 234.1445,672.5078 L244.1445,672.5078' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,614.8984 113.5723,614.8984 L123.5723,614.8984' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='108.71' x='123.5723' y='768.9219'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='88.71' x='133.5723' y='793.4551'>Maintainability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='579.542' x='282.2822' y='711.3125'/><a xlink:actuate='onRequest' xlink:href='#scenario-M1' href='#scenario-M1' xlink:show='new' target='_top' xlink:title='#scenario-M1' title='#scenario-M1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='84.8135' x='292.2822' y='735.8457'>#scenario-M1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='470.8389' x='380.9854' y='735.8457'>M1 - Adding a new bot difficulty requires no changes outside the bot module</text><path d='M232.2822,787.7266 L242.2822,787.7266 C257.2822,787.7266 257.2822,730.1172 272.2822,730.1172 L282.2822,730.1172' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='472.9014' x='282.2822' y='768.9219'/><a xlink:actuate='onRequest' xlink:href='#scenario-M2' href='#scenario-M2' xlink:show='new' target='_top' xlink:title='#scenario-M2' title='#scenario-M2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='84.8135' x='292.2822' y='793.4551'>#scenario-M2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='364.1982' x='380.9854' y='793.4551'>M2 - Board size logic is configurable without code changes</text><path d='M232.2822,787.7266 L242.2822,787.7266 C257.2822,787.7266 257.2822,787.7266 272.2822,787.7266 L282.2822,787.7266' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='481.4463' x='282.2822' y='826.5313'/><a xlink:actuate='onRequest' xlink:href='#scenario-M3' href='#scenario-M3' xlink:show='new' target='_top' xlink:title='#scenario-M3' title='#scenario-M3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='84.8135' x='292.2822' y='851.0645'>#scenario-M3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='372.7432' x='380.9854' y='851.0645'>M3 - The codebase follows a consistent layered architecture</text><path d='M232.2822,787.7266 L242.2822,787.7266 C257.2822,787.7266 257.2822,845.3359 272.2822,845.3359 L282.2822,845.3359' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,787.7266 113.5723,787.7266 L123.5723,787.7266' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='81.4688' x='123.5723' y='912.9453'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='61.4688' x='133.5723' y='937.4785'>Portability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='495.4668' x='255.041' y='884.1406'/><a xlink:actuate='onRequest' xlink:href='#scenario-Po1' href='#scenario-Po1' xlink:show='new' target='_top' xlink:title='#scenario-Po1' title='#scenario-Po1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='90.2754' x='265.041' y='908.6738'>#scenario-Po1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='381.3018' x='359.2061' y='908.6738'>Po1 - The game runs on modern browsers without installation</text><path d='M205.041,931.75 L215.041,931.75 C230.041,931.75 230.041,902.9453 245.041,902.9453 L255.041,902.9453' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='535.2246' x='255.041' y='941.75'/><a xlink:actuate='onRequest' xlink:href='#scenario-Po2' href='#scenario-Po2' xlink:show='new' target='_top' xlink:title='#scenario-Po2' title='#scenario-Po2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='90.2754' x='265.041' y='966.2832'>#scenario-Po2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='421.0596' x='359.2061' y='966.2832'>Po2 - The backend can be deployed on any standard cloud provider</text><path d='M205.041,931.75 L215.041,931.75 C230.041,931.75 230.041,960.5547 245.041,960.5547 L255.041,960.5547' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,931.75 113.5723,931.75 L123.5723,931.75' fill='none' style='stroke:#181818;stroke-width:1;'/><?plantuml-src TPHDZzem48Rl_8gHgaejqg82KgMzxVPIzO2KGZcjzZ2n9s3XsAd7WQQ_lZCXeKZPFI0HI1xF-p5vuemfroxO6flP77wsw5tkPlCvx1bBDrpCuUNb0niAc5nys2zVNs6_X0VuTIJO_m2qs6G6umcJxo17iAwgA578K4PC5jZz9Pw2LWfQ2UWP0bsWPKfWC40_5I0Si2Pm0TfWvPyLoA1jVWkqLj1QGD_rYQFZ75C7ZW6D8MPN-fw36Uh86TOogpCd1S6Ml7jFwLQLRaUbt76c6XZFn51ZDaT8nAqNwNIc0Au24qCWarqCO5DiffDkLV9M9UzLh8y76UiIqudXyN7n-15Y1LdEogwcwSCgSxiUnYcZMEGlsEam9na9uIpfMP5u9hYuV1IqibBhUy-We5J5L6CmKtQXKelbZQsfIO3YE_zFO0bC8j62O0131zmsJKoPhWbFeQgsMDqDB8Or0k3xLAzC1Z5DcTeTPyJM3hpuwgTKjQ5G6pPz26FSFk8zU3s2LVgEJ9lUYdYdkdUgkq1cIK8Gc2HiGOei2YPrZGhyH8l30ih-ylCKeqftrohVQXo3RCErWHg4In0lOMZECFGKfE9sAcwdnOr1olMdSJ8HLbcu20t9VLQBuW9Aryx3mcxGXIoVzygyKQKRLVfihGi7GUdIQIftbYVwtSff3262EM8uoDVOPdQM-ZBfxNMqKgdf0Uh1HZtuTblwlk56Dr6YgDoXJQYxgEqKglmesE6OAK-js8nrrrjBP9BkUHylMdT1ijYehncF7MbUcCpHPLd1Db5VUMddUuOKiUzy74lVlsrI6_ecYaPA0SeaH-aEZ1Ex82ydxr5t_0rYN_XuQpoQa-nGNuQIm5BZOoTJ3aqNKh3gbF6njT2aU1QRq-n9dXdVoRFbOlLbzNMn-WS0?></g></svg>
 </div>
 </div>
 </div>
@@ -2868,6 +2690,499 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 </div>
 </div>
 </div>
+<table id="scenario-U1" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. U1 – UI adapts to different board sizes</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Starts a game with a non-default board size</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any modern browser, any screen resolution</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The board and all UI elements render correctly without overflow or distortion</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No layout breakage for any supported board size</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-U2" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. U2 – New user starts a game quickly</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">First-time user</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Visits the app for the first time</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normal runtime conditions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user can register, configure and start a game</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The entire flow takes under 2 minutes</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-U3" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. U3 – Game history is easy to reach</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logged-in player</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wants to check their past matches</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normal runtime conditions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The history screen is displayed</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reachable in at most 3 clicks from any screen</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-R1" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. R1 – Match results are saved despite connection drops</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System / Network</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Connection drops while a match is finishing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unstable network conditions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match result is persisted once connection is restored</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No match data is lost due to temporary disconnection</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-R2" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. R2 – Login availability</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registered player</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Attempts to log in</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normal and peak load conditions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Login succeeds with correct credentials</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System available for login 99.9% of the time</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-R3" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. R3 – Bot always plays a valid move</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game engine</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">It is the bot&#8217;s turn</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any board size, any difficulty, any game state</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The bot selects and plays a legal move</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zero illegal moves produced across all difficulty levels</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-P1" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 7. P1 – Board renders quickly</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Starts or joins a game</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normal load, any supported board size</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The board is fully rendered and interactive</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render time under 1 second</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-P2" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. P2 – Bot responds without delay</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Game engine</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player completes their turn</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any difficulty level</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The bot calculates and plays its move</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response time under 2 seconds</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-P3" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. P3 – Match history loads fast</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logged-in player</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Opens their match history</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any number of past matches stored</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">History list is displayed</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Load time under 3 seconds</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-S1" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 10. S1 – Passwords are stored securely</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New or existing user</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registers or changes their password</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normal runtime conditions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Password is hashed before storage</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No plain-text passwords stored (e.g. bcrypt with salt)</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-S2" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. S2 – Users can only see their own history</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logged-in player</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requests match history</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multi-user environment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Only that user&#8217;s own matches are returned</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No match data from other users is ever exposed</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-S3" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 12. S3 – Sessions expire after inactivity</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User is inactive for a configured period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any logged-in session</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session is invalidated and user must log in again</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session expires within the configured timeout window</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-M1" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 13. M1 – New bot difficulty is easy to add</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Developer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adds a new bot difficulty level</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Development environment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New bot is integrated without modifying other modules</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zero changes required outside the bot module</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-M2" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 14. M2 – Board size is configurable</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Developer / Operator</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Changes the supported board size range</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Development or configuration environment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">New size is supported across the application</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No code changes required, only configuration</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-M3" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 15. M3 – Consistent layered architecture</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Developer</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reviews or extends the codebase</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Development environment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Code structure follows the defined layers consistently</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No cross-layer violations found in architecture review</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-Po1" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 16. Po1 – Runs in modern browsers</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Player</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Opens the app in a modern browser</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chrome, Firefox, Edge, Safari (latest versions)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">App loads and functions correctly</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All core features work without any installation</p></td>
+</tr>
+</tbody>
+</table>
+<table id="scenario-Po2" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 17. Po2 – Backend deployable on standard cloud</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Operator</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stimulus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deploys the backend to a cloud provider</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Environment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any standard cloud platform (AWS, GCP, Azure, etc.)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Response</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Backend starts and operates correctly</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measure</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No provider-specific dependencies required</p></td>
+</tr>
+</tbody>
+</table>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
