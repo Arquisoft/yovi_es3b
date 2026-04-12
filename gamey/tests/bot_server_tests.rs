@@ -2,7 +2,7 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use gamey::{YBotRegistry, YEN, create_default_state, create_router, state::AppState, RandomBot, MoveResponse, ErrorResponse};
+use gamey::{YBotRegistry, YEN, create_default_state, create_router, state::AppState, RandomBot, MoveResponse, ErrorResponse, PlayResponse};
 use http_body_util::BodyExt;
 use std::sync::Arc;
 use tower::ServiceExt;
@@ -259,6 +259,122 @@ async fn test_choose_with_empty_bot_registry() {
     let error_response: ErrorResponse = serde_json::from_slice(&body).unwrap();
 
     assert!(error_response.message.contains("Bot not found"));
+}
+
+// ============================================================================
+// Play endpoint tests (GET /play?position=...&bot_id=...)
+// ============================================================================
+
+#[tokio::test]
+async fn test_play_endpoint_returns_coords() {
+    let app = test_app();
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
+    let position = serde_json::to_string(&yen).unwrap();
+    let uri = format!("/play?position={}", urlencoding::encode(&position));
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("GET")
+                .uri(&uri)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let play_response: PlayResponse = serde_json::from_slice(&body).unwrap();
+    assert!(play_response.coords.x() + play_response.coords.y() + play_response.coords.z() >= 0);
+}
+
+#[tokio::test]
+async fn test_play_endpoint_with_bot_id() {
+    let app = test_app();
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
+    let position = serde_json::to_string(&yen).unwrap();
+    let uri = format!("/play?position={}&bot_id=easy", urlencoding::encode(&position));
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("GET")
+                .uri(&uri)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let play_response: PlayResponse = serde_json::from_slice(&body).unwrap();
+    assert!(play_response.coords.x() + play_response.coords.y() + play_response.coords.z() >= 0);
+}
+
+#[tokio::test]
+async fn test_play_endpoint_with_invalid_position() {
+    let app = test_app();
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("GET")
+                .uri("/play?position=not_valid_json")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+}
+
+#[tokio::test]
+async fn test_play_endpoint_post_returns_method_not_allowed() {
+    let app = test_app();
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/play")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
+}
+
+#[tokio::test]
+async fn test_play_response_coords_format() {
+    let app = test_app();
+    let yen = YEN::new(3, 0, vec!['B', 'R'], "./../...".to_string());
+    let position = serde_json::to_string(&yen).unwrap();
+    let uri = format!("/play?position={}", urlencoding::encode(&position));
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("GET")
+                .uri(&uri)
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert!(json.get("coords").is_some(), "response must have 'coords' key");
+    let coords = &json["coords"];
+    assert!(coords.get("x").is_some());
+    assert!(coords.get("y").is_some());
+    assert!(coords.get("z").is_some());
 }
 
 // ============================================================================
