@@ -32,6 +32,13 @@
     "newGame": "New game",
     "subtitle": "Connect the three sides of the board to win",
     "size": "Board size",
+    "gameMode": "Game mode",
+    "modeClassic": "Classic",
+    "modeClassicDesc": "Alternate turns with the bot",
+    "modeMaster": "Master Y",
+    "modeMasterDesc": "Place 2 pieces per turn",
+    "modeFortune": "Fortune Y",
+    "modeFortuneDesc": "A coin decides who moves next",
     "difficulty": "Difficulty",
     "startGame": "Start game"
   },
@@ -56,7 +63,14 @@
     "difficultyEasy": "🎲 Easy",
     "difficultyHard": "🧠 Hard",
     "difficultyExtreme": "🔥 Extreme",
-    "difficultyImpossible": "👿 Impossible"
+    "difficultyImpossible": "👿 Impossible",
+    "gameMode": "Mode",
+    "modeClassic": "Classic",
+    "modeMaster": "Master Y",
+    "modeFortune": "Fortune Y",
+    "masterPiece": "Piece {{current}} of {{total}}",
+    "fortuneYourTurn": "🪙 Coin flip: your turn!",
+    "fortuneBotTurn": "🪙 Coin flip: bot's turn!"
   },
   "history": {
     "title": "Game history",

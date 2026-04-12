@@ -9,6 +9,7 @@ const E2E_PASSWORD = process.env.E2E_PASSWORD ?? ''
 
 class CustomWorld {
   browser = null
+  context = null
   page = null
 
   baseUrl() {
@@ -32,10 +33,12 @@ Before(async function () {
   const slowMo = Number(process.env.E2E_SLOW_MO ?? 0)
 
   this.browser = await chromium.launch({ headless, slowMo })
-  this.page = await this.browser.newPage()
+  this.context = await this.browser.newContext({ locale: 'en-US' })
+  this.page = await this.context.newPage()
 })
 
 After(async function () {
   if (this.page) await this.page.close()
+  if (this.context) await this.context.close()
   if (this.browser) await this.browser.close()
 })

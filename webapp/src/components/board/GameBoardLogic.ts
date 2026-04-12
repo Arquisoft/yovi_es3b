@@ -1,24 +1,19 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { saveGame, resolveWinner, type Difficulty } from "../GameResultApi";
 
 export type Player = 1 | 2;
 export type Board = Record<string, Player>;
-
+export type GameMode = "classic" | "master" | "fortune";
 
 // YEN serialisation — converts the board state to the format the bot API
 // expects: rows of B (player 1), R (bot), or . (empty), joined by "/"
 export function buildYEN(size: number, board: Board) {
-    // Casillas ocupadas
-    // Player 1 -> B
-    // Player 2 -> R
     const occupied: Record<string, string> = {};
     for (const [key, player] of Object.entries(board)) {
         occupied[key] = player === 1 ? "B" : "R";
     }
 
-    // Letra del jugador o "." si está vacía
-    // Guarda el esquema de cada fila
     const rows: string[] = [];
     for (let x = size - 1; x >= 0; x--) {
         let row = "";
@@ -30,16 +25,56 @@ export function buildYEN(size: number, board: Board) {
 
     return {
         size,
-        turn: 1, // 1 = bot's turn (0-indexed: 0 = "B", 1 = "R")
+        turn: 1,
         players: ["B", "R"] as [string, string],
         layout: rows.join("/"),
     };
 }
 
 // ---------------------------------------------------------------------------
+// Client-side win detection (mirrors the Rust Union-Find logic)
+// Sides: x===0 → side A, y===0 → side B, x+y===size-1 → side C
+// ---------------------------------------------------------------------------
+function checkWin(size: number, board: Board, player: Player): boolean {
+    const owned = new Set<string>(
+        Object.entries(board).filter(([, v]) => v === player).map(([k]) => k)
+    );
+    const visited = new Set<string>();
+
+    for (const start of owned) {
+        if (visited.has(start)) continue;
+
+        const queue = [start];
+        let sideA = false, sideB = false, sideC = false;
+
+        while (queue.length > 0) {
+            const key = queue.shift()!;
+            if (visited.has(key)) continue;
+            visited.add(key);
+
+            const [q, r] = key.split(",").map(Number);
+            if (q === 0)            sideA = true;
+            if (r === 0)            sideB = true;
+            if (q + r === size - 1) sideC = true;
+            if (sideA && sideB && sideC) return true;
+
+            // 6 neighbours in barycentric coords — only follow player-owned cells
+            const nbrs: string[] = [];
+            if (q > 0)            { nbrs.push(`${q-1},${r+1}`, `${q-1},${r}`); }
+            if (r > 0)            { nbrs.push(`${q+1},${r-1}`, `${q},${r-1}`); }
+            if (q + r < size - 1) { nbrs.push(`${q+1},${r}`,   `${q},${r+1}`); }
+            for (const n of nbrs) {
+                if (owned.has(n) && !visited.has(n)) queue.push(n);
+            }
+        }
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
-export function useGameY(size: number, botId: string, difficulty: Difficulty) {
+export function useGameY(size: number, botId: string, difficulty: Difficulty, gameMode: GameMode = "classic") {
     const { user } = useAuth();
 
     const [board, setBoard] = useState<Board>({});
@@ -49,13 +84,21 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty) {
     const [winner, setWinner] = useState<string | null>(null);
     const [turns, setTurns] = useState(0);
 
-    // Para usar la referencia al último estado del objeto en llamadas asíncronas
+    // Master Y: pieces the player can still place this turn (resets to 2 after bot moves)
+    const [masterPiecesLeft, setMasterPiecesLeft] = useState(2);
+
+    // Fortune Y: result of the last coin flip ("player" | "bot" | null)
+    const [fortuneFlip, setFortuneFlip] = useState<"player" | "bot" | null>(null);
+
+    // Fortune Y: coin flip animation state
+    const [coinAnimating, setCoinAnimating] = useState(false);
+    const [coinAnimResult, setCoinAnimResult] = useState<"player" | "bot" | null>(null);
+
     const gameFinishedRef = useRef(false);
     const startTimeRef = useRef(Date.now());
 
     // ---- helpers -----------------------------------------------------------
 
-    // Guardar el resultado de la partida
     const persistResult = async (winnerId: string) => {
         if (!user) return;
         await saveGame(
@@ -67,7 +110,6 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty) {
         );
     };
 
-    // Set todos los valores necesarios al finalizar el juego
     const finishGame = async (winnerId: string) => {
         gameFinishedRef.current = true;
         setWinner(winnerId);
@@ -75,11 +117,28 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty) {
         await persistResult(winnerId);
     };
 
-    // ---- bot move ----------------------------------------------------------
+    // ---- coin flip animation -----------------------------------------------
+    // Returns the flip result after the visual animation completes.
 
-    const fetchBotMove = async (boardAfterPlayer: Board): Promise<void> => {
+    const flipCoin = (): Promise<"player" | "bot"> => {
+        return new Promise((resolve) => {
+            const result: "player" | "bot" = Math.random() < 0.5 ? "player" : "bot";
+            setCoinAnimating(true);
+            setCoinAnimResult(result);
+            setTimeout(() => {
+                setCoinAnimating(false);
+                setCoinAnimResult(null);
+                resolve(result);
+            }, 1600);
+        });
+    };
+
+    // ---- bot move ----------------------------------------------------------
+    // Returns the board after applying the bot's move so callers can chain moves.
+
+    const fetchBotMove = async (currentBoard: Board): Promise<Board> => {
         const API_URL = import.meta.env.VITE_GAMEY_URL ?? "http://localhost:4000";
-        const yen = buildYEN(size, boardAfterPlayer);
+        const yen = buildYEN(size, currentBoard);
 
         const res = await fetch(`${API_URL}/v1/ybot/choose/${botId}`, {
             method: "POST",
@@ -87,13 +146,12 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty) {
             body: JSON.stringify(yen),
         });
 
-        // 409 = game already finished (server-side detection)
         if (res.status === 409) {
             const errJson = await res.json().catch(() => ({}));
             const msg: string = errJson?.message ?? "";
             const match = msg.match(/\(winner:\s*PlayerId\((\d+)\)\)/i);
             await finishGame(match?.[1]?.trim() ?? "");
-            return;
+            return currentBoard;
         }
 
         if (!res.ok) {
@@ -104,65 +162,161 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty) {
         const data = await res.json();
         const status = data?.status;
 
-        // Game finished with a winner reported in the response body
-        if (status && typeof status === "object" && "Finished" in status) {
-            const w = status.Finished?.winner;
-            await finishGame(typeof w === "number" ? String(w) : String(w ?? ""));
-            return;
-        }
-
-        // Normal move: apply the bot's chosen coordinates
         const { x, y, z } = data?.coords ?? {};
-        // Comprobamos que las coordenadas son válidas
         const validCoords =
             typeof x === "number" &&
             typeof y === "number" &&
             typeof z === "number" &&
             x + y + z === size - 1;
 
+        // Always apply the bot's move first so the winning piece is visible
+        let newBoard = currentBoard;
         if (validCoords) {
-            setBoard((prev) => {
-                const botKey = `${x},${y}`;
-                return prev[botKey] ? prev : { ...prev, [botKey]: 2 };
-            });
-            setTurns((t) => t + 1);
+            const botKey = `${x},${y}`;
+            if (!currentBoard[botKey]) {
+                newBoard = { ...currentBoard, [botKey]: 2 as Player };
+                setBoard(newBoard);
+                setTurns((t) => t + 1);
+            }
         }
-        // If no valid coords the bot skipped its turn — nothing to do
+
+        if (status && typeof status === "object" && "Finished" in status) {
+            const w = status.Finished?.winner;
+            await finishGame(typeof w === "number" ? String(w) : String(w ?? ""));
+            return newBoard;
+        }
+
+        return newBoard;
     };
 
-    // ---- player clicks a cell --------------------------------
+    // ---- classic bot turn --------------------------------------------------
 
-    /* Usa coordenadas en sistema axial hexagonal
-     * q: equivalente la columna de la celda. Se incrementa hacia la derecha en el tablero
-     * r: equivalente a la fila de la celda. Se incrementa hacia arriba y hacia la derecha (triangulo)
-     */
-    const handleCellClick = async (q: number, r: number): Promise<void> => {
-        if (gameFinishedRef.current || gameOver || loadingBot || currentPlayer !== 1) return;
-
-        const key = `${q},${r}`;
-        if (board[key]) return; // cell already occupied
-
-        // Copiamos el tablero actual y lo modificamos con el movimiento del jugador
-        const nextBoard: Board = { ...board, [key]: 1 };
-        setBoard(nextBoard);
+    const runClassicBotTurn = async (boardAfterPlayer: Board) => {
         setCurrentPlayer(2);
         setLoadingBot(true);
-        setTurns((t) => t + 1);
-
         try {
-            await fetchBotMove(nextBoard);
+            await fetchBotMove(boardAfterPlayer);
         } catch (err: any) {
             console.error("Bot error:", err);
             alert(`Error al obtener el movimiento del bot: ${String(err?.message ?? err)}`);
         } finally {
-    if (!gameFinishedRef.current) {
-        setCurrentPlayer(1);
-        setLoadingBot(false);
-    }
-}
+            if (!gameFinishedRef.current) {
+                setCurrentPlayer(1);
+                setLoadingBot(false);
+            }
+        }
     };
 
-    // ---- reset board -----------------------------------------------
+    // ---- master bot turn (2 pieces) ----------------------------------------
+
+    const runMasterBotTurn = async (boardAfterPlayer: Board) => {
+        setCurrentPlayer(2);
+        setLoadingBot(true);
+        try {
+            const boardAfterBot1 = await fetchBotMove(boardAfterPlayer);
+            if (!gameFinishedRef.current) {
+                await fetchBotMove(boardAfterBot1);
+            }
+        } catch (err: any) {
+            console.error("Bot error:", err);
+            alert(`Error al obtener el movimiento del bot: ${String(err?.message ?? err)}`);
+        } finally {
+            if (!gameFinishedRef.current) {
+                setCurrentPlayer(1);
+                setLoadingBot(false);
+                setMasterPiecesLeft(2);
+            }
+        }
+    };
+
+    // ---- fortune bot turn (loop until coin says player) --------------------
+
+    const runFortuneBotTurn = async (initialBoard: Board) => {
+        setCurrentPlayer(2);
+        setLoadingBot(true);
+        try {
+            let currentBoard = initialBoard;
+            let nextFlip: "player" | "bot" = "bot";
+
+            while (nextFlip === "bot" && !gameFinishedRef.current) {
+                currentBoard = await fetchBotMove(currentBoard);
+                if (gameFinishedRef.current) break;
+                nextFlip = await flipCoin();
+                setFortuneFlip(nextFlip);
+            }
+        } catch (err: any) {
+            console.error("Bot error:", err);
+            alert(`Error al obtener el movimiento del bot: ${String(err?.message ?? err)}`);
+        } finally {
+            if (!gameFinishedRef.current) {
+                setCurrentPlayer(1);
+                setLoadingBot(false);
+            }
+        }
+    };
+
+    // ---- initial coin flip for Fortune Y ----------------------------------
+    // resetKey increments on each resetGame() call so the effect re-runs.
+    // startedRef prevents the double-invocation that React Strict Mode causes.
+
+    const [resetKey, setResetKey] = useState(0);
+    const initialFlipStartedRef = useRef(false);
+
+    useEffect(() => {
+        if (gameMode !== "fortune") return;
+        if (initialFlipStartedRef.current) return;
+        initialFlipStartedRef.current = true;
+
+        (async () => {
+            const flip = await flipCoin();
+            setFortuneFlip(flip);
+            if (flip === "bot") await runFortuneBotTurn({});
+        })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [resetKey]);
+
+    // ---- player clicks a cell ----------------------------------------------
+
+    const handleCellClick = async (q: number, r: number): Promise<void> => {
+        if (gameFinishedRef.current || gameOver || loadingBot || coinAnimating || currentPlayer !== 1) return;
+
+        const key = `${q},${r}`;
+        if (board[key]) return;
+
+        const nextBoard: Board = { ...board, [key]: 1 };
+        setBoard(nextBoard);
+        setTurns((t) => t + 1);
+
+        if (gameMode === "master") {
+            if (masterPiecesLeft > 1) {
+                // Player still has a second piece to place this turn
+                setMasterPiecesLeft(1);
+                return;
+            }
+            // Player placed their 2nd piece → bot places 2
+            setMasterPiecesLeft(2);
+            await runMasterBotTurn(nextBoard);
+
+        } else if (gameMode === "fortune") {
+            // Detect player win immediately without waiting for a bot turn
+            if (checkWin(size, nextBoard, 1)) {
+                await finishGame("0");
+                return;
+            }
+            const flip = await flipCoin();
+            setFortuneFlip(flip);
+            if (flip === "bot") {
+                await runFortuneBotTurn(nextBoard);
+            }
+            // flip === "player": player goes again, nothing else to do
+
+        } else {
+            // Classic
+            await runClassicBotTurn(nextBoard);
+        }
+    };
+
+    // ---- reset board -------------------------------------------------------
 
     const resetGame = () => {
         gameFinishedRef.current = false;
@@ -173,7 +327,28 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty) {
         setGameOver(false);
         setWinner(null);
         setTurns(0);
+        setMasterPiecesLeft(2);
+        setFortuneFlip(null);
+        setCoinAnimating(false);
+        setCoinAnimResult(null);
+
+        if (gameMode === "fortune") {
+            initialFlipStartedRef.current = false;
+            setResetKey((k) => k + 1);
+        }
     };
 
-    return { board, currentPlayer, loadingBot, gameOver, winner, handleCellClick, resetGame };
+    return {
+        board,
+        currentPlayer,
+        loadingBot,
+        gameOver,
+        winner,
+        handleCellClick,
+        resetGame,
+        masterPiecesLeft,
+        fortuneFlip,
+        coinAnimating,
+        coinAnimResult,
+    };
 }
