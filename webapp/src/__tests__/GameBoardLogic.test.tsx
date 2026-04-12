@@ -447,7 +447,7 @@ describe('useGameY — Fortune Y mode', () => {
     afterEach(() => { vi.useRealTimers() })
 
     test('coin animation starts when player places a piece', async () => {
-        vi.spyOn(Math, 'random').mockReturnValue(0.1) // always "player"
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // always "player"
         global.fetch = mockBotResponse()
         const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
 
@@ -461,7 +461,7 @@ describe('useGameY — Fortune Y mode', () => {
     })
 
     test('when coin says player, bot is not called and fortuneFlip is "player"', async () => {
-        vi.spyOn(Math, 'random').mockReturnValue(0.1) // always → "player"
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // always → "player"
         global.fetch = mockBotResponse()
         const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
 
@@ -479,10 +479,10 @@ describe('useGameY — Fortune Y mode', () => {
     })
 
     test('when coin says bot, bot makes exactly one move then flip decides next turn', async () => {
-        vi.spyOn(Math, 'random')
-            .mockReturnValueOnce(0.1)  // initial flip → "player"
-            .mockReturnValueOnce(0.9)  // after player move → "bot"
-            .mockReturnValueOnce(0.1)  // after bot move → "player" (loop exits)
+        vi.spyOn(crypto, 'getRandomValues')
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 0; return arr })  // initial flip → "player"
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 1; return arr })  // after player move → "bot"
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 0; return arr })  // after bot move → "player" (loop exits)
 
         global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
         const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
@@ -503,9 +503,9 @@ describe('useGameY — Fortune Y mode', () => {
     })
 
     test('initial flip decides bot goes first and bot places a piece on empty board', async () => {
-        vi.spyOn(Math, 'random')
-            .mockReturnValueOnce(0.9)  // initial flip → "bot"
-            .mockReturnValueOnce(0.1)  // after bot move → "player"
+        vi.spyOn(crypto, 'getRandomValues')
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 1; return arr })  // initial flip → "bot"
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 0; return arr })  // after bot move → "player"
 
         global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
         const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
@@ -520,7 +520,7 @@ describe('useGameY — Fortune Y mode', () => {
     })
 
     test('player win is detected immediately without triggering a coin flip', async () => {
-        vi.spyOn(Math, 'random').mockReturnValue(0.1) // always → "player"
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // always → "player"
         global.fetch = mockBotResponse()
 
         // Size-3 board: (0,0)→sideA+sideB, (0,1)→sideA, (0,2)→sideA+sideC
