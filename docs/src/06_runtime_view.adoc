@@ -110,8 +110,8 @@ Web --> User: Display past matches
 
 **Description**
 
-1. After logging in and playing, the user accesses the history section from the navigation bar.
+1. After logging in, the user accesses the history section from the navigation bar.
 2. The WebApp requests the user's match history from the users module.
-3. The users.js module retrieves all past matches associated with the user.
-4. The data is returned to the Web App in JSON format.
-5. The interface displays the list of previously played matches.
+3. Game.js retrieves all past matches associated with the user.
+4. The data is returned to the WebApp in JSON format.
+5. The interface displays the list of previously played matches of the player.
