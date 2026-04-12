@@ -1,0 +1,231 @@
+openapi: 3.0.0
+info:
+  title: YOVI Game Engine API
+  version: 1.0.0
+  description: API for interacting with the YOVI game engine. Allows external bots to play against the engine and query bot moves.
+
+paths:
+  /play:
+    get:
+      summary: Request the next bot move
+      description: >
+        Main endpoint for external bots to interact with the application.
+        Accepts "position" (required) as a JSON-encoded YEN string in the query,
+        and "bot_id" (optional) to select the difficulty. Returns the coordinates
+        of the bot's chosen move. Authentication is not required.
+      parameters:
+        - in: query
+          name: position
+          required: true
+          schema:
+            type: string
+          description: Current board state serialized as a JSON string in YEN format.
+          example: '{"size":4,"turn":1,"players":["B","R"],"layout":"B/.B/RB./B..R"}'
+        - in: query
+          name: bot_id
+          required: false
+          schema:
+            type: string
+            enum: [easy, hard, extreme, impossible, corner]
+            default: easy
+          description: Difficulty level of the bot to play against. Defaults to "easy".
+          example: extreme
+      responses:
+        '200':
+          description: Bot move successfully computed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayResponse'
+              example:
+                coords:
+                  x: 0
+                  y: 1
+                  z: 2
+        '400':
+          description: Invalid YEN format or bot not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: No valid moves available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /{api_version}/ybot/choose/{bot_id}:
+    post:
+      summary: Request a move from a specific internal bot
+      description: >
+        Low-level endpoint that accepts a game state in YEN format and returns
+        the coordinates chosen by the specified bot. Used internally by the webapp.
+      parameters:
+        - in: path
+          name: api_version
+          required: true
+          schema:
+            type: string
+            example: v1
+          description: API version (currently only "v1" is supported).
+        - in: path
+          name: bot_id
+          required: true
+          schema:
+            type: string
+            enum: [random_bot, corner_bot, heuristic_bot, minimax_bot, montecarlo_bot]
+          description: Internal bot identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/YEN'
+            example:
+              size: 4
+              turn: 1
+              players: ["B", "R"]
+              layout: "B/.B/RB./B..R"
+      responses:
+        '200':
+          description: Bot move computed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoveResponse'
+              example:
+                api_version: v1
+                bot_id: random_bot
+                coords:
+                  x: 0
+                  y: 2
+                  z: 1
+                status:
+                  Ongoing:
+                    next_player: 0
+        '400':
+          description: Invalid YEN format, unsupported API version, or bot not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /status:
+    get:
+      summary: Health check
+      description: Returns "OK" if the service is running.
+      responses:
+        '200':
+          description: Service is running.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+
+components:
+  schemas:
+    YEN:
+      type: object
+      description: >
+        Y Exchange Notation — compact JSON representation of a Y game state.
+        Rows in the layout are separated by "/" ordered top to bottom.
+        Each cell is a player symbol or "." for empty.
+      required: [size, turn, players, layout]
+      properties:
+        size:
+          type: integer
+          example: 4
+          description: Length of one side of the triangular board.
+        turn:
+          type: integer
+          example: 1
+          description: 0-indexed index of the player whose turn it is.
+        players:
+          type: array
+          items:
+            type: string
+          example: ["B", "R"]
+          description: Character symbols representing each player.
+        layout:
+          type: string
+          example: "B/.B/RB./B..R"
+          description: Compact board string with rows separated by "/".
+
+    Coordinates:
+      type: object
+      description: Barycentric coordinates (x, y, z) on the triangular board. Valid coordinates satisfy x + y + z = size - 1.
+      properties:
+        x:
+          type: integer
+          example: 0
+        y:
+          type: integer
+          example: 1
+        z:
+          type: integer
+          example: 2
+
+    PlayResponse:
+      type: object
+      required:
+        - coords
+      properties:
+        coords:
+          $ref: '#/components/schemas/Coordinates'
+          description: Coordinates of the bot's chosen move.
+
+    MoveResponse:
+      type: object
+      properties:
+        api_version:
+          type: string
+          example: v1
+        bot_id:
+          type: string
+          example: random_bot
+        coords:
+          $ref: '#/components/schemas/Coordinates'
+        status:
+          $ref: '#/components/schemas/GameStatus'
+
+    GameStatus:
+      type: object
+      description: >
+        Game status. Either Ongoing (with next player) or Finished (with winner).
+      example:
+        Ongoing:
+          next_player: 0
+      oneOf:
+        - type: object
+          properties:
+            Ongoing:
+              type: object
+              properties:
+                next_player:
+                  type: integer
+                  example: 0
+        - type: object
+          properties:
+            Finished:
+              type: object
+              properties:
+                winner:
+                  type: integer
+                  example: 0
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Invalid YEN format: ..."
+        api_version:
+          type: string
+          nullable: true
+          example: v1
+        bot_id:
+          type: string
+          nullable: true
+          example: easy

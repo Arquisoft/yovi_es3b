@@ -1,10 +1,25 @@
 services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - monitor-net
+
   users:
     build: ./users
     container_name: users
-    image: ghcr.io/arquisoft/yovi_0-users:latest
+    image: ghcr.io/arquisoft/yovi_es3b-users:latest
     ports:
       - "3000:3000"
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/yovi
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
+    depends_on:
+      - mongo
     networks:
       - monitor-net
 
@@ -12,9 +27,14 @@ services:
     build:
       context: ./webapp
       args:
-        - VITE_API_URL=http://localhost:3000
+        - VITE_API_URL=http://${DEPLOY_HOST}:3000
+        - VITE_GAMEY_URL=http://${DEPLOY_HOST}:4000
+        - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
+        - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
+        - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
+        - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
     container_name: webapp
-    image: ghcr.io/arquisoft/yovi_0-webapp:latest
+    image: ghcr.io/arquisoft/yovi_es3b-webapp:latest
     ports:
       - "80:80"
     depends_on:
@@ -25,7 +45,7 @@ services:
   gamey:
     build: ./gamey
     container_name: gamey
-    image: ghcr.io/arquisoft/yovi_0-gamey:latest
+    image: ghcr.io/arquisoft/yovi_es3b-gamey:latest
     ports:
       - "4000:4000"
     networks:
@@ -50,6 +70,9 @@ services:
       - ./users/monitoring/grafana/provisioning:/etc/grafana/provisioning
     networks:
       - monitor-net
+
+volumes:
+  mongo_data:
 
 networks:
   monitor-net:

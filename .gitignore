@@ -4,5 +4,9 @@ gamey/target
 lcov.info
 docs/build
 .env
+users/.env
 webapp/.env
 .vscode/
+loadtest/run.bat
+loadtest/src/test/resources/credentials.csv
+loadtest/target/

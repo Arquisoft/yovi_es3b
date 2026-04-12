@@ -1,0 +1,112 @@
+/*Hoja de estilos para cada carta del historial*/
+
+/*Estilo principal de la carta*/
+.game-card {
+    background: #1a1a24;
+    border: 0.5px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid transparent;
+}
+
+/*Color de borde verde para partidas ganadas*/
+.game-card--win {
+    border-left-color: #1D9E75;
+}
+
+/*Color de borde rojo para partidas perdidas*/
+.game-card--loss {
+    border-left-color: #E24B4A;
+}
+
+.game-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.game-card__result {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 8px;
+}
+
+/*Color de fondo y fuente para victorias*/
+.game-card__result--win {
+    background: #0F3D2E;
+    color: #5DCAA5;
+}
+
+/*Color de fondo y fuente para derrotas*/
+.game-card__result--loss {
+    background: #3D1515;
+    color: #F09595;
+}
+
+.game-card__date {
+    font-size: 12px;
+    color: #666;
+}
+
+.game-card__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.game-card__stat {
+    background: #12121a;
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.game-card__stat--full {
+    grid-column: span 2;
+}
+
+.game-card__stat-label {
+    font-size: 11px;
+    color: #666;
+}
+
+.game-card__stat-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: #e0e0e0;
+}
+
+.game-card__difficulty {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+/*Color de fondo y fuente para dificultad easy*/
+.game-card__difficulty--easy {
+    background: #0C2A3D;
+    color: #85B7EB;
+}
+
+/*Color de fondo y fuente para dificultad hard*/
+.game-card__difficulty--hard {
+    background: #3D2A08;
+    color: #EF9F27;
+}
+
+.game-card__difficulty--extreme {
+    background: #3D0C1A;
+    color: #F06080;
+}
+
+.game-card__difficulty--impossible {
+    background: #2A0C3D;
+    color: #C070F0;
+}

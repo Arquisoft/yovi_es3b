@@ -57,6 +57,14 @@ impl GameY {
         }
     }
 
+     ///Returns if the position at coords is ocuppied by the player
+    pub fn is_my_piece(&self, coords: Coordinates, player: PlayerId) -> bool {
+        match self.board_map.get(&coords) {
+            Some((_, p)) => *p == player,
+            None => false, // Empty coords
+        }
+    }
+
     /// Returns the current game status.
     pub fn status(&self) -> &GameStatus {
         &self.status
@@ -73,6 +81,11 @@ impl GameY {
     /// Returns the list of available cell indices where pieces can be placed.
     pub fn available_cells(&self) -> &Vec<u32> {
         &self.available_cells
+    }
+
+    /// Devuelve el jugador que ocupa una casilla, o None si está vacía
+    pub fn cell_owner(&self, coords: &Coordinates) -> Option<PlayerId> {
+        self.board_map.get(coords).map(|(_, p)| *p)
     }
 
     /// Returns the total number of cells on the board.
@@ -258,7 +271,7 @@ impl GameY {
     }
 
     /// Returns the neighboring coordinates for a given cell.
-    fn get_neighbors(&self, coords: &Coordinates) -> Vec<Coordinates> {
+    pub fn get_neighbors(&self, coords: &Coordinates) -> Vec<Coordinates> {
         let mut neighbors = Vec::new();
         let x = coords.x();
         let y = coords.y();
@@ -544,14 +557,18 @@ fn apply_player_color(symbol: String, player: Option<PlayerId>) -> String {
     }
 }
 
+
+use serde::{Serialize, Deserialize};
 /// Represents the current status of a game.
-#[derive(Debug, Clone)]
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GameStatus {
-    /// The game is still in progress with the specified player to move next.
+        /// The game is still in progress with the specified player to move next.
     Ongoing { next_player: PlayerId },
     /// The game has ended with a winner.
     Finished { winner: PlayerId },
 }
+
 
 #[cfg(test)]
 mod tests {

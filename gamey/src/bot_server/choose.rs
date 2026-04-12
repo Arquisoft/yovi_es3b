@@ -1,9 +1,14 @@
-use crate::{Coordinates, GameY, YEN, check_api_version, error::ErrorResponse, state::AppState};
+
 use axum::{
-    Json,
     extract::{Path, State},
+    Json,
 };
 use serde::{Deserialize, Serialize};
+use crate::{check_api_version, Coordinates, GameY, Movement, PlayerId, YEN};
+use crate::error::ErrorResponse;
+use crate::game::GameStatus;
+use crate::state::AppState;
+
 
 /// Path parameters extracted from the choose endpoint URL.
 #[derive(Deserialize)]
@@ -18,52 +23,74 @@ pub struct ChooseParams {
 ///
 /// Contains the bot's chosen move coordinates along with context
 /// about which API version and bot were used.
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct MoveResponse {
     /// The API version used for this request.
     pub api_version: String,
     /// The bot that selected this move.
     pub bot_id: String,
-    /// The coordinates where the bot chooses to place its piece.
+    /// The current game status (ongoing/finished).
+    pub status: GameStatus,
+    /// The coordinates chosen by the bot (None when the game is already finished).
     pub coords: Coordinates,
 }
 
-/// Handler for the bot move selection endpoint.
-///
-/// This endpoint accepts a game state in YEN format and returns the
-/// coordinates of the bot's chosen move.
-///
-/// # Route
-/// `POST /{api_version}/ybot/choose/{bot_id}`
-///
-/// # Request Body
-/// A JSON object in YEN format representing the current game state.
-///
-/// # Response
-/// On success, returns a `MoveResponse` with the chosen coordinates.
-/// On failure, returns an `ErrorResponse` with details about what went wrong.
+
+    /// Handler for the bot move selection endpoint.
+    ///
+    /// This endpoint accepts a game state in YEN format and returns the
+    /// coordinates of the bot's chosen move.
+    ///
+    /// # Route
+    /// `POST /{api_version}/ybot/choose/{bot_id}`
+    ///
+    /// # Request Body
+    /// A JSON object in YEN format representing the current game state.
+    ///
+    /// # Response
+    /// On success, returns a `MoveResponse` with the chosen coordinates.
+    /// On failure, returns an `ErrorResponse` with details about what went wrong.
+    
+
 #[axum::debug_handler]
 pub async fn choose(
     State(state): State<AppState>,
     Path(params): Path<ChooseParams>,
     Json(yen): Json<YEN>,
-) -> Result<Json<MoveResponse>, Json<ErrorResponse>> {
+) -> Result<Json<MoveResponse>,Json<ErrorResponse>> {
+    // Api Version
     check_api_version(&params.api_version)?;
+
+    // Parse the YEN built on the webapp
     let game_y = match GameY::try_from(yen) {
         Ok(game) => game,
         Err(err) => {
-            return Err(Json(ErrorResponse::error(
+             return Err(Json(ErrorResponse::error(
                 &format!("Invalid YEN format: {}", err),
                 Some(params.api_version),
                 Some(params.bot_id),
             )));
         }
     };
+
+    // if the game ended
+    if game_y.check_game_over() {
+        let resp = MoveResponse {
+            api_version: params.api_version,
+            bot_id: params.bot_id,
+            status: game_y.status().clone(),
+            coords: Coordinates::new(1, 1, 1),
+        };
+        return Ok(Json(resp));
+    }
+
+    // If the game continues
     let bot = match state.bots().find(&params.bot_id) {
         Some(bot) => bot,
         None => {
             let available_bots = state.bots().names().join(", ");
-            return Err(Json(ErrorResponse::error(
+             return Err(Json(ErrorResponse::error(
                 &format!(
                     "Bot not found: {}, available bots: [{}]",
                     params.bot_id, available_bots
@@ -73,10 +100,11 @@ pub async fn choose(
             )));
         }
     };
+
+    // The bot makes a move(Depending on the endpoint)
     let coords = match bot.choose_move(&game_y) {
         Some(coords) => coords,
         None => {
-            // Handle the case where the bot has no valid moves
             return Err(Json(ErrorResponse::error(
                 "No valid moves available for the bot",
                 Some(params.api_version),
@@ -84,17 +112,28 @@ pub async fn choose(
             )));
         }
     };
+    
+    println!("CornerBot coords: {:?}", coords);
+
+    let mut game_after_move = game_y.clone();
+    let _ = game_after_move.add_move(Movement::Placement { player: PlayerId::new(1), coords });
+
+    // We build the MoveResponse to send as a JSON
     let response = MoveResponse {
         api_version: params.api_version,
         bot_id: params.bot_id,
+        status: game_after_move.status().clone(),
         coords,
     };
     Ok(Json(response))
 }
 
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::PlayerId;
 
     #[test]
     fn test_move_response_creation() {
@@ -102,6 +141,7 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 2, 3),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         assert_eq!(response.api_version, "v1");
         assert_eq!(response.bot_id, "random");
@@ -114,6 +154,7 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 2, 3),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let json = serde_json::to_string(&response).unwrap();
         assert!(json.contains("\"api_version\":\"v1\""));
@@ -122,7 +163,16 @@ mod tests {
 
     #[test]
     fn test_move_response_deserialize() {
-        let json = r#"{"api_version":"v1","bot_id":"test","coords":{"x":0,"y":1,"z":2}}"#;
+       let json = r#"{
+        "api_version":"v1",
+        "bot_id":"test",
+        "coords":{"x":0,"y":1,"z":2},
+        "status":{
+            "Ongoing":{
+                "next_player":0
+            }
+        }
+    }"#;
         let response: MoveResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.api_version, "v1");
         assert_eq!(response.bot_id, "test");
@@ -134,6 +184,7 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(0, 0, 0),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let cloned = response.clone();
         assert_eq!(response, cloned);
@@ -145,16 +196,19 @@ mod tests {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 1, 1),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let r2 = MoveResponse {
             api_version: "v1".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 1, 1),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         let r3 = MoveResponse {
             api_version: "v2".to_string(),
             bot_id: "random".to_string(),
             coords: Coordinates::new(1, 1, 1),
+            status: GameStatus::Ongoing{ next_player: PlayerId::new(0) }
         };
         assert_eq!(r1, r2);
         assert_ne!(r1, r3);

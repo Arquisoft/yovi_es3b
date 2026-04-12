@@ -11,14 +11,20 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch",
-    "test:e2e:run": "cucumber-js --import test/e2e/support/setup.mjs --import test/e2e/steps/**/*.mjs test/e2e/features --format progress",
+    "test:e2e:run": "cucumber-js --tags \"not @skip\" --import test/e2e/support/setup.mjs --import test/e2e/steps/**/*.mjs test/e2e/features --format progress",
     "test:e2e": "start-server-and-test start:all http://localhost:5173 test:e2e:run",
     "test:e2e:install-browsers": "npx playwright install",
     "start:all": "concurrently \"npm run dev\" \"npm --prefix ../users start\""
   },
   "dependencies": {
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
+    "firebase": "^12.10.0",
+    "i18next": "^25.8.18",
+    "i18next-browser-languagedetector": "^8.2.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-i18next": "^16.5.8"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^12.4.0",

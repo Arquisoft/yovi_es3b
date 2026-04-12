@@ -1,23 +1,38 @@
-import './App.css'
-import RegisterForm from './RegisterForm';
-import reactLogo from './assets/react.svg'
+import { useState } from 'react';
+import { useAuth } from './context/AuthContext';
+import AuthPage from './AuthPage';
+import LobbyPage from './LobbyPage';
+import GamePage from './GamePage';
+import ProfilePage from './ProfilePage';
+import HistoryPage from './components/history/HistoryPage.tsx';
+import Navbar from './components/NavBar';
+import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
+    const { user, loading } = useAuth();
+    const [currentPage, setCurrentPage] = useState('lobby');
 
-      <h2>Welcome to the Software Arquitecture 2025-2026 course</h2>
-      <RegisterForm />
-    </div>
-  );
+    if (loading) return <div className="loading">Cargando...</div>;
+
+    if (!user) return <AuthPage onSuccess={() => setCurrentPage('lobby')} />;
+
+    const renderPage = () => {
+        switch (currentPage) {
+            case 'game':    return <GamePage />;
+            case 'profile': return <ProfilePage />;
+            case 'history': return <HistoryPage />;
+            default:        return <LobbyPage />;
+        }
+    };
+
+    return (
+        <div className="App">
+            <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
+            <main className="main-content">
+                {renderPage()}
+            </main>
+        </div>
+    );
 }
 
 export default App;

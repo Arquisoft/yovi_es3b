@@ -1,0 +1,156 @@
+/* ── Lobby ──────────────────────────────────────────────── */
+
+.lobby-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 3.5rem);
+    position: relative;
+    overflow: hidden;
+}
+
+/* tsParticles canvas container */
+.lobby-particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* ── Lobby container — shields text from particles ──────── */
+.lobby-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 2.5rem 3rem;
+    border-radius: 7px;
+    /* Subtle backdrop so particles don't bleed into text */
+    background: radial-gradient(ellipse at center, rgba(15,15,19,0.95) 60%, transparent 100%);
+    animation: lobby-fade-up 0.5s ease both;
+}
+
+@keyframes lobby-fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Game Y tag ────────────────────────────────────────── */
+.lobby-game-name {
+    font-family: var(--font-mono);
+    font-size: 2.8rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.lobby-game-name::before,
+.lobby-game-name::after {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+}
+
+/* ── Title ──────────────────────────────────────────────── */
+.lobby-title {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 2.6rem;
+    line-height: 1.1;
+    color: var(--text);
+    margin: 0;
+    text-align: center;
+}
+
+.lobby-title__username {
+    color: var(--accent);
+}
+
+/* ── Description ────────────────────────────────────────── */
+.lobby-description {
+    font-family: var(--font-ui);
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    line-height: 1.75;
+    text-align: center;
+    max-width: 420px;
+    margin: 0;
+}
+
+.lobby-description a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.lobby-description a:hover {
+    color: var(--text);
+}
+
+/* ── Footer group ──────────────────────────────────────────── */
+.lobby-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.lobby-btn-primary {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.85rem 2.4rem;
+    border-radius: 3px;
+    border: 1px solid var(--accent);
+    background: var(--accent-dim);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s, color 0.15s;
+}
+
+.lobby-btn-primary:hover {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 28px var(--accent-glow);
+}
+
+.lobby-docs-link {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.lobby-docs-link:hover {
+    color: var(--text-muted);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .lobby-title {
+        font-size: 1.9rem;
+    }
+
+    .lobby-description {
+        font-size: 0.8rem;
+    }
+
+    .lobby-btn-primary {
+        padding: 0.75rem 1.8rem;
+    }
+}

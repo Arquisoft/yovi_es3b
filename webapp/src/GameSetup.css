@@ -1,0 +1,273 @@
+/* ── Pantalla de configuración de partida ──────────────── */
+
+.setup {
+  min-height: calc(100vh - 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: setup-fade 0.4s ease both;
+}
+
+@keyframes setup-fade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Tarjeta principal */
+.setup__card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.2rem 2rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px var(--border-soft),
+    0 12px 48px rgba(0, 0, 0, 0.45),
+    0 0 80px rgba(124, 106, 247, 0.05);
+}
+
+/* Cabecera */
+.setup__header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.setup__tag {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(124, 106, 247, 0.15);
+  margin-bottom: 0.5rem;
+}
+
+.setup__title {
+  font-family: var(--font-ui);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 0;
+  text-shadow: 0 0 40px var(--accent-glow);
+}
+
+.setup__subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.setup__divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* Campo genérico */
+.setup__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.setup__label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ── Selector de tamaño ────────────────────────────────── */
+.setup__sizes {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.setup__size-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.setup__size-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.setup__size-btn--active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 16px var(--accent-glow), inset 0 0 12px var(--accent-glow);
+}
+
+.setup__size-num {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: color 0.15s;
+}
+
+.setup__size-btn:hover .setup__size-num,
+.setup__size-btn--active .setup__size-num {
+  color: var(--text);
+}
+
+/* ── Selector de dificultad ────────────────────────────── */
+.setup__diff-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.setup__diff-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+}
+
+.setup__diff-btn:hover {
+  border-color: var(--text-muted);
+  background: var(--bg-surface);
+}
+
+.setup__diff-btn--active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Punto de color para cada dificultad */
+.setup__diff-icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.setup__diff-icon--easy {
+  background: #4fb3ff;
+  box-shadow: 0 0 8px rgba(79, 179, 255, 0.5);
+}
+
+.setup__diff-icon--hard {
+  background: #f0a040;
+  box-shadow: 0 0 8px rgba(240, 160, 64, 0.5);
+}
+
+.setup__diff-icon--extreme {
+  background: #f05070;
+  box-shadow: 0 0 8px rgba(240, 80, 112, 0.5);
+}
+
+.setup__diff-icon--impossible {
+  background: #9050f0;
+  box-shadow: 0 0 8px rgba(144, 80, 240, 0.5);
+}
+
+.setup__diff-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.setup__diff-name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.15s;
+}
+
+.setup__diff-btn:hover .setup__diff-name,
+.setup__diff-btn--active .setup__diff-name {
+  color: var(--text);
+}
+
+.setup__diff-desc {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* ── Botón de jugar ────────────────────────────────────── */
+.setup__play-btn {
+  width: 100%;
+  padding: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 5px;
+  border: 1px solid var(--accent);
+  background: var(--accent-dim);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.setup__play-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 28px var(--accent-glow);
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .setup {
+    padding: 1rem;
+  }
+
+  .setup__card {
+    padding: 1.6rem 1.3rem;
+  }
+
+  .setup__title {
+    font-size: 1.6rem;
+  }
+
+  .setup__size-btn {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .setup__size-num {
+    font-size: 0.8rem;
+  }
+}

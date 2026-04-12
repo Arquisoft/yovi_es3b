@@ -56,29 +56,47 @@ jobs:
     name: Run E2E tests
     runs-on: ubuntu-latest
     needs: [test-node, test-rust]
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: Install users dependencies
-        run: |
-          cd users
-          npm ci
+        run: cd users && npm ci
+
       - name: Install webapp dependencies
-        run: |
-          cd webapp
-          npm ci
+        run: cd webapp && npm ci
+
       - name: Install Playwright browsers
-        run: |
-          cd webapp
-          npm run test:e2e:install-browsers
-      - name: Run E2E tests (start servers and run cucumber)
-        run: |
-          cd webapp
-          npm run test:e2e
+        run: cd webapp && npm run test:e2e:install-browsers
+
+      - name: Run E2E tests
+        run: cd webapp && npm run test:e2e
+        env:
+          # Users service
+          MONGO_URL: mongodb://localhost:27017/yovi
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_ADMIN_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+          # Webapp (Vite dev server)
+          VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          VITE_API_URL: http://localhost:3000
+          VITE_GAMEY_URL: http://localhost:4000
+          # E2E test credentials
+          E2E_EMAIL: test@yovi.com
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
 
   docker-push-users:
     name: Publish users image
@@ -119,8 +137,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           workdir: webapp
-          buildargs: VITE_API_URL=http://${{ secrets.DEPLOY_HOST }}:3000
-
+          buildargs: VITE_API_URL=http://${{ secrets.DEPLOY_HOST }}:3000,VITE_GAMEY_URL=http://${{ secrets.DEPLOY_HOST }}:4000,VITE_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }},VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }},VITE_FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }},VITE_FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+  
   docker-push-gamey:
     name: Publish gamey image
     runs-on: ubuntu-latest
@@ -147,12 +165,17 @@ jobs:
     needs: [docker-push-users, docker-push-webapp, docker-push-gamey]
     steps:
       - name: Deploy over SSH
-        uses: fifsky/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_HOST }}
-          user: ${{ secrets.DEPLOY_USER }}
+          username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
-          command: |
+          envs: FIREBASE_PROJECT_ID,FIREBASE_CLIENT_EMAIL,FIREBASE_PRIVATE_KEY
+          script: |
             wget https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ github.event.repository.name }}/master/docker-compose.yml -O docker-compose.yml
             docker compose down
             docker compose up -d --pull always
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_ADMIN_PROJECT_ID }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
