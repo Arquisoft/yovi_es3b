@@ -93,3 +93,25 @@ Web --> User: Update board
 4. The bot computes the next move.
 5. The result is returned directly back to the Web App.
 6. The UI updates with the new game state.
+
+=== View Match History
+
+[plantuml,"Match history sequence (WebApp → Game.js)",png]
+----
+actor User #87CEFA
+participant "Web App" as Web #87CEFA
+participant "Users Module" as Users #87CEFA
+
+User -> Web: Click "History" in navigation bar
+Web -> Users: GET /users/history
+Users --> Web: MatchHistory (JSON)
+Web --> User: Display past matches
+----
+
+**Description**
+
+1. After logging in and playing, the user accesses the history section from the navigation bar.
+2. The WebApp requests the user's match history from the users module.
+3. The users.js module retrieves all past matches associated with the user.
+4. The data is returned to the Web App in JSON format.
+5. The interface displays the list of previously played matches.
