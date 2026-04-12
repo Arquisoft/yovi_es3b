@@ -1,11 +1,10 @@
 
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
     Json,
 };
 use serde::{Deserialize, Serialize};
-use crate::{check_api_version, Coordinates, GameY, YEN};
+use crate::{check_api_version, Coordinates, GameY, Movement, PlayerId, YEN};
 use crate::error::ErrorResponse;
 use crate::game::GameStatus;
 use crate::state::AppState;
@@ -115,12 +114,16 @@ pub async fn choose(
     };
     
     println!("CornerBot coords: {:?}", coords);
+
+    let mut game_after_move = game_y.clone();
+    let _ = game_after_move.add_move(Movement::Placement { player: PlayerId::new(1), coords });
+
     // We build the MoveResponse to send as a JSON
     let response = MoveResponse {
         api_version: params.api_version,
         bot_id: params.bot_id,
-        status: game_y.status().clone(),
-        coords: coords,
+        status: game_after_move.status().clone(),
+        coords,
     };
     Ok(Json(response))
 }
@@ -129,9 +132,8 @@ pub async fn choose(
 
 #[cfg(test)]
 mod tests {
-     use super::*;
-    use crate::PlayerId;
     use super::*;
+    use crate::PlayerId;
 
     #[test]
     fn test_move_response_creation() {

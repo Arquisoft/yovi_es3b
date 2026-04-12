@@ -6,38 +6,30 @@ info:
 
 paths:
   /play:
-    post:
+    get:
       summary: Request the next bot move
       description: >
         Main endpoint for external bots to interact with the application.
-        Accepts two parameters: "position" (required) with the current board state
-        in YEN notation, and "bot_id" (optional) to select the difficulty.
-        Returns the updated board state in YEN notation after the bot's move.
-        Authentication is not required.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - position
-              properties:
-                position:
-                  $ref: '#/components/schemas/YEN'
-                bot_id:
-                  type: string
-                  description: >
-                    Difficulty level of the bot to play against. Defaults to "easy".
-                  enum: [easy, hard, extreme, impossible, corner]
-                  example: extreme
-            example:
-              position:
-                size: 4
-                turn: 1
-                players: ["B", "R"]
-                layout: "B/.B/RB./B..R"
-              bot_id: extreme
+        Accepts "position" (required) as a JSON-encoded YEN string in the query,
+        and "bot_id" (optional) to select the difficulty. Returns the coordinates
+        of the bot's chosen move. Authentication is not required.
+      parameters:
+        - in: query
+          name: position
+          required: true
+          schema:
+            type: string
+          description: Current board state serialized as a JSON string in YEN format.
+          example: '{"size":4,"turn":1,"players":["B","R"],"layout":"B/.B/RB./B..R"}'
+        - in: query
+          name: bot_id
+          required: false
+          schema:
+            type: string
+            enum: [easy, hard, extreme, impossible, corner]
+            default: easy
+          description: Difficulty level of the bot to play against. Defaults to "easy".
+          example: extreme
       responses:
         '200':
           description: Bot move successfully computed.
@@ -46,18 +38,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/PlayResponse'
               example:
-                position:
-                  size: 4
-                  turn: 0
-                  players: ["B", "R"]
-                  layout: "B/.B/RB./BR.R"
-                move:
+                coords:
                   x: 0
                   y: 1
                   z: 2
-                status:
-                  Ongoing:
-                    next_player: 0
         '400':
           description: Invalid YEN format or bot not found.
           content:
@@ -66,12 +50,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: No valid moves available.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal error applying the move.
           content:
             application/json:
               schema:
@@ -191,19 +169,12 @@ components:
 
     PlayResponse:
       type: object
+      required:
+        - coords
       properties:
-        position:
-          allOf:
-            - $ref: '#/components/schemas/YEN'
-          nullable: true
-          description: Updated board state in YEN after the bot's move. Null if the game was already finished.
-        move:
-          allOf:
-            - $ref: '#/components/schemas/Coordinates'
-          nullable: true
-          description: Coordinates chosen by the bot. Null if the game was already finished.
-        status:
-          $ref: '#/components/schemas/GameStatus'
+        coords:
+          $ref: '#/components/schemas/Coordinates'
+          description: Coordinates of the bot's chosen move.
 
     MoveResponse:
       type: object
