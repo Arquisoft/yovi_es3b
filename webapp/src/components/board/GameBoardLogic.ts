@@ -122,7 +122,9 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
 
     const flipCoin = (): Promise<"player" | "bot"> => {
         return new Promise((resolve) => {
-            const result: "player" | "bot" = Math.random() < 0.5 ? "player" : "bot";
+            const array = new Uint32Array(1);
+            crypto.getRandomValues(array);
+            const result: "player" | "bot" = array[0] % 2 === 0 ? "player" : "bot";
             setCoinAnimating(true);
             setCoinAnimResult(result);
             setTimeout(() => {
