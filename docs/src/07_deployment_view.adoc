@@ -2,99 +2,50 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-deployment-view]]
 
-
 == Deployment View
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-The deployment view describes:
-
- 1. technical infrastructure used to execute your system, with infrastructure elements like geographical locations, environments, computers, processors, channels and net topologies as well as other infrastructure elements and
-
-2. mapping of (software) building blocks to that infrastructure elements.
-
-Often systems are executed in different environments, e.g. development environment, test environment, production environment. In such cases you should document all relevant environments.
-
-Especially document a deployment view if your software is executed as distributed system with more than one computer, processor, server or container or when you design and construct your own hardware processors and chips.
-
-From a software perspective it is sufficient to capture only those elements of an infrastructure that are needed to show a deployment of your building blocks. Hardware architects can go beyond that and describe an infrastructure to any level of detail they need to capture.
-
-.Motivation
-Software does not run without hardware.
-This underlying infrastructure can and will influence a system and/or some
-cross-cutting concepts. Therefore, there is a need to know the infrastructure.
-
-.Form
-
-Maybe a highest level deployment diagram is already contained in section 3.2. as
-technical context with your own infrastructure as ONE black box. In this section one can
-zoom into this black box using additional deployment diagrams:
-
-* UML offers deployment diagrams to express that view. Use it, probably with nested diagrams,
-when your infrastructure is more complex.
-* When your (hardware) stakeholders prefer other kinds of diagrams rather than a deployment diagram, let them use any kind that is able to show nodes and channels of the infrastructure.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-7/[Deployment View] in the arc42 documentation.
-
-****
-endif::arc42help[]
 
 === Infrastructure Level 1
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Describe (usually in a combination of diagrams, tables, and text):
-
-* distribution of a system to multiple locations, environments, computers, processors, .., as well as physical connections between them
-* important justifications or motivations for this deployment structure
-* quality and/or performance features of this infrastructure
-* mapping of software artifacts to elements of this infrastructure
-
-For multiple environments or alternative deployments please copy and adapt this section of arc42 for all relevant environments.
-****
-endif::arc42help[]
-
-_**<Overview Diagram>**_
+image::Infrastructure-Level1.jpg[Infrastructure Level 1 Diagram, align="center"]
 
 Motivation::
-
-_<explanation in text form>_
+The system is deployed on a single Azure virtual machine, using Docker Compose to orchestrate all six services. This decision simplifies deployment and management for a small team while maintaining service isolation through containers. MongoDB runs as a container with a persistent volume so game and user data survives container restarts. Authentication is delegated to Firebase (Google Cloud) to avoid managing credentials manually. Monitoring is handled by a Prometheus + Grafana stack deployed alongside the application services.
 
 Quality and/or Performance Features::
-
-_<explanation in text form>_
+* **Availability**: The Azure server runs 24/7. Docker Compose restarts containers automatically on failure. MongoDB data is persisted in a named Docker volume (`mongo_data`), so data is not lost on redeployment.
+* **Observability**: The `users` service exposes Prometheus-format metrics via `express-prom-bundle` at `/metrics`. Prometheus scrapes these metrics and Grafana provides dashboards for visualization, provisioned automatically via configuration files.
+* **Security**: Communication between the browser and the backend uses JWT tokens signed by Firebase. Sensitive variables (Firebase keys, MongoDB URL) are managed as GitHub Actions secrets and injected at deploy time via `appleboy/ssh-action`. The `mongo` container is not exposed externally — only accessible within the `monitor-net` internal network.
+* **Scalability**: The microservices architecture allows each service to be scaled independently if needed in the future.
 
 Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
 
+[cols="1,1,1", options="header"]
+|===
+| Software Component | Docker Container | Exposed Port
+| React Frontend (Vite + Nginx) | `webapp` | 80
+| Users and Games API (Node.js + Express) | `users` | 3000
+| Game Engine and Bots (Rust + Axum) | `gamey` | 4000
+| Database (MongoDB 7) | `mongo` | internal only
+| Metrics collection | `prometheus` | 9090
+| Metrics visualization | `grafana` | 9091
+|===
 
 === Infrastructure Level 2
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you can include the internal structure of (some) infrastructure elements from level 1.
+==== Azure Virtual Machine
 
-Please copy the structure from level 1 for each selected element.
-****
-endif::arc42help[]
+The VM runs Ubuntu 24.04 LTS. Docker Engine and Docker Compose are installed directly on the machine. SSH access for deployments is restricted via public/private key pair, with the private key stored as a GitHub Actions secret (`DEPLOY_KEY`). All containers share the internal `monitor-net` bridge network, which allows inter-service communication by container name (e.g. `users` connects to MongoDB as `mongodb://mongo:27017/yovi` and reaches the game engine at `http://gamey:4000`). The `mongo` container is the only service not exposed externally. A named volume `mongo_data` persists database contents across deployments.
 
-==== _<Infrastructure Element 1>_
+==== CI/CD Pipeline (GitHub Actions)
 
-_<diagram + explanation>_
+image::githubactions.jpg[GitHub Actions CI/CD Pipeline, align="center"]
 
-==== _<Infrastructure Element 2>_
+The pipeline is triggered when a release is published on GitHub. Unit tests for Node.js services (webapp and users) run in parallel via a matrix strategy, and Rust tests run concurrently. E2E tests run after all unit tests pass, with a real MongoDB 7 instance spun up as a GitHub Actions service and Firebase credentials injected as environment variables. Docker images are built and pushed to GitHub Container Registry (`ghcr.io/arquisoft/yovi_es3b-*`). The three Docker images are built in parallel after E2E tests pass. Finally, the server fetches the latest `docker-compose.yml` from the master branch and pulls the new images.
 
-_<diagram + explanation>_
+The `webapp` image is built with all `VITE_*` variables injected as build arguments (API URL, Gamey URL, and Firebase configuration), since Vite embeds environment variables at build time and they cannot be changed at runtime.
 
-...
+Firebase Admin credentials (`FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`) are transferred to the remote server via the `envs` parameter of `appleboy/ssh-action` so the `users` container can verify Firebase tokens at runtime.
 
-==== _<Infrastructure Element n>_
+==== Monitoring Stack
 
-_<diagram + explanation>_
+Prometheus is configured via `users/monitoring/prometheus/` and scrapes metrics from the `users` service at `/metrics`. Grafana reads from Prometheus and is provisioned automatically via `users/monitoring/grafana/provisioning/`. Both services are part of the `monitor-net` network. Grafana is accessible on port 9091 of the Azure VM (internally mapped from Grafana's default port 3000).

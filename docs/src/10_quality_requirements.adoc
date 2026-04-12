@@ -67,7 +67,7 @@ endif::arc42help[]
 *** [[#scenario-P2]] P2 – The bot responds in under 2 seconds on any difficulty level
 *** [[#scenario-P3]] P3 – Match history loads in under 3 seconds
 ** Security
-*** [[#scenario-S1]] S1 – Passwords are stored encrypted  
+*** [[#scenario-S1]] S1 – Passwords are stored encrypted (e.g. bcrypt)
 *** [[#scenario-S2]] S2 – A user can only access their own match history
 *** [[#scenario-S3]] S3 – Sessions expire after a period of inactivity
 ** Maintainability
