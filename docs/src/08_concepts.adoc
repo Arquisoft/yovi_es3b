@@ -3,59 +3,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-concepts]]
 == Cross-cutting Concepts
 
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-This section describes overall, principal regulations and solution ideas that are relevant in multiple parts (= cross-cutting) of your system.
-Such concepts are often related to multiple building blocks.
-They can include many different topics, such as
-
-* models, especially domain models
-* architecture or design patterns
-* rules for using specific technology
-* principal, often technical decisions of an overarching (= cross-cutting) nature
-* implementation rules
-
-
-.Motivation
-Concepts form the basis for _conceptual integrity_ (consistency, homogeneity) of the architecture. 
-Thus, they are an important contribution to achieve inner qualities of your system.
-
-Some of these concepts cannot be assigned to individual building blocks, e.g. security or safety. 
-
-
-.Form
-The form can be varied:
-
-* concept papers with any kind of structure
-* cross-cutting model excerpts or scenarios using notations of the architecture views
-* sample implementations, especially for technical concepts
-* reference to typical usage of standard frameworks (e.g. using Hibernate for object/relational mapping)
-
-.Structure
-A potential (but not mandatory) structure for this section could be:
-
-* Domain concepts
-* User Experience concepts (UX)
-* Safety and security concepts
-* Architecture and design patterns
-* "Under-the-hood"
-* development concepts
-* operational concepts
-
-Note: it might be difficult to assign individual concepts to one specific topic
-on this list.
-
-image::08-concepts-EN.drawio.png["Possible topics for crosscutting concepts"]
-
-
-.Further Information
-
-See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
-****
-endif::arc42help[]
 === Domain Concepts
 
 The system’s domain revolves around the board game Y, 
@@ -126,17 +73,14 @@ backend allows the addition of new game modes or features without impacting exis
 
 The frontend is deployed as a static hosting application on Azure, 
 providing fast load times and easy scalability. 
-The backend runs as a cloud service on an Azure VM and can optionally be containerized with Docker for portability. 
+The backend runs as a cloud service on an Azure VM, optionally containerized using Docker for portability. 
 Backend logs track requests and errors, while Firebase provides authentication monitoring. API requests and errors are 
-traced to support debugging and operational insight.
+traced to facilitate debugging and operational insight.
 
-The backend is stateless with respect to persistent storage. 
-During gameplay, each backend instance maintains temporary in-memory game sessions to process moves, 
-evaluate game state, and respond with bot actions. Once a game ends, all results are stored in the database, 
-allowing backend instances to remain horizontally scalable and resilient. Frontend and backend components can scale 
-independently, optimizing resource usage and ensuring system availability even if partial failures occur, 
-such as temporary issues with authentication services.
-
+The stateless backend architecture allows horizontal scaling, 
+and Firebase automatically handles authentication scaling. 
+Frontend and backend components can scale independently, optimizing resource usage and ensuring resilience to 
+partial failures, such as when authentication services experience issues but gameplay continues uninterrupted.
 Key design decisions highlight the rationale behind technology choices: Firebase simplifies authentication management, 
-Rust ensures high-performance and memory-safe game logic, React enables interactive and reusable UI components, 
-and the stateless backend design promotes scalability, simplicity, and overall system resilience.
+Rust ensures high-performance and memory-safe game logic, React enables interactive and reusable UI components, and the 
+stateless backend promotes scalability, simplicity, and overall system resilience.

@@ -5,104 +5,42 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 == Building Block View
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-The building block view shows the static decomposition of the system into building blocks (modules, components, subsystems, classes, interfaces, packages, libraries, frameworks, layers, partitions, tiers, functions, macros, operations, data structures, ...) as well as their dependencies (relationships, associations, ...)
-
-This view is mandatory for every architecture documentation.
-In analogy to a house this is the _floor plan_.
-
-.Motivation
-Maintain an overview of your source code by making its structure understandable through
-abstraction.
-
-This allows you to communicate with your stakeholder on an abstract level without disclosing implementation details.
-
-.Form
-The building block view is a hierarchical collection of black boxes and white boxes
-(see figure below) and their descriptions.
-
-image::05_building_blocks-EN.png["Hierarchy of building blocks"]
-
-*Level 1* is the white box description of the overall system together with black
-box descriptions of all contained building blocks.
-
-*Level 2* zooms into some building blocks of level 1.
-Thus it contains the white box description of selected building blocks of level 1, together with black box descriptions of their internal building blocks.
-
-*Level 3* zooms into selected building blocks of level 2, and so on.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-5/[Building Block View] in the arc42 documentation.
-
-****
-endif::arc42help[]
-
 === Whitebox Overall System
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you describe the decomposition of the overall system using the following white box template. It contains
 
- * an overview diagram
- * a motivation for the decomposition
- * black box descriptions of the contained building blocks. For these we offer you alternatives:
+image::overviewDiagramLevel1.png[Overview Diagram Level 1]
 
-   ** use _one_ table for a short and pragmatic overview of all contained building blocks and their interfaces
-   ** use a list of black box descriptions of the building blocks according to the black box template (see below).
-   Depending on your choice of tool this list could be sub-chapters (in text files), sub-pages (in a Wiki) or nested elements (in a modeling tool).
+**Motivation**
 
+The system is divided into a React-based web application and a Rust-based game engine to clearly separate user interface concerns from core game logic.
 
- * (optional:) important interfaces, that are not explained in the black box templates of a building block, but are very important for understanding the white box.
-Since there are so many ways to specify interfaces why do not provide a specific template for them.
- In the worst case you have to specify and describe syntax, semantics, protocols, error handling,
- restrictions, versions, qualities, necessary compatibilities and many things more.
-In the best case you will get away with examples or simple signatures.
+The Web App is responsible for rendering the UI and managing user interactions, while persistence is handled via the backend service.
 
-****
-endif::arc42help[]
+The Game Engine encapsulates the game rules and bot logic, allowing for high performance and reusability.
 
-_**<Overview Diagram>**_
-
-Motivation::
-
-_<text explanation>_
+This separation improves maintainability, scalability, and enables independent development of UI and game logic. 
 
 
 Contained Building Blocks::
-_<Description of contained building block (black boxes)>_
-
-Important Interfaces::
-_<Description of important interfaces>_
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Insert your explanations of black boxes from level 1:
-
-If you use tabular form you will only describe your black boxes with name and
-responsibility according to the following schema:
-
-[cols="1,2" options="header"]
+[cols="1,2", options="header"]
 |===
-| **Name** | **Responsibility**
-| _<black box 1>_ | _<Text>_
-| _<black box 2>_ | _<Text>_
+| Name | Responsibility
+
+| Web App (React / Vite / TypeScript)
+| Provides the user interface, handles user interactions, and communicates with the backend service via REST APIs.
+
+| Users Service (Node.js / Express)
+| Acts as the backend API, managing user data, authentication, and coordinating communication between the frontend, database, and game engine.
+
+| Game Engine (Rust)
+| Implements core game logic, rules, and bot behavior, processing game-related computations.
+
+| Database
+| Stores persistent data such as user accounts, game state, and scores.
+
 |===
 
-
-
-If you use a list of black box descriptions then you fill in a separate black box template for every important building block .
-Its headline is the name of the black box.
-****
-endif::arc42help[]
-
-==== <Name black box 1>
+==== Webapp
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -120,35 +58,157 @@ according the the following black box template:
 ****
 endif::arc42help[]
 
-_<Purpose/Responsibility>_
+**Purpose/Responsibility**
 
-_<Interface(s)>_
+Provides the user interface of the system. It handles user interactions, renders the game board, and communicates with the backend service to retrieve and update data.
 
-_<(Optional) Quality/Performance Characteristics>_
+**Interface(s)**
 
-_<(Optional) Directory/File Location>_
+REST API calls to the Users Service:
 
-_<(Optional) Fulfilled Requirements>_
+POST /login – user authentication
 
-_<(optional) Open Issues/Problems/Risks>_
+GET /user – retrieve user data
 
+POST /ybot/choose – send player actions and return the bots´ moves
 
+Receives JSON responses containing user and game state data and sends YEN.
 
+**Quality/Performance Characteristics**
 
-==== <Name black box 2>
+Responsive UI with low latency interaction
 
-_<black box template>_
+Cross-browser compatibility
 
-==== <Name black box n>
+Fast rendering using modern frontend tooling (Vite)
 
-_<black box template>_
+**Directory/File Location: **
+/webapp
 
+**Fulfilled Requirements**
 
-==== <Name interface 1>
+User interaction and gameplay visualization
 
-...
+Display of game state and results
 
-==== <Name interface m>
+**Open Issues/Problems/Risks**
+
+Performance limitations for complex UI updates
+
+Dependency on backend availability
+
+==== Users Service (Node.js / Express)
+
+**Purpose/Responsibility**
+
+Acts as the central backend service. It manages user-related functionality, handles authentication, and coordinates communication between the frontend, database, and game engine.
+
+**Interface(s)**
+
+REST API exposed to Web App:
+
+Authentication endpoints (/login, /register)
+
+Internal communication:
+
+Database queries (CRUD operations)
+
+**Quality/Performance Characteristics**
+
+Stateless service for scalability
+
+Handles concurrent requests efficiently
+
+**Directory/File Location: **
+/users
+
+**Fulfilled Requirements**
+
+User management and authentication
+
+**Open Issues/Problems/Risks**
+
+Single point of failure if not replicated
+
+Performance bottleneck under high load
+
+==== Game Engine (Rust)
+
+**Purpose/Responsibility**
+
+Implements the core game logic, including rules, state transitions, and bot behavior. It processes game actions and computes the resulting game state.
+
+**Interface(s)**
+
+Receives requests from Webapp:
+
+Input: current game state + player move
+
+Output: updated game state and bot actions
+
+**Quality/Performance Characteristics**
+
+High performance and low-level efficiency
+
+Deterministic and reliable computation
+
+Suitable for complex game logic and AI
+
+**Directory/File Location: **
+/gamey
+
+**Fulfilled Requirements**
+
+Game rules enforcement
+
+Bot/AI decision making
+
+Game state updates
+
+**Open Issues/Problems/Risks**
+
+Integration complexity with Node.js service
+
+Debugging can be harder across language boundaries
+
+==== Database
+
+**Purpose/Responsibility**
+
+Provides persistent storage for the system, including user data, game states, and scores.
+
+**Interface(s)**
+
+Accessed by Users Service via database queries (e.g., SQL or NoSQL queries)
+
+Supports CRUD operations:
+
+Create/update user data
+
+Store and retrieve game state
+
+**Quality/Performance Characteristics**
+
+Data consistency and reliability
+
+Scalable depending on chosen database system
+
+Performance depends on query optimization
+
+**Directory/File Location**
+External system (not part of source directories)
+
+**Fulfilled Requirements**
+
+Persistent storage of users and game data
+
+Retrieval of historical and current game information
+
+**Open Issues/Problems/Risks**
+
+Potential performance bottlenecks with large datasets
+
+Requires backup and data integrity strategies
 
 
 
@@ -165,7 +225,7 @@ Leave out normal, simple, boring or standardized parts of your system
 ****
 endif::arc42help[]
 
-==== White Box _<building block 1>_
+==== White Box Web App – Game Board Component
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -174,52 +234,79 @@ ifdef::arc42help[]
 ****
 endif::arc42help[]
 
-_<white box template>_
+**Diagram**
 
-==== White Box _<building block 2>_
+image::gameBoardDiagram.png[GameBoard Diagram Level 2]
 
+**Purpose/Responsibility**
 
-_<white box template>_
+Renders the visual game board, updates state based on player actions, and communicates moves to the Users Service.
 
-...
+**Interface(s)**
 
-==== White Box _<building block m>_
+Receives game state from Gamey (JSON)
 
+Sends player moves back via Backend API
 
-_<white box template>_
+**Quality/Performance Characteristics**
 
+Responsive UI
+
+Low latency updates
+
+Reactive updates via React state management
+
+**Directory/File Location: **
+webapp/src/components/GameBoard.tsx
+
+**Fulfilled Requirements**
+
+Visual display of the game board
+
+Handles player interactions
+
+**Open Issues/Problems/Risks**
+
+Complex rendering for larger boards may affect performance
+
+==== White Box Gamey – Bots
+
+**Diagram**
+
+image::gameyBotsDiagram.png[Bots Diagram Level 2]
+
+**Purpose/Responsibility**
+
+Implements AI decision-making for the game, generating moves based on the current game state.
+
+**Interface(s)**
+
+Input: current game state
+
+Output: selected move
+
+Exposed via the Backend API
+
+**Quality/Performance Characteristics**
+
+Efficient computation for AI moves
+
+Deterministic behavior for testing
+
+**Directory/File Location: **
+gamey/src/bot/
+
+**Fulfilled Requirements**
+
+Automates bot moves in the game
+
+Ensures challenge for players
+
+**Open Issues/Problems/Risks**
+
+Scaling to multiple bots simultaneously may increase processing time
 
 
 === Level 3
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you can specify the inner structure of (some) building blocks from level 2 as white boxes.
-
-When you need more detailed levels of your architecture please copy this
-part of arc42 for additional levels.
-****
-endif::arc42help[]
-
-==== White Box <_building block x.1_>
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Specifies the internal structure of _building block x.1_.
-****
-endif::arc42help[]
-
-_<white box template>_
-
-
-==== White Box <_building block x.2_>
-
-_<white box template>_
-
-
-
-==== White Box <_building block y.1_>
-
-_<white box template>_
+Not needed for this version yet.

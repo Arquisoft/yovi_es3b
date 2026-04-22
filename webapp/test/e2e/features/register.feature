@@ -1,8 +1,8 @@
 Feature: Register
   Validate the register form
 
-  @skip
-  Scenario: Successful registration
-    Given the register page is open
-    When I enter "Alice" as the username and submit
-    Then I should see a welcome message containing "Hello Alice"
+  Scenario: Register form requires all fields
+    Given the app is open
+    When I click the register link
+    And I submit the login form
+    Then I should see a login error message

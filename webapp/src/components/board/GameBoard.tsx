@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import "./GameBoard.css";
 import { type Difficulty } from "../GameResultApi";
-import { useGameY, type Player } from "./GameBoardLogic.ts";
+import { useGameY, type Player, type GameMode } from "./GameBoardLogic.ts";
 import {
   generateBoard,
   getSides,
@@ -21,6 +21,12 @@ const DIFFICULTY_LABEL_KEY: Record<string, string> = {
   hard: "game.difficultyHard",
   extreme: "game.difficultyExtreme",
   impossible: "game.difficultyImpossible",
+};
+
+const GAME_MODE_LABEL_KEY: Record<GameMode, string> = {
+  classic: "game.modeClassic",
+  master: "game.modeMaster",
+  fortune: "game.modeFortune",
 };
 
 const CELL_BASE = "#1a1a24";
@@ -43,6 +49,25 @@ function SideLegend() {
           <span className="side-legend-label">{t(key)}</span>
         </div>
       ))}
+    </div>
+  );
+}
+
+function CoinFlipOverlay({ result }: { result: "player" | "bot" | null }) {
+  const { t } = useTranslation();
+  return (
+    <div className="coin-overlay">
+      <div className="coin-anim">
+        <div className="coin-wrapper">
+          <div className={`coin coin--${result ?? "player"}`}>
+            <div className="coin-face coin-front">★</div>
+            <div className="coin-face coin-back">✕</div>
+          </div>
+        </div>
+        <p className="coin-label">
+          {result === "player" ? t("game.fortuneYourTurn") : t("game.fortuneBotTurn")}
+        </p>
+      </div>
     </div>
   );
 }
@@ -142,15 +167,16 @@ type GameBoardProps = {
   userName?: string;
   botId?: string;
   difficulty?: Difficulty;
+  gameMode?: GameMode;
 };
 
-export default function GameBoard({ size = 9, botId = "random_bot", difficulty = "easy" }: GameBoardProps) {
+export default function GameBoard({ size = 9, botId = "random_bot", difficulty = "easy", gameMode = "classic" }: GameBoardProps) {
   const { t } = useTranslation();
   const cells = useMemo(() => generateBoard(size), [size]);
   const [hovered, setHovered] = useState<string | null>(null);
 
-  const { board, currentPlayer, loadingBot, gameOver, winner, handleCellClick, resetGame } =
-    useGameY(size, botId, difficulty);
+  const { board, currentPlayer, loadingBot, gameOver, winner, handleCellClick, resetGame, masterPiecesLeft, fortuneFlip, coinAnimating, coinAnimResult } =
+    useGameY(size, botId, difficulty, gameMode);
 
   const viewBox = useMemo(() => {
     const positions = cells.map(({ q, r }) => hexToPixel(q, r));
@@ -179,6 +205,13 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
           <span className="game-sidebar__label">{t('game.difficulty')}</span>
           <span className={`game-sidebar__badge game-sidebar__badge--${difficulty}`}>
             {t(DIFFICULTY_LABEL_KEY[difficulty])}
+          </span>
+        </div>
+
+        <div className="game-sidebar__section">
+          <span className="game-sidebar__label">{t('game.gameMode')}</span>
+          <span className={`game-sidebar__badge game-sidebar__badge--mode-${gameMode}`}>
+            {t(GAME_MODE_LABEL_KEY[gameMode])}
           </span>
         </div>
 
@@ -226,11 +259,18 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
 
       {/* Zona central del tablero */}
       <main className="game-main">
+        {coinAnimating && <CoinFlipOverlay result={coinAnimResult} />}
         {/* Indicador de turno */}
         <div className={`turn-bar ${loadingBot ? "turn-bar--thinking" : ""}`}>
           <div className={`turn-dot turn-dot--${currentPlayer}`} />
           <span className="turn-label">
-            {loadingBot ? t('game.botThinking') : t('game.turn', { player: t(PLAYER_LABEL_KEY[currentPlayer]) })}
+            {loadingBot
+              ? t('game.botThinking')
+              : gameMode === "master" && currentPlayer === 1
+                ? t('game.masterPiece', { current: 3 - masterPiecesLeft, total: 2 })
+                : gameMode === "fortune" && fortuneFlip !== null
+                  ? t(fortuneFlip === "player" ? 'game.fortuneYourTurn' : 'game.fortuneBotTurn')
+                  : t('game.turn', { player: t(PLAYER_LABEL_KEY[currentPlayer]) })}
           </span>
         </div>
 

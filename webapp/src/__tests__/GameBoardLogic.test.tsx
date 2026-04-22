@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, afterEach } from 'vitest'
+import { describe, expect, test, vi, afterEach, beforeEach } from 'vitest'
 import {renderHook, waitFor} from '@testing-library/react'
 import { useGameY, buildYEN, type Board } from '../components/board/GameBoardLogic'
 import {act} from "react";
@@ -350,5 +350,200 @@ describe('useGameY — handleCellClick', () => {
         })
 
         expect(result.current.winner).toBe('2')
+    })
+})
+
+// ---------------------------------------------------------------------------
+// Master Y
+// ---------------------------------------------------------------------------
+
+describe('useGameY — Master Y mode', () => {
+    test('first click places player piece, sets masterPiecesLeft to 1, and does not call the bot', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        await act(async () => {
+            await result.current.handleCellClick(2, 2)
+        })
+
+        expect(result.current.board['2,2']).toBe(1)
+        expect(result.current.masterPiecesLeft).toBe(1)
+        expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    test('second click in the same turn triggers exactly two bot moves', async () => {
+        global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+        await act(async () => { await result.current.handleCellClick(2, 2) })
+
+        expect(global.fetch).toHaveBeenCalledTimes(2)
+        expect(result.current.currentPlayer).toBe(1)
+        expect(result.current.masterPiecesLeft).toBe(2)
+    })
+
+    test('board has exactly 4 pieces after one complete Master Y turn', async () => {
+        global.fetch = vi.fn()
+            .mockResolvedValueOnce({
+                ok: true, status: 200,
+                json: async () => ({ coords: { x: 3, y: 2, z: 3 } }),
+                text: async () => '',
+            } as Response)
+            .mockResolvedValueOnce({
+                ok: true, status: 200,
+                json: async () => ({ coords: { x: 4, y: 1, z: 3 } }),
+                text: async () => '',
+            } as Response)
+
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+        await act(async () => { await result.current.handleCellClick(2, 2) })
+
+        expect(Object.keys(result.current.board)).toHaveLength(4)
+        expect(result.current.board['1,1']).toBe(1)
+        expect(result.current.board['2,2']).toBe(1)
+        expect(result.current.board['3,2']).toBe(2)
+        expect(result.current.board['4,1']).toBe(2)
+    })
+
+    test('game ends immediately if bot wins on first move of its turn', async () => {
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true, status: 200,
+            json: async () => ({
+                coords: { x: 3, y: 2, z: 3 },
+                status: { Finished: { winner: 1 } },
+            }),
+            text: async () => '',
+        } as Response)
+
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+        await act(async () => { await result.current.handleCellClick(2, 2) })
+
+        expect(result.current.gameOver).toBe(true)
+        expect(result.current.winner).toBe('1')
+    })
+
+    test('currentPlayer stays 1 between first and second Master Y piece placement', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+
+        expect(result.current.currentPlayer).toBe(1)
+        expect(result.current.loadingBot).toBe(false)
+    })
+})
+
+// ---------------------------------------------------------------------------
+// Fortune Y
+// ---------------------------------------------------------------------------
+
+describe('useGameY — Fortune Y mode', () => {
+    beforeEach(() => { vi.useFakeTimers() })
+    afterEach(() => { vi.useRealTimers() })
+
+    test('coin animation starts when player places a piece', async () => {
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // always "player"
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        // Advance past initial flip
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        act(() => { result.current.handleCellClick(1, 1) })
+
+        // Animation should be active immediately
+        expect(result.current.coinAnimating).toBe(true)
+    })
+
+    test('when coin says player, bot is not called and fortuneFlip is "player"', async () => {
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // always → "player"
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        // Advance past initial flip
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        act(() => { result.current.handleCellClick(1, 1) })
+
+        // Resolve the coin flip after the player move
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        expect(result.current.fortuneFlip).toBe('player')
+        expect(result.current.board['1,1']).toBe(1)
+        expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    test('when coin says bot, bot makes exactly one move then flip decides next turn', async () => {
+        vi.spyOn(crypto, 'getRandomValues')
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 0; return arr })  // initial flip → "player"
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 1; return arr })  // after player move → "bot"
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 0; return arr })  // after bot move → "player" (loop exits)
+
+        global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        // Advance past initial flip (player → no bot)
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        act(() => { result.current.handleCellClick(1, 1) })
+
+        // Resolve player-move flip (→ "bot", triggers bot fetch + second flip timer)
+        await act(async () => { vi.advanceTimersByTime(1600) })
+        // Resolve bot-move flip (→ "player", loop exits)
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        expect(global.fetch).toHaveBeenCalledTimes(1)
+        expect(result.current.board['3,2']).toBe(2)
+        expect(result.current.currentPlayer).toBe(1)
+    })
+
+    test('initial flip decides bot goes first and bot places a piece on empty board', async () => {
+        vi.spyOn(crypto, 'getRandomValues')
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 1; return arr })  // initial flip → "bot"
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 0; return arr })  // after bot move → "player"
+
+        global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        // Resolve initial flip (→ "bot") then bot fetch then second flip (→ "player")
+        await act(async () => { vi.advanceTimersByTime(1600) })
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        expect(result.current.board['3,2']).toBe(2)
+        expect(result.current.currentPlayer).toBe(1)
+        expect(global.fetch).toHaveBeenCalledTimes(1)
+    })
+
+    test('player win is detected immediately without triggering a coin flip', async () => {
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // always → "player"
+        global.fetch = mockBotResponse()
+
+        // Size-3 board: (0,0)→sideA+sideB, (0,1)→sideA, (0,2)→sideA+sideC
+        // Connected component {(0,0),(0,1),(0,2)} touches all three sides → win
+        const { result } = renderHook(() => useGameY(3, 'random_bot', 'easy', 'fortune'))
+
+        // Advance past initial flip
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        // Place first two pieces (no win yet)
+        act(() => { result.current.handleCellClick(0, 0) })
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        act(() => { result.current.handleCellClick(0, 1) })
+        await act(async () => { vi.advanceTimersByTime(1600) })
+
+        // Place winning piece — win detected before flipCoin is called.
+        // No timer needed: checkWin + finishGame has no setTimeout.
+        await act(async () => { await result.current.handleCellClick(0, 2) })
+
+        expect(result.current.gameOver).toBe(true)
+        expect(result.current.winner).toBe('0')
+        // Bot never called: game ended before coin flip and bot turn
+        expect(global.fetch).not.toHaveBeenCalled()
     })
 })

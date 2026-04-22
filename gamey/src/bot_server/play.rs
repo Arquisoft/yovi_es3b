@@ -1,6 +1,6 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::{Query, State}, http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
-use crate::{Coordinates, GameStatus, GameY, YEN};
+use crate::{Coordinates, GameY, YEN};
 use crate::bot_server::error::ErrorResponse;
 use crate::bot_server::state::AppState;
 
@@ -15,90 +15,54 @@ fn resolve_bot_id(bot_id: &str) -> &str {
     }
 }
 
-fn apply_move_to_yen(yen: &YEN, coords: &Coordinates) -> Result<YEN, String> {
-    let mut rows: Vec<String> = yen.layout().split('/').map(str::to_string).collect();
-    let size = yen.size() as i32;
-    let x = coords.x() as i32;
-    if x >= size {
-        return Err(format!("Coordinate x={} out of bounds for size={}", x, size));
-    }
-    let row_index = (size - 1 - x) as usize;
-
-    let row = rows.get_mut(row_index)
-        .ok_or_else(|| format!("Row index {} out of bounds", row_index))?;
-
-    let col = coords.y() as usize;
-    if col >= row.len() {
-        return Err(format!("Column {} out of bounds in row {}", col, row_index));
-    }
-
-    let player_char = yen.players()
-        .get(yen.turn() as usize)
-        .ok_or_else(|| format!("No player at turn index {}", yen.turn()))?;
-
-    let mut chars: Vec<char> = row.chars().collect();
-    chars[col] = *player_char;
-    *row = chars.into_iter().collect();
-
-    let next_turn = (yen.turn() + 1) % yen.players().len() as u32;
-
-    Ok(YEN::new(
-        yen.size(),
-        next_turn,
-        yen.players().to_vec(),
-        rows.join("/"),
-    ))
-}
-
 #[derive(Deserialize)]
-pub struct PlayRequest {
-    pub position: YEN,
+pub struct PlayQuery {
+    pub position: String,
     pub bot_id: Option<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct PlayResponse {
-    pub position: Option<YEN>,
-    #[serde(rename = "move")]
-    pub move_coords: Option<Coordinates>,
-    pub status: GameStatus,
+    pub coords: Coordinates,
 }
 
 #[axum::debug_handler]
 pub async fn play(
     State(state): State<AppState>,
-    Json(req): Json<PlayRequest>,
+    Query(query): Query<PlayQuery>,
 ) -> Result<Json<PlayResponse>, (StatusCode, Json<ErrorResponse>)> {
-    let yen = req.position;
-    let difficulty = req.bot_id.as_deref().unwrap_or("easy");
+    let yen: YEN = serde_json::from_str(&query.position).map_err(|err| {
+        (
+            StatusCode::BAD_REQUEST,
+            Json(ErrorResponse::error(
+                &format!("Invalid YEN JSON: {}", err),
+                None,
+                query.bot_id.clone(),
+            )),
+        )
+    })?;
+
+    let difficulty = query.bot_id.as_deref().unwrap_or("easy");
     let internal_bot_id = resolve_bot_id(difficulty);
 
-    let game_y = GameY::try_from(yen.clone()).map_err(|err| {
+    let game_y = GameY::try_from(yen).map_err(|err| {
         (
             StatusCode::BAD_REQUEST,
             Json(ErrorResponse::error(
                 &format!("Invalid YEN format: {}", err),
                 None,
-                Some(difficulty.to_string()),
+                query.bot_id.clone(),
             )),
         )
     })?;
-
-    if game_y.check_game_over() {
-        return Ok(Json(PlayResponse {
-            position: None,
-            move_coords: None,
-            status: game_y.status().clone(),
-        }));
-    }
 
     let bot = state.bots().find(internal_bot_id).ok_or_else(|| {
         (
             StatusCode::BAD_REQUEST,
             Json(ErrorResponse::error(
-                &format!("Bot not found: {} (resolved from '{}')", internal_bot_id, difficulty),
+                &format!("Bot not found: {}", internal_bot_id),
                 None,
-                Some(difficulty.to_string()),
+                query.bot_id.clone(),
             )),
         )
     })?;
@@ -109,32 +73,17 @@ pub async fn play(
             Json(ErrorResponse::error(
                 "No valid moves available",
                 None,
-                Some(difficulty.to_string()),
+                query.bot_id.clone(),
             )),
         )
     })?;
 
-    let updated_yen = apply_move_to_yen(&yen, &coords).map_err(|err| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(ErrorResponse::error(&err, None, Some(difficulty.to_string()))),
-        )
-    })?;
-
-    Ok(Json(PlayResponse {
-        position: Some(updated_yen),
-        move_coords: Some(coords),
-        status: game_y.status().clone(),
-    }))
+    Ok(Json(PlayResponse { coords }))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn sample_yen() -> YEN {
-        YEN::new(4, 1, vec!['B', 'R'], "B/.B/RB./B..R".to_string())
-    }
 
     #[test]
     fn test_resolve_bot_id() {
@@ -147,36 +96,17 @@ mod tests {
     }
 
     #[test]
-    fn test_apply_move_to_yen_advances_turn() {
-        let yen = sample_yen();
-        let coords = Coordinates::new(0, 1, 2);
-        let updated = apply_move_to_yen(&yen, &coords).unwrap();
-        assert_eq!(updated.turn(), 0);
+    fn test_play_response_serializes_correctly() {
+        let coords = Coordinates::new(1, 1, 1);
+        let resp = PlayResponse { coords };
+        let json = serde_json::to_string(&resp).unwrap();
+        assert!(json.contains("\"coords\""));
     }
 
     #[test]
-    fn test_apply_move_to_yen_places_correct_player() {
-        let yen = sample_yen();
-        let coords = Coordinates::new(0, 2, 1);
-        let updated = apply_move_to_yen(&yen, &coords).unwrap();
-        let rows: Vec<&str> = updated.layout().split('/').collect();
-        assert_eq!(rows[3].chars().nth(2), Some('R'));
-    }
-
-    #[test]
-    fn test_apply_move_preserves_size_and_players() {
-        let yen = sample_yen();
-        let coords = Coordinates::new(0, 0, 3);
-        let updated = apply_move_to_yen(&yen, &coords).unwrap();
-        assert_eq!(updated.size(), yen.size());
-        assert_eq!(updated.players(), yen.players());
-    }
-
-    #[test]
-    fn test_apply_move_out_of_bounds_row() {
-        let yen = sample_yen();
-        let coords = Coordinates::new(10, 0, 0);
-        let result = apply_move_to_yen(&yen, &coords);
-        assert!(result.is_err());
+    fn test_play_query_position_is_string() {
+        let yen_str = r#"{"size":4,"turn":1,"players":["B","R"],"layout":"B/.B/RB./B..R"}"#;
+        let yen: YEN = serde_json::from_str(yen_str).unwrap();
+        assert_eq!(yen.size(), 4);
     }
 }
