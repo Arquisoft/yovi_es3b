@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
+import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 
 const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
     const { t } = useTranslation();
+    const { setUsername: setContextUsername } = useAuth();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,21 +29,33 @@ const RegisterForm: React.FC<Props> = ({ onSuccess, onSwitchToLogin }) => {
         setLoading(true);
 
         try {
+            // Creamos usuario y actualizamos displayName por si la consulta
+            // a MongoDB tarda, el usuario ya tiene su nombre en Firebase
             const credential = await createUserWithEmailAndPassword(auth, email, password);
+            await updateProfile(credential.user, { displayName: username });
+            setContextUsername(username);
+            
             const token = await credential.user.getIdToken();
 
+            // Registramos igualmente el usuario
             const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-            const res = await fetch(`${API_URL}/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ username }),
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || t('auth.serverError'));
-
+            try {
+                const res = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ username }),
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || t('auth.serverError'));
+                }
+            } catch (err: any) {
+                setError(err.message || t('auth.registrationError'));
+            }
+            
             onSuccess();
         } catch (err: any) {
             setError(err.message || t('auth.registrationError'));

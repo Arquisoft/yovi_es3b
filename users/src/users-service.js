@@ -75,8 +75,11 @@ export function createApp(middleware = verifyToken) {
       if (existing) {
         return res.status(409).json({ error: req.t('userAlreadyRegistered') })
       }
-      await User.create({ firebaseUid: uid, username })
-      res.status(201).json({ message: req.t('welcomeUser', { username }) })
+      const user = await User.create({ firebaseUid: uid, username })
+      res.status(201).json({ 
+        message: req.t('welcomeUser', { username }),
+        user: { username: user.username, _id: user._id }
+      })
     } catch (err) {
       res.status(500).json({ error: err.message })
     }

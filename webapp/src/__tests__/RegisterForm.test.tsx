@@ -11,7 +11,21 @@ vi.mock('../firebase/firebase', () => ({
 
 // Mock de firebase/auth
 vi.mock('firebase/auth', () => ({
-  createUserWithEmailAndPassword: vi.fn()
+  createUserWithEmailAndPassword: vi.fn(),
+  updateProfile: vi.fn()
+}))
+
+// Mock del contexto AuthContext
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    setUsername: vi.fn(),
+    user: null,
+    loading: false,
+    token: null,
+    username: null,
+    photoURL: null,
+    setPhotoURL: vi.fn()
+  })
 }))
 
 // Mock para i18n
@@ -52,12 +66,14 @@ describe('RegisterForm', () => {
       }
     }
 
-    const { createUserWithEmailAndPassword } = await import('firebase/auth')
+    const { createUserWithEmailAndPassword, updateProfile } = await import('firebase/auth')
     ;(createUserWithEmailAndPassword as any).mockResolvedValue(mockCredential)
+    // añadimos mock de updateProfile cuando tiene el username
+    ;(updateProfile as any).mockResolvedValue(undefined)
 
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({})
+      json: async () => ({ user: { username: 'Pablo', _id: '123' } })
     } as Response)
 
     render(
@@ -75,6 +91,7 @@ describe('RegisterForm', () => {
 
     await waitFor(() => {
       expect(onSuccess).toHaveBeenCalled()
+      expect(updateProfile).toHaveBeenCalledWith(mockCredential.user, { displayName: 'Pablo' })
     })
   })
 })
