@@ -89,7 +89,7 @@ export function createApp(middleware = verifyToken) {
       if (!user) return res.status(404).json({ error: 'Usuario no encontrado' })
 
       const game = await Game.create({
-        username: user.username,
+        userId: user._id,
         winner,
         durationMs,
         turns,
@@ -106,7 +106,7 @@ export function createApp(middleware = verifyToken) {
       const user = await User.findOne({ firebaseUid: req.user.uid })
       if (!user) return res.status(404).json({ error: 'Usuario no encontrado' })
 
-      const games = await Game.find({ username: user.username })
+      const games = await Game.find({ userId: user._id })
           .sort({ createdAt: -1 })
           .limit(50)
       res.json(games)

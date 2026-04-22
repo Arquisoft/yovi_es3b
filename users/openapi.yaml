@@ -159,9 +159,9 @@ paths:
                   _id:
                     type: string
                     example: "64a7f3bc2e4e2a001f3d1234"
-                  username:
+                  userId:
                     type: string
-                    example: "testuser"
+                    example: "64a7f3bc2e4e2a001f3d5678"
                   winner:
                     type: string
                     example: "user"
@@ -223,9 +223,9 @@ paths:
                     _id:
                       type: string
                       example: "64a7f3bc2e4e2a001f3d1234"
-                    username:
+                    userId:
                       type: string
-                      example: "testuser"
+                      example: "64a7f3bc2e4e2a001f3d5678"
                     durationMs:
                       type: integer
                       example: 10000
