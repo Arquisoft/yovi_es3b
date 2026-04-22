@@ -24,6 +24,7 @@ use tower_http::cors::{Any, CorsLayer};
 
 pub use choose::MoveResponse;
 pub use error::ErrorResponse;
+pub use play::PlayResponse;
 pub use version::*;
 
 use crate::{
@@ -41,7 +42,7 @@ use crate::{
 pub fn create_router(state: AppState) -> Router {
     Router::new()
         .route("/status", get(status))
-        .route("/play", post(play::play))
+        .route("/play", get(play::play))
         .route(
             "/{api_version}/ybot/choose/{bot_id}",
             post(choose::choose),

@@ -6,7 +6,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 ifdef::arc42help[]
 [role="arc42help"]
-****
+****    
 .Contents
 The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios from the following areas:
 
@@ -39,29 +39,79 @@ See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-=== <Runtime Scenario 1>
+=== Single Player Game Initialization
 
-
-* _<insert runtime diagram or textual description of the scenario>_
-* _<insert description of the notable aspects of the interactions between the
-building block instances depicted in this diagram.>_
-
-It is possible to use a sequence diagram:
-
-[plantuml,"Sequence diagram",png]
+[plantuml,"Game Initialization Sequence with Difficulty",png]
 ----
-actor Alice
-actor Bob
-database Pod as "Bob's Pod"
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-Alice  --> Pod: Store route
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+actor User #87CEFA
+participant "Web App" as Web #87CEFA
+participant "Game Engine (Gamey)" as Gamey #87CEFA
+participant "Bot" #87CEFA
+
+User -> Web: Open app / Join game
+Web --> User: Prompt to select difficulty
+User -> Web: Select difficulty
+Web -> Gamey: Request new game (player info + difficulty)
+Gamey -> Bot: Initialize AI players (if any, with difficulty)
+Bot --> Gamey: Ready
+Gamey --> Web: Return initial game state (YEN + board)
+Web --> User: Render initial board
 ----
 
-=== <Runtime Scenario 2>
+**Description**
 
-=== ...
+1. The user opens the Web App and chooses to join a game.
+2. The Web App prompts the user to select a difficulty level.
+3. The user selects the desired difficulty.
+4. The Web App sends a request to Gamey to start a new game, including player info and difficulty.
+5. The Game Engine initializes bot players according to the chosen difficulty.
+6. Bots report readiness to the Game Engine.
+7. Gamey sends the initial game state and board to the Web App.
+8. The Web App renders the initial board for the user.
 
-=== <Runtime Scenario n>
+=== Player Move and Bot Response
+
+[plantuml,"Player move sequence (Web App → Gamey)",png]
+----
+actor User #87CEFA
+participant "Web App" as Web #87CEFA
+participant "Game Engine (Gamey)" as Gamey #87CEFA
+participant "Bot" #87CEFA
+
+User -> Web: Make move
+Web -> Gamey: POST /gamey/choose (send game state in YEN)
+Gamey -> Bot: choose_move(game_state)
+Bot --> Gamey: Coordinates
+Gamey --> Web: MoveResponse (JSON)
+Web --> User: Update board
+----
+**Description**
+
+1. The user performs a move in the Web App.
+2. The Web App sends the game state directly to the Game Engine (Gamey).
+3. The Game Engine selects the appropriate bot.
+4. The bot computes the next move.
+5. The result is returned directly back to the Web App.
+6. The UI updates with the new game state.
+
+=== View Match History
+
+[plantuml,"Match history sequence (WebApp → Game.js)",png]
+----
+actor User #87CEFA
+participant "Web App" as Web #87CEFA
+participant "Users Module" as Users #87CEFA
+
+User -> Web: Click "History" in navigation bar
+Web -> Users: GET /users/history
+Users --> Web: MatchHistory (JSON)
+Web --> User: Display past matches
+----
+
+**Description**
+
+1. After logging in, the user accesses the history section from the navigation bar.
+2. The WebApp requests the user's match history from the users module.
+3. Game.js retrieves all past matches associated with the user.
+4. The data is returned to the WebApp in JSON format.
+5. The interface displays the list of previously played matches of the player.
