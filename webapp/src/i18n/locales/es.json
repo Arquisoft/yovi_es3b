@@ -55,6 +55,8 @@
     "bot": "Bot",
     "progress": "Progreso",
     "newGame": "Nueva partida",
+    "skip": "Saltar acción",
+    "clue": "Dame una pista",
     "turn": "Turno de {{player}}",
     "botThinking": "El bot está pensando…",
     "gameOver": "La partida ha terminado",

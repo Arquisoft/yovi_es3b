@@ -1,7 +1,7 @@
 import { describe, expect, test, vi, afterEach, beforeEach } from 'vitest'
-import {renderHook, waitFor} from '@testing-library/react'
-import { useGameY, buildYEN, type Board } from '../components/board/GameBoardLogic'
-import {act} from "react";
+import { renderHook, waitFor } from '@testing-library/react'
+import { useGameY, buildYEN, buildYENReversed, type Board } from '../components/board/GameBoardLogic'
+import { act } from "react";
 
 vi.mock("../../context/AuthContext", () => ({
     useAuth: () => ({
@@ -546,4 +546,88 @@ describe('useGameY — Fortune Y mode', () => {
         // Bot never called: game ended before coin flip and bot turn
         expect(global.fetch).not.toHaveBeenCalled()
     })
-})
+});
+
+// ---------------------------------------------------------------------------
+// Hint
+// ---------------------------------------------------------------------------
+describe('useGameY — Hints', () => {
+    test('buildYENReversed swaps player and bot pieces correctly', () => {
+        const board: Board = {
+            "0,0": 1,
+            "1,0": 2
+        };
+
+        const yen = buildYENReversed(3, board);
+
+        expect(yen.layout).toContain("R"); // player → R
+        expect(yen.layout).toContain("B"); // bot → B
+
+        expect(yen.players).toEqual(["R", "B"]);
+    });
+
+    test('returns coords from API', async () => {
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                coords: { x: 2, y: 1, z: 5 }
+            })
+        }) as any;
+
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'));
+
+        const coords = await result.current.askForClue(result.current.board);
+
+        expect(coords).toEqual({ x: 2, y: 1, z: 5 });
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    test('sets clueCell after calling handleClue', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({ coords: { x: 2, y: 1, z: 5 } }),
+            text: async () => '',
+        } as Response)
+
+        await act(async () => {
+            await result.current.handleClue(result.current.board)
+        })
+
+        expect(result.current.clueCell).toBe("2,1")
+    })
+
+    test('askForClue returns coords from API', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({ coords: { x: 2, y: 1, z: 5 } }),
+            text: async () => '',
+        } as Response)
+
+        const coords = await result.current.askForClue(result.current.board)
+
+        expect(coords).toEqual({ x: 2, y: 1, z: 5 })
+        expect(global.fetch).toHaveBeenCalledTimes(1)
+    })
+
+    test('throws on bad response', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: false,
+            status: 500,
+            json: async () => ({}),
+            text: async () => 'error',
+        } as Response)
+
+        await expect(
+            result.current.askForClue(result.current.board)
+        ).rejects.toThrow()
+    });
+});

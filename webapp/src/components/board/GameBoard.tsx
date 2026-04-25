@@ -35,6 +35,7 @@ const CELL_CORNER = "#1e1e2a";
 const CELL_STROKE = "#2a2a3a";
 const CELL_STROKE_CORNER = "#333348";
 
+
 // ---------------------------------------------------------------------------
 // Sub-componentes
 // ---------------------------------------------------------------------------
@@ -95,12 +96,13 @@ type HexCellProps = {
   size: number;
   owner: Player | undefined;
   isHovered: boolean;
+  isClue?: boolean;
   onClick: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 };
 
-function HexCell({ q, r, size, owner, isHovered, onClick, onMouseEnter, onMouseLeave }: HexCellProps) {
+function HexCell({ q, r, size, owner, isHovered, isClue, onClick, onMouseEnter, onMouseLeave }: HexCellProps) {
   const { x, y } = hexToPixel(q, r);
   const sides = getSides(q, r, size);
 
@@ -110,11 +112,16 @@ function HexCell({ q, r, size, owner, isHovered, onClick, onMouseEnter, onMouseL
   if (isHovered) fill = "#ffffff22";
   if (owner) fill = PLAYER_FILL[owner];
 
-  const stroke = owner
+  const baseStroke = owner
     ? PLAYER_STROKE[owner]
     : sides.length >= 2
       ? CELL_STROKE_CORNER
       : CELL_STROKE;
+
+  const stroke = isClue && !owner
+    ? "#6dfa60"
+    : baseStroke;
+
   const strokeWidth = sides.length >= 2 ? 1.5 : 1;
 
   return (
@@ -175,7 +182,9 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
   const cells = useMemo(() => generateBoard(size), [size]);
   const [hovered, setHovered] = useState<string | null>(null);
 
-  const { board, currentPlayer, loadingBot, gameOver, winner, handleCellClick, resetGame, masterPiecesLeft, fortuneFlip, coinAnimating, coinAnimResult } =
+
+
+  const { board, clueCell, currentPlayer, loadingBot, gameOver, winner, handleCellClick, skipAction, resetGame, handleClue, masterPiecesLeft, fortuneFlip, coinAnimating, coinAnimResult } =
     useGameY(size, botId, difficulty, gameMode);
 
   const viewBox = useMemo(() => {
@@ -283,6 +292,8 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
           >
             {cells.map(({ q, r }) => {
               const key = `${q},${r}`;
+              const isClue = clueCell === key;
+
               return (
                 <HexCell
                   key={key}
@@ -291,6 +302,7 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
                   size={size}
                   owner={board[key]}
                   isHovered={hovered === key && !board[key] && canHover}
+                  isClue={isClue}
                   onClick={() => handleCellClick(q, r)}
                   onMouseEnter={() => setHovered(key)}
                   onMouseLeave={() => setHovered(null)}
@@ -300,6 +312,23 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
           </svg>
         </div>
       </main>
+      <aside className="game-sidebar game-sidebar--right">
+        <button
+          className="skip-button"
+          onClick={() => skipAction(board)}
+          disabled={loadingBot || gameOver || currentPlayer !== 1}
+        >
+          {t('game.skip')}
+        </button>
+
+        <button
+          className="clue-button"
+          onClick={() => handleClue(board)}
+          disabled={loadingBot || gameOver || clueCell !== null || currentPlayer !== 1}
+        >
+          {t('game.clue')}
+        </button>
+      </aside>
     </div>
   );
 }
