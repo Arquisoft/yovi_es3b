@@ -41,7 +41,7 @@
 
 /* ── Game Y tag ────────────────────────────────────────── */
 .lobby-game-name {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), serif;
     font-size: 2.8rem;
     letter-spacing: 0.25em;
     text-transform: uppercase;
@@ -49,6 +49,12 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
+}
+
+@media (max-width: 480px) {
+    .lobby-game-name {
+        font-size: 2.5rem;
+    }
 }
 
 .lobby-game-name::before,
@@ -63,7 +69,7 @@
 
 /* ── Title ──────────────────────────────────────────────── */
 .lobby-title {
-    font-family: var(--font-ui);
+    font-family: var(--font-ui), serif;
     font-weight: 700;
     font-size: 2.6rem;
     line-height: 1.1;
@@ -78,7 +84,7 @@
 
 /* ── Description ────────────────────────────────────────── */
 .lobby-description {
-    font-family: var(--font-ui);
+    font-family: var(--font-ui), serif;
     font-size: 1.3rem;
     color: var(--text-muted);
     line-height: 1.75;
@@ -107,7 +113,7 @@
 }
 
 .lobby-btn-primary {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), serif;
     font-size: 0.72rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -127,7 +133,7 @@
 }
 
 .lobby-docs-link {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), serif;
     font-size: 0.92rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;

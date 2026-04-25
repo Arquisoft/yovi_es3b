@@ -32,7 +32,7 @@
 }
 
 .navbar-title {
-  font-family: var(--font-ui);
+  font-family: var(--font-ui), serif;
   font-weight: 700;
   font-size: 1.1rem;
   letter-spacing: 0.1em;
@@ -54,21 +54,29 @@
   cursor: pointer;
   padding: 0.4rem 0.9rem;
   border-radius: 3px;
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), serif;
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   transition: color 0.15s, background 0.15s;
 }
+
 .navbar-link:hover {
   color: var(--text);
   background: var(--accent-dim);
   border-color: transparent;
 }
+
 .navbar-link--active {
   color: var(--text);
   border-bottom: 2px solid var(--accent);
   background: var(--accent-dim);
+}
+
+.navbar-right {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .navbar-logout {
@@ -78,16 +86,148 @@
   cursor: pointer;
   padding: 0.4rem 0.9rem;
   border-radius: 3px;
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), serif;
   font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   transition: color 0.15s, border-color 0.15s;
 }
+
 .navbar-logout:hover {
   color: var(--side-2);
   border-color: var(--side-2);
+}
+
+/* ── Hamburger Menu ─────────────────────────────────────── */
+.navbar-hamburger {
+  display: none;
   background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--text);
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.navbar-hamburger:hover {
+  opacity: 0.8;
+}
+
+.navbar-hamburger--active {
+  transform: rotate(90deg);
+}
+
+/* ── Mobile Menu ────────────────────────────────────────── */
+.navbar-mobile-menu {
+  display: none;
+  position: absolute;
+  top: 3.5rem;
+  left: 0;
+  right: 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  animation: slideDown 0.3s ease;
+  z-index: 99;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-mobile-link,
+.navbar-mobile-logout {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 1rem 1.5rem;
+  font-family: var(--font-mono), serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.15s, background 0.15s;
+}
+
+.navbar-mobile-link:hover,
+.navbar-mobile-logout:hover {
+  color: var(--text);
+  background: var(--accent-dim);
+}
+
+.navbar-mobile-link--active {
+  color: var(--text);
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  padding-left: calc(1.5rem - 3px);
+}
+
+.navbar-mobile-logout {
+  color: var(--text-muted);
+  border-left: 3px solid transparent;
+  padding-left: 1.5rem;
+}
+
+.navbar-mobile-logout:hover {
+  color: var(--side-2);
+}
+
+/* ── Movil y tablet ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+  }
+
+  .navbar-title {
+    font-size: 0.95rem;
+    margin-right: 0.5rem;
+  }
+
+  .navbar-links,
+  .navbar-logout {
+    display: none;
+  }
+
+  .navbar-hamburger {
+    display: block;
+    margin-left: auto;
+  }
+
+  .navbar-mobile-menu {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    height: 3rem;
+    padding: 0 0.75rem;
+  }
+
+  .navbar-title {
+    font-size: 0.85rem;
+  }
+
+  .navbar-mobile-link,
+  .navbar-mobile-logout {
+    padding: 0.75rem 1rem;
+    font-size: 0.65rem;
+  }
+
+  .main-content {
+    padding-top: 3rem;
+  }
 }
 
 /* ── Contenido principal ─────────────────────────────────── */
@@ -114,7 +254,7 @@
 }
 
 .auth-page-title {
-  font-family: var(--font-ui);
+  font-family: var(--font-ui), serif;
   font-weight: 700;
   font-size: 1.1rem;
   letter-spacing: 0.1em;
@@ -233,7 +373,7 @@
 }
 
 .history-page pre {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), serif;
   color: var(--text-muted);
   font-size: 0.85rem;
 }
@@ -244,7 +384,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), serif;
   color: var(--text-muted);
   font-size: 0.8rem;
   letter-spacing: 0.15em;
@@ -271,7 +411,7 @@
 }
 
 .form-group label {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), serif;
   font-size: 0.65rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -283,7 +423,7 @@
   border: 1px solid var(--border);
   border-radius: 3px;
   font-size: 0.95rem;
-  font-family: var(--font-ui);
+  font-family: var(--font-ui), serif;
   background: var(--bg-raised);
   color: var(--text);
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -314,7 +454,7 @@
 }
 
 .error-message {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), serif;
   font-size: 0.7rem;
   color: var(--side-2);
   letter-spacing: 0.03em;
