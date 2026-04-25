@@ -115,8 +115,9 @@ describe('POST /register', () => {
     })
 
     it('creates user and returns 201', async () => {
+        const mockUser = { _id: '507f1f77bcf86cd799439011', firebaseUid: 'test-uid-123', username: 'Pablo' }
         User.findOne.mockResolvedValue(null)
-        User.create.mockResolvedValue({ firebaseUid: 'test-uid-123', username: 'Pablo' })
+        User.create.mockResolvedValue(mockUser)
 
         const res = await request(appWithAuth)
             .post('/register')
@@ -125,6 +126,9 @@ describe('POST /register', () => {
 
         expect(res.status).toBe(201)
         expect(res.body).toHaveProperty('message')
+        expect(res.body).toHaveProperty('user')
+        expect(res.body.user).toHaveProperty('username', 'Pablo')
+        expect(res.body.user).toHaveProperty('_id', '507f1f77bcf86cd799439011')
     })
 
     it('returns 409 if user already exists', async () => {
@@ -222,7 +226,7 @@ describe('POST /games', () => {
 
 
     it('return 201 when game is stored correctly', async () => {
-        User.findOne.mockResolvedValue({username: 'Pablo'});
+        User.findOne.mockResolvedValue({_id: '507f1f77bcf86cd799439011', username: 'Pablo'});
         Game.create.mockResolvedValue({});
 
         const res = await request(appWithAuth)
@@ -262,17 +266,17 @@ describe('GET /games/me', () => {
     })
 
     it('returns a collection of games when request is correct', async () => {
-        User.findOne.mockResolvedValue({username: 'Pablo'});
+        User.findOne.mockResolvedValue({_id: '507f1f77bcf86cd799439011', username: 'Pablo'});
         const mockGames = [
             {
-                username:   'Pablo',
+                userId:     '507f1f77bcf86cd799439011',
                 winner:     "player",
                 durationMs: 10000,
                 turns:      20,
                 difficulty: "extreme",
             },
             {
-                username:   'Pablo',
+                userId:     '507f1f77bcf86cd799439011',
                 winner:     "bot",
                 durationMs: 30000,
                 turns:      15,
@@ -294,7 +298,7 @@ describe('GET /games/me', () => {
 
         expect(res.body[0]).toEqual(
             expect.objectContaining({
-                username:   'Pablo',
+                userId:     '507f1f77bcf86cd799439011',
                 winner:     "player",
                 durationMs: 10000,
                 turns:      20,
@@ -314,7 +318,7 @@ describe('GET /games/me', () => {
     })
 
     it('return 500 when an internal error occurs', async () => {
-        User.findOne.mockResolvedValue({username: 'Pablo'});
+        User.findOne.mockResolvedValue({_id: '507f1f77bcf86cd799439011', username: 'Pablo'});
         Game.find.mockReturnValue(
             null
         );

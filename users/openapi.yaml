@@ -110,7 +110,7 @@ paths:
         - bearerAuth: [ ]
       responses:
         '201':
-          description: Returns the message "Welcome <userName>"
+          description: Returns the message "Welcome <userName>" and user data
           content:
             application/json:
               schema:
@@ -119,6 +119,15 @@ paths:
                   message:
                     type: string
                     example: "Welcome Pablo"
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: "Pablo"
+                      _id:
+                        type: string
+                        example: "64a7f3bc2e4e2a001f3d1234"
         '401':
           description: Unauthorized – missing or invalid token
         '409':
@@ -159,9 +168,9 @@ paths:
                   _id:
                     type: string
                     example: "64a7f3bc2e4e2a001f3d1234"
-                  username:
+                  userId:
                     type: string
-                    example: "testuser"
+                    example: "64a7f3bc2e4e2a001f3d5678"
                   winner:
                     type: string
                     example: "user"
@@ -223,9 +232,9 @@ paths:
                     _id:
                       type: string
                       example: "64a7f3bc2e4e2a001f3d1234"
-                    username:
+                    userId:
                       type: string
-                      example: "testuser"
+                      example: "64a7f3bc2e4e2a001f3d5678"
                     durationMs:
                       type: integer
                       example: 10000
