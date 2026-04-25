@@ -40,78 +40,208 @@ See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
 endif::arc42help[]
 
 === Single Player Game Initialization
-
 [plantuml,"Game Initialization Sequence with Difficulty",png]
-----
 actor User #87CEFA
 participant "Web App" as Web #87CEFA
+participant "Auth Service" as Auth #87CEFA
 participant "Game Engine (Gamey)" as Gamey #87CEFA
-participant "Bot" #87CEFA
-
+participant "Bot (ybot)" as Bot #87CEFA
 User -> Web: Open app / Join game
+Web -> Auth: Validate session token (JWT)
+Auth --> Web: 200 OK — token valid, user identity confirmed
 Web --> User: Prompt to select difficulty
-User -> Web: Select difficulty
-Web -> Gamey: Request new game (player info + difficulty)
-Gamey -> Bot: Initialize AI players (if any, with difficulty)
-Bot --> Gamey: Ready
-Gamey --> Web: Return initial game state (YEN + board)
+User -> Web: Select difficulty (easy/medium/hard)
+Web -> Gamey: POST /gamey/new\n[Authorization: Bearer <JWT>]\n{ player_id, difficulty }
+Gamey -> Gamey: Validate JWT\nValidate difficulty value\nCreate game record\nAssign bot_id by difficulty
+Gamey -> Bot: POST /{api_version}/ybot/init/{bot_id}\n{ player_id, difficulty }
+Bot -> Bot: Load difficulty config\nInitialise internal state
+Bot --> Gamey: 200 OK — { bot_id, status: "ready" }
+Gamey --> Web: 201 Created\n{ game_id, initial_board (YEN), current_turn, status: "ongoing" }
 Web --> User: Render initial board
-----
+Description
 
-**Description**
+The user opens the Web App and chooses to start a single-player game.
+The Web App validates the user's session by checking the JWT with the Auth Service.
+The Auth Service responds with 200 OK, confirming the token is valid and returning the user identity.
+The Web App prompts the user to select a difficulty level (easy, medium, or hard).
+The user selects the desired difficulty.
+The Web App sends a POST /gamey/new request to Gamey, including:
 
-1. The user opens the Web App and chooses to join a game.
-2. The Web App prompts the user to select a difficulty level.
-3. The user selects the desired difficulty.
-4. The Web App sends a request to Gamey to start a new game, including player info and difficulty.
-5. The Game Engine initializes bot players according to the chosen difficulty.
-6. Bots report readiness to the Game Engine.
-7. Gamey sends the initial game state and board to the Web App.
-8. The Web App renders the initial board for the user.
+
+Authorization: Bearer <JWT> header
+Body: { player_id, difficulty }
+
+
+Gamey performs internal validation:
+
+
+Verifies the JWT signature and expiry.
+Validates that difficulty is one of the accepted enum values.
+Creates a new game record and assigns a bot_id based on difficulty.
+
+
+Gamey sends POST /{api_version}/ybot/init/{bot_id} to the Bot service, with { player_id, difficulty }.
+The Bot loads its difficulty configuration and initialises its internal state.
+The Bot responds with 200 OK — { bot_id, status: "ready" }.
+Gamey responds to the Web App with 201 Created:
+
+json{
+  "game_id": "abc123",
+  "initial_board": {
+    "size": 5,
+    "turn": 1,
+    "players": ["B", "R"],
+    "layout": "..../.../.././."
+  },
+  "current_turn": "B",
+  "status": "ongoing"
+}
+
+The Web App renders the initial board for the user.
+
 
 === Player Move and Bot Response
-
-[plantuml,"Player move sequence (Web App → Gamey)",png]
-----
+[plantuml,"Player move sequence (Web App → Gamey → ybot)",png]
 actor User #87CEFA
 participant "Web App" as Web #87CEFA
 participant "Game Engine (Gamey)" as Gamey #87CEFA
-participant "Bot" #87CEFA
+participant "Bot (ybot)" as Bot #87CEFA
+User -> Web: Place stone at (x, y)
+Web -> Web: Build YEN from current board state\nbuildYEN(size, board)
+Web -> Gamey: POST /gamey/choose\n[Authorization: Bearer <JWT>]\n{ game_id, yen: { size, turn, players, layout } }
+Gamey -> Gamey: Validate JWT\nValidate game_id exists & is ongoing\nValidate it is the player's turn\nValidate move coords are in bounds\nApply player move to board
+Gamey -> Bot: POST /{api_version}/ybot/choose/{bot_id}\n[Content-Type: application/json]\n{ size, turn, players, layout }
+Bot -> Bot: Parse YEN layout\nRun move selection algorithm\nValidate chosen coords\nReturn best move
+Bot --> Gamey: 200 OK\nMoveResponse { api_version, bot_id, status, coords }
+Gamey -> Gamey: Apply bot move to board\nCheck win condition\nPersist updated game state
+Gamey --> Web: 200 OK\n{ game_id, bot_move: coords, board (YEN), status }
+Web --> User: Render updated board
+Description
 
-User -> Web: Make move
-Web -> Gamey: POST /gamey/choose (send game state in YEN)
-Gamey -> Bot: choose_move(game_state)
-Bot --> Gamey: Coordinates
-Gamey --> Web: MoveResponse (JSON)
-Web --> User: Update board
-----
-**Description**
+The user places a stone at position (x, y) in the Web App.
+The Web App serialises the current board into YEN format using buildYEN(size, board):
 
-1. The user performs a move in the Web App.
-2. The Web App sends the game state directly to the Game Engine (Gamey).
-3. The Game Engine selects the appropriate bot.
-4. The bot computes the next move.
-5. The result is returned directly back to the Web App.
-6. The UI updates with the new game state.
+
+Each cell is mapped to B (player 1), R (bot), or . (empty).
+Rows are built from x = size-1 down to x = 0, each row having size - x cells.
+Rows are joined with / to form the layout string.
+
+json{
+  "size": 5,
+  "turn": 1,
+  "players": ["B", "R"],
+  "layout": "..../.../.././."
+}
+
+The Web App sends POST /gamey/choose to Gamey:
+
+
+Header: Authorization: Bearer <JWT>
+Body: { game_id, yen: { size, turn, players, layout } }
+
+
+Gamey performs internal validation:
+
+
+Verifies the JWT and extracts the user identity.
+Checks the game_id exists and has status: "ongoing".
+Confirms it is currently the player's (B) turn.
+Validates that the player's chosen coords are within bounds and not already occupied.
+Applies the player's move to the internal board state.
+
+
+Gamey forwards the YEN game state to the Bot via POST /{api_version}/ybot/choose/{bot_id}:
+
+
+Header: Content-Type: application/json
+Body: the full YEN object
+
+
+The Bot parses the YEN layout, runs its move-selection algorithm (depth varies by difficulty), validates the resulting coordinates, and returns the best move.
+The Bot responds with 200 OK and a MoveResponse:
+
+json{
+  "api_version": "v1",
+  "bot_id": "easy-bot",
+  "status": "ongoing",
+  "coords": { "x": 2, "y": 1 }
+}
+
+Gamey applies the bot's move to the board, checks win conditions, and persists the updated game state.
+Gamey responds to the Web App with 200 OK:
+
+json{
+  "game_id": "abc123",
+  "bot_move": { "x": 2, "y": 1 },
+  "board": {
+    "size": 5,
+    "turn": 2,
+    "players": ["B", "R"],
+    "layout": "..../..R/.././."
+  },
+  "status": "ongoing"
+}
+
+The Web App updates the board rendering with the bot's move.
+
+Error cases
+ScenarioHTTP StatusResponseInvalid / expired JWT401 Unauthorized{ error: "invalid_token" }game_id not found404 Not Found{ error: "game_not_found" }Game already finished409 Conflict{ error: "game_already_finished" }Move out of bounds422 Unprocessable Entity{ error: "invalid_coords" }Cell already occupied422 Unprocessable Entity{ error: "cell_occupied" }Bot service unreachable502 Bad Gateway{ error: "bot_unavailable" }
 
 === View Match History
-
-[plantuml,"Match history sequence (WebApp → Game.js)",png]
-----
+[plantuml,"Match history sequence (Web App → Users Module)",png]
 actor User #87CEFA
 participant "Web App" as Web #87CEFA
+participant "Auth Service" as Auth #87CEFA
 participant "Users Module" as Users #87CEFA
-
 User -> Web: Click "History" in navigation bar
-Web -> Users: GET /users/history
-Users --> Web: MatchHistory (JSON)
-Web --> User: Display past matches
-----
+Web -> Auth: Validate session token (JWT)
+Auth --> Web: 200 OK — user identity confirmed
+Web -> Users: GET /users/history\n[Authorization: Bearer <JWT>]
+Users -> Users: Validate JWT\nExtract user_id\nQuery match records for user_id\nSort by date descending
+Users --> Web: 200 OK — MatchHistory (JSON)
+Web --> User: Display list of past matches
+Description
 
-**Description**
+After logging in, the user clicks "History" in the navigation bar.
+The Web App validates the active session JWT with the Auth Service.
+The Auth Service returns 200 OK and confirms the user identity.
+The Web App sends GET /users/history to the Users Module:
 
-1. After logging in, the user accesses the history section from the navigation bar.
-2. The WebApp requests the user's match history from the users module.
-3. Game.js retrieves all past matches associated with the user.
-4. The data is returned to the WebApp in JSON format.
-5. The interface displays the list of previously played matches of the player.
+
+Header: Authorization: Bearer <JWT>
+
+
+The Users Module performs internal steps:
+
+
+Validates the JWT signature and expiry.
+Extracts the user_id from the token claims.
+Queries the database for all match records associated with user_id.
+Sorts results by date, most recent first.
+
+
+The Users Module responds with 200 OK and a MatchHistory payload:
+
+json{
+  "user_id": "user_42",
+  "matches": [
+    {
+      "game_id": "abc123",
+      "date": "2025-04-10T14:32:00Z",
+      "difficulty": "medium",
+      "result": "win",
+      "duration_seconds": 142,
+      "board_size": 5
+    },
+    {
+      "game_id": "xyz789",
+      "date": "2025-04-08T09:15:00Z",
+      "difficulty": "hard",
+      "result": "loss",
+      "duration_seconds": 87,
+      "board_size": 7
+    }
+  ]
+}
+
+The Web App renders the list of past matches for the user.
