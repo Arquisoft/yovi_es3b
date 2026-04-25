@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { useAuth } from "../context/AuthContext";
@@ -12,9 +13,16 @@ interface Props {
 const Navbar: React.FC<Props> = ({ currentPage, onNavigate }) => {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await signOut(auth);
+    setIsMenuOpen(false);
+  };
+
+  const handleNavigate = (page: string) => {
+    onNavigate(page);
+    setIsMenuOpen(false);
   };
 
   const navItems = [
@@ -26,7 +34,7 @@ const Navbar: React.FC<Props> = ({ currentPage, onNavigate }) => {
 
   return (
     <nav className="navbar">
-      <button className="navbar-title" onClick={() => onNavigate("lobby")}>
+      <button className="navbar-title" onClick={() => handleNavigate("lobby")}>
         YOVI
       </button>
       <div className="navbar-links">
@@ -34,7 +42,7 @@ const Navbar: React.FC<Props> = ({ currentPage, onNavigate }) => {
           <button
             key={item.id}
             className={`navbar-link${currentPage === item.id ? " navbar-link--active" : ""}`}
-            onClick={() => onNavigate(item.id)}
+            onClick={() => handleNavigate(item.id)}
           >
             {item.label}
           </button>
@@ -48,6 +56,38 @@ const Navbar: React.FC<Props> = ({ currentPage, onNavigate }) => {
           </button>
         )}
       </div>
+
+      {/* Menú para móviles */}
+      <button
+        className={`navbar-hamburger${isMenuOpen ? " navbar-hamburger--active" : ""}`}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label={isMenuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
+        aria-expanded={isMenuOpen}
+        aria-controls="mobile-menu"
+      >
+        ☰
+      </button>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="navbar-mobile-menu" id="mobile-menu" role="navigation" aria-label={t("nav.menu")}>
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              className={`navbar-mobile-link${currentPage === item.id ? " navbar-mobile-link--active" : ""}`}
+              onClick={() => handleNavigate(item.id)}
+              aria-current={currentPage === item.id ? "page" : undefined}
+            >
+              {item.label}
+            </button>
+          ))}
+          {user && (
+            <button className="navbar-mobile-logout" onClick={handleLogout}>
+              {t("nav.logout")}
+            </button>
+          )}
+        </div>
+      )}
     </nav>
   );
 };
