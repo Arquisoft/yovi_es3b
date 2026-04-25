@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const gameSchema = new mongoose.Schema({
-    username:   { type: String, required: true },
+    userId:     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     winner:     { type: String, enum: ["player", "bot"], required: true },
     durationMs: { type: Number, required: true },
     turns:      { type: Number, required: true },

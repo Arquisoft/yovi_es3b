@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/users-service.js",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "migrate:games-to-userid": "node src/migrations/migrateGamesToUserId.js"
   },
   "author": "",
   "license": "ISC",

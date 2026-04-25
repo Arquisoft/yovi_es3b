@@ -32,6 +32,6 @@ class UserLoad extends Simulation {
     )
 
   setUp(
-    scn.inject(rampUsers(10).during(10.seconds))
+    scn.inject(rampUsers(50).during(25.seconds))
   ).protocols(httpProtocol)
 }

@@ -4,7 +4,17 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3b&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3b)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_yovi_es3b&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_yovi_es3b)
 
-This project is a template with some basic functionality for the ASW labs.
+## Colaborators
+| Name | Email |
+|------|-------|
+| David López Araujo | UO299774@uniovi.es |
+| Sergio García Santamarina | UO294636@uniovi.es |
+| Pablo Hevia Fernández | UO301496@uniovi.es |
+| Alejandro González Álvarez | UO293819@uniovi.es |
+
+Course: Software Architecture
+
+Academic Year: 2025/2026
 
 ## Project Structure
 
