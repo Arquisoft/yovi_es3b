@@ -105,12 +105,14 @@ type HexCellProps = {
 function HexCell({ q, r, size, owner, isHovered, isClue, onClick, onMouseEnter, onMouseLeave }: HexCellProps) {
   const { x, y } = hexToPixel(q, r);
   const sides = getSides(q, r, size);
+  const showClue = !!isClue && !owner;
 
   let fill = CELL_BASE;
   if (sides.length === 1) fill = SIDE_COLORS[sides[0]] + CELL_EDGE_OPACITY;
   if (sides.length >= 2) fill = CELL_CORNER;
   if (isHovered) fill = "#ffffff22";
   if (owner) fill = PLAYER_FILL[owner];
+  if (showClue) fill = "rgba(124, 106, 247, 0.22)";
 
   const baseStroke = owner
     ? PLAYER_STROKE[owner]
@@ -118,21 +120,18 @@ function HexCell({ q, r, size, owner, isHovered, isClue, onClick, onMouseEnter, 
       ? CELL_STROKE_CORNER
       : CELL_STROKE;
 
-  const stroke = isClue && !owner
-    ? "#6dfa60"
-    : baseStroke;
-
-  const strokeWidth = sides.length >= 2 ? 1.5 : 1;
+  const stroke = showClue ? "#7c6af7" : baseStroke;
+  const strokeWidth = showClue ? 2 : sides.length >= 2 ? 1.5 : 1;
 
   return (
     <g
-      className={`hex-cell${owner ? " hex-cell--occupied" : ""}`}
+      className={`hex-cell${owner ? " hex-cell--occupied" : ""}${showClue ? " hex-cell--clue" : ""}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <polygon
-        className="hex-polygon"
+        className={`hex-polygon${showClue ? " hex-polygon--clue" : ""}`}
         points={hexCorners(x, y)}
         fill={fill}
         stroke={stroke}
@@ -311,24 +310,24 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
             })}
           </svg>
         </div>
-      </main>
-      <aside className="game-sidebar game-sidebar--right">
-        <button
-          className="skip-button"
-          onClick={() => skipAction(board)}
-          disabled={loadingBot || gameOver || currentPlayer !== 1}
-        >
-          {t('game.skip')}
-        </button>
 
-        <button
-          className="clue-button"
-          onClick={() => handleClue(board)}
-          disabled={loadingBot || gameOver || clueCell !== null || currentPlayer !== 1}
-        >
-          {t('game.clue')}
-        </button>
-      </aside>
+        <div className="game-actions">
+          <button
+            className="game-action game-action--skip"
+            onClick={() => skipAction(board)}
+            disabled={loadingBot || gameOver || currentPlayer !== 1}
+          >
+            {t('game.skip')}
+          </button>
+          <button
+            className="game-action game-action--clue"
+            onClick={() => handleClue(board)}
+            disabled={loadingBot || gameOver || clueCell !== null || currentPlayer !== 1}
+          >
+            {t('game.clue')}
+          </button>
+        </div>
+      </main>
     </div>
   );
 }
