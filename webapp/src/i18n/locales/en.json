@@ -73,7 +73,8 @@
     "modeFortune": "Fortune Y",
     "masterPiece": "Piece {{current}} of {{total}}",
     "fortuneYourTurn": "🪙 Coin flip: your turn!",
-    "fortuneBotTurn": "🪙 Coin flip: bot's turn!"
+    "fortuneBotTurn": "🪙 Coin flip: bot's turn!",
+    "timeLeft": "{{seconds}}s"
   },
   "history": {
     "title": "Game history",

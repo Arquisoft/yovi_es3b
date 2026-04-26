@@ -73,7 +73,8 @@
     "modeFortune": "Fortune Y",
     "masterPiece": "Pieza {{current}} de {{total}}",
     "fortuneYourTurn": "🪙 ¡Cara: es tu turno!",
-    "fortuneBotTurn": "🪙 Cruz: turno del bot"
+    "fortuneBotTurn": "🪙 Cruz: turno del bot",
+    "timeLeft": "{{seconds}}s"
   },
   "history": {
     "title": "Historial de partidas",

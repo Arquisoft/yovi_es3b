@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./GameBoard.css";
 import { type Difficulty } from "../GameResultApi";
 import { useGameY, type Player, type GameMode } from "./GameBoardLogic.ts";
@@ -50,6 +50,30 @@ function SideLegend() {
           <span className="side-legend-label">{t(key)}</span>
         </div>
       ))}
+    </div>
+  );
+}
+
+function TurnTimer({ deadline, totalMs }: { deadline: number; totalMs: number }) {
+  const { t } = useTranslation();
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 100);
+    return () => clearInterval(id);
+  }, []);
+
+  const remainingMs = Math.max(0, deadline - now);
+  const seconds = Math.ceil(remainingMs / 1000);
+  const pct = Math.max(0, Math.min(100, (remainingMs / totalMs) * 100));
+  const urgent = remainingMs <= 3000;
+
+  return (
+    <div className={`turn-timer ${urgent ? "turn-timer--urgent" : ""}`}>
+      <span className="turn-timer__label">{t("game.timeLeft", { seconds })}</span>
+      <div className="turn-timer__track">
+        <div className="turn-timer__bar" style={{ width: `${pct}%` }} />
+      </div>
     </div>
   );
 }
@@ -183,7 +207,7 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
 
 
 
-  const { board, clueCell, currentPlayer, loadingBot, gameOver, winner, handleCellClick, skipAction, resetGame, handleClue, masterPiecesLeft, fortuneFlip, coinAnimating, coinAnimResult } =
+  const { board, clueCell, currentPlayer, loadingBot, gameOver, winner, handleCellClick, skipAction, resetGame, handleClue, masterPiecesLeft, fortuneFlip, coinAnimating, coinAnimResult, turnDeadline, turnTimeoutMs } =
     useGameY(size, botId, difficulty, gameMode);
 
   const viewBox = useMemo(() => {
@@ -280,6 +304,9 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
                   ? t(fortuneFlip === "player" ? 'game.fortuneYourTurn' : 'game.fortuneBotTurn')
                   : t('game.turn', { player: t(PLAYER_LABEL_KEY[currentPlayer]) })}
           </span>
+          {turnDeadline !== null && (
+            <TurnTimer deadline={turnDeadline} totalMs={turnTimeoutMs} />
+          )}
         </div>
 
         {gameOver && <WinnerBanner winner={winner} />}

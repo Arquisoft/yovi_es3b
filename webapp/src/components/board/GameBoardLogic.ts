@@ -6,6 +6,8 @@ export type Player = 1 | 2;
 export type Board = Record<string, Player>;
 export type GameMode = "classic" | "master" | "fortune";
 
+const TURN_TIMEOUT_MS = 8000;
+
 // YEN serialisation — converts the board state to the format the bot API
 // expects: rows of B (player 1), R (bot), or . (empty), joined by "/"
 export function buildYEN(size: number, board: Board) {
@@ -121,6 +123,12 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
     // Fortune Y: coin flip animation state
     const [coinAnimating, setCoinAnimating] = useState(false);
     const [coinAnimResult, setCoinAnimResult] = useState<"player" | "bot" | null>(null);
+
+    // timer 8seg
+    const [turnDeadline, setTurnDeadline] = useState<number | null>(null);
+    const turnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const boardRef = useRef<Board>({});
+    useEffect(() => { boardRef.current = board; }, [board]);
 
     const gameFinishedRef = useRef(false);
     const startTimeRef = useRef(Date.now());
@@ -364,6 +372,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         setFortuneFlip(null);
         setCoinAnimating(false);
         setCoinAnimResult(null);
+        clearTurnTimer();
 
         if (gameMode === "fortune") {
             initialFlipStartedRef.current = false;
@@ -445,6 +454,45 @@ const handleClue = async (currentBoard: Board) => {
     }
 };
 
+    // ---- timer ------
+    // in master skips one piece
+
+    function clearTurnTimer() {
+        if (turnTimeoutRef.current) {
+            clearTimeout(turnTimeoutRef.current);
+            turnTimeoutRef.current = null;
+        }
+        setTurnDeadline(null);
+    }
+
+    function armTurnTimer() {
+        clearTurnTimer();
+        setTurnDeadline(Date.now() + TURN_TIMEOUT_MS);
+        turnTimeoutRef.current = setTimeout(() => {
+            turnTimeoutRef.current = null;
+            setTurnDeadline(null);
+            if (!gameFinishedRef.current) {
+                void skipAction(boardRef.current);
+            }
+        }, TURN_TIMEOUT_MS);
+    }
+
+    useEffect(() => {
+        const playerActive =
+            !gameOver &&
+            !loadingBot &&
+            !coinAnimating &&
+            currentPlayer === 1 &&
+            (gameMode !== "fortune" || fortuneFlip === "player");
+
+        if (playerActive) {
+            armTurnTimer();
+        } else {
+            clearTurnTimer();
+        }
+        return clearTurnTimer;
+    }, [currentPlayer, loadingBot, coinAnimating, gameOver, gameMode, fortuneFlip, masterPiecesLeft, board]);
+
     return {
         board,
         clueCell,
@@ -461,5 +509,7 @@ const handleClue = async (currentBoard: Board) => {
         fortuneFlip,
         coinAnimating,
         coinAnimResult,
+        turnDeadline,
+        turnTimeoutMs: TURN_TIMEOUT_MS,
     };
 }
