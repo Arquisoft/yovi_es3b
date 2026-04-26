@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+import { act } from 'react'
 import '@testing-library/jest-dom'
 import GameBoard from '../components/board/GameBoard'
 
@@ -107,5 +108,45 @@ describe('GameBoard', () => {
         await user.click(screen.getByRole('button', { name: 'game.newGame' }))
 
         expect(container.querySelector('.hex-cell--occupied')).not.toBeInTheDocument()
+    })
+
+    test('renders the turn timer when the player has the active turn', () => {
+        global.fetch = mockBotResponse()
+        const { container } = render(<GameBoard size={3} difficulty="easy" />)
+
+        expect(container.querySelector('.turn-timer')).toBeInTheDocument()
+        expect(container.querySelector('.turn-timer__bar')).toBeInTheDocument()
+    })
+
+    test('turn timer applies the urgent class once ≤ 3s remain', async () => {
+        vi.useFakeTimers()
+        try {
+            global.fetch = mockBotResponse()
+            const { container } = render(<GameBoard size={3} difficulty="easy" />)
+
+            // Initially the timer is at 8s — not urgent
+            expect(container.querySelector('.turn-timer--urgent')).not.toBeInTheDocument()
+
+            // Advance ~5.5s so the displayed countdown reaches ~2.5s remaining
+            await act(async () => { await vi.advanceTimersByTimeAsync(5500) })
+
+            expect(container.querySelector('.turn-timer--urgent')).toBeInTheDocument()
+        } finally {
+            vi.useRealTimers()
+        }
+    })
+
+    test('turn timer is hidden during the bot turn', async () => {
+        // Bot fetch never resolves — we stay in the loadingBot state forever
+        global.fetch = vi.fn(() => new Promise(() => {})) as unknown as typeof fetch
+        const user = userEvent.setup()
+        const { container } = render(<GameBoard size={3} difficulty="easy" />)
+
+        const firstCell = container.querySelector('.hex-cell')!
+        await user.click(firstCell)
+
+        await waitFor(() => {
+            expect(container.querySelector('.turn-timer')).not.toBeInTheDocument()
+        })
     })
 })

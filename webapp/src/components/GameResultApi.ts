@@ -2,6 +2,7 @@ import type { User } from "firebase/auth";
 
 export type Difficulty = "easy" | "hard" | "extreme" | "impossible";
 export type Winner = "player" | "bot";
+export type GameMode = "classic" | "master" | "fortune";
 
 // Extraemos la funcionalidad para guardar los resultados de la partida
 // a una clase externa
@@ -10,7 +11,8 @@ export async function saveGame(
     winner: Winner,
     durationMs: number,
     turns: number,
-    difficulty: Difficulty
+    difficulty: Difficulty,
+    gameMode: GameMode = "classic"
 ): Promise<void> {
     try {
         const token = await user.getIdToken();
@@ -21,7 +23,7 @@ export async function saveGame(
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ winner, durationMs, turns, difficulty }),
+            body: JSON.stringify({ winner, durationMs, turns, difficulty, gameMode }),
         });
     } catch (err) {
         console.error("Error guardando partida:", err);

@@ -11,6 +11,7 @@ export type GameResult = {
     durationMs: number;
     turns: number;
     difficulty: "easy" | "hard" | "extreme" | "impossible";
+    gameMode?: "classic" | "master" | "fortune";
     createdAt: string;
 };
 
