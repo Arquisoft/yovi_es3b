@@ -14,6 +14,12 @@ import { detectLanguage } from './middleware/languaje.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+function switchBranch(caseExpr, value) {
+  const obj = { case: caseExpr }
+  obj['then'] = value
+  return obj
+}
+
 export function createApp(middleware = verifyToken) {
   const app = express()
 
@@ -65,8 +71,10 @@ export function createApp(middleware = verifyToken) {
     }
 
     try {
+      const safeDifficulty = VALID_DIFFICULTIES.find(d => d === difficulty)
+
       const pipeline = []
-      if (difficulty) pipeline.push({ $match: { difficulty } })
+      if (safeDifficulty) pipeline.push({ $match: { difficulty: safeDifficulty } })
 
       pipeline.push(
         {
@@ -76,10 +84,10 @@ export function createApp(middleware = verifyToken) {
               $sum: {
                 $switch: {
                   branches: [
-                    { case: { $eq: ['$winner', 'bot'] }, then: -200 },
-                    { case: { $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'classic'] }] }, then: 1000 },
-                    { case: { $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'master'] }] }, then: 600 },
-                    { case: { $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'fortune'] }] }, then: 400 },
+                    switchBranch({ $eq: ['$winner', 'bot'] }, -200),
+                    switchBranch({ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'classic'] }] }, 1000),
+                    switchBranch({ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'master'] }] }, 600),
+                    switchBranch({ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'fortune'] }] }, 400),
                   ],
                   default: 0,
                 },
@@ -135,6 +143,8 @@ export function createApp(middleware = verifyToken) {
 
   app.post('/games', middleware, async (req, res) => {
     const { winner, durationMs, turns, difficulty, gameMode } = req.body
+    const VALID_WINNERS = ['player', 'bot']
+    const VALID_DIFFICULTIES = ['easy', 'hard', 'extreme', 'impossible']
     const VALID_GAME_MODES = ['classic', 'master', 'fortune']
 
     if (gameMode !== undefined && !VALID_GAME_MODES.includes(gameMode)) {
@@ -145,16 +155,22 @@ export function createApp(middleware = verifyToken) {
       const user = await User.findOne({ firebaseUid: req.user.uid })
       if (!user) return res.status(404).json({ error: req.t('userNotFound') })
 
-      const game = await Game.create({
-        userId: user._id,
-        winner,
-        durationMs,
-        turns,
-        difficulty,
-        ...(gameMode && { gameMode }),
-      })
+      const safeWinner = VALID_WINNERS.find(w => w === winner)
+      const safeDifficulty = VALID_DIFFICULTIES.find(d => d === difficulty)
+      const safeGameMode = VALID_GAME_MODES.find(m => m === gameMode)
 
-      const wonField = winner === 'player' ? 'gamesWon' : 'gamesLost'
+      const gameDoc = {
+        userId: user._id,
+        winner: safeWinner,
+        durationMs: Number(durationMs),
+        turns: Number(turns),
+        difficulty: safeDifficulty,
+      }
+      if (safeGameMode) gameDoc.gameMode = safeGameMode
+
+      const game = await Game.create(gameDoc)
+
+      const wonField = safeWinner === 'player' ? 'gamesWon' : 'gamesLost'
       await User.updateOne(
         { _id: user._id },
         { $inc: { gamesPlayed: 1, [wonField]: 1 } }

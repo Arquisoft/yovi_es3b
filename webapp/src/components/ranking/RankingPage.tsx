@@ -53,7 +53,7 @@ const RankingPage: React.FC = () => {
         };
 
         fetchRanking();
-    }, [user, difficulty, t]);
+    }, [user, difficulty]);
 
     const formatWinRate = (entry: RankingEntry) => {
         if (entry.gamesPlayed === 0) return "—";
