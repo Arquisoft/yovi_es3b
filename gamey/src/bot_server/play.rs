@@ -42,7 +42,7 @@ pub async fn play(
         )
     })?;
 
-    let difficulty = query.bot_id.as_deref().unwrap_or("easy");
+    let difficulty = query.bot_id.as_deref().unwrap_or("impossible");
     let internal_bot_id = resolve_bot_id(difficulty);
 
     let game_y = GameY::try_from(yen).map_err(|err| {
