@@ -507,3 +507,56 @@
     width: min(90vw, 540px);
   }
 }
+
+.game-sidebar--right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skip-button {
+  background-color: #facc15; /* amarillo */
+  color: #000;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.skip-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.skip-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clue-button {
+  background-color: #6dfa60; /* azul claro tipo "hint" */
+  color: #000;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
+}
+
+.clue-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  background-color: #4fff3f;
+}
+
+.clue-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}

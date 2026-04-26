@@ -108,4 +108,6 @@ describe('GameBoard', () => {
 
         expect(container.querySelector('.hex-cell--occupied')).not.toBeInTheDocument()
     })
+
+    
 })

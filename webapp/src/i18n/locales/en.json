@@ -55,6 +55,8 @@
     "bot": "Bot",
     "progress": "Progress",
     "newGame": "New game",
+    "skip": "Skip action",
+    "clue": "Give me a clue",
     "turn": "{{player}}'s turn",
     "botThinking": "Bot is thinking…",
     "gameOver": "Game over",
