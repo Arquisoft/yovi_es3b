@@ -11,6 +11,16 @@ function formatDuration(ms: number): string {
     return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
 }
 
+function gamePoints(game: GameResult): number {
+    if (game.winner === "bot") return -200;
+    switch (game.gameMode ?? "classic") {
+        case "master":  return 600;
+        case "fortune": return 400;
+        case "classic":
+        default:        return 1000;
+    }
+}
+
 function formatDate(isoString: string, t: (key: string) => string, locale: string): string {
     const date = new Date(isoString);
     const now = new Date();
@@ -39,14 +49,20 @@ const GameHistoryCard: React.FC<Props> = ({ game }) => {
     const { t, i18n } = useTranslation();
     const isWin = game.winner === "player";
     const locale = i18n.language.startsWith('es') ? 'es-ES' : 'en-GB';
+    const points = gamePoints(game);
 
     return (
         // Aplicamos un estilo diferente para partidas ganadas y perdidas
         <div className={`game-card ${isWin ? "game-card--win" : "game-card--loss"}`}>
             <div className="game-card__header">
-                <span className={`game-card__result ${isWin ? "game-card__result--win" : "game-card__result--loss"}`}>
-                    {isWin ? t('history.win') : t('history.loss')}
-                </span>
+                <div className="game-card__header-left">
+                    <span className={`game-card__result ${isWin ? "game-card__result--win" : "game-card__result--loss"}`}>
+                        {isWin ? t('history.win') : t('history.loss')}
+                    </span>
+                    <span className={`game-card__points ${isWin ? "game-card__points--win" : "game-card__points--loss"}`}>
+                        {points > 0 ? `+${points}` : points} {t('history.points')}
+                    </span>
+                </div>
                 <span className="game-card__date">{formatDate(game.createdAt, t, locale)}</span>
             </div>
             <div className="game-card__stats">

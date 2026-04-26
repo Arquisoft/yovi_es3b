@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./GameBoard.css";
 import { type Difficulty } from "../GameResultApi";
 import { useGameY, type Player, type GameMode } from "./GameBoardLogic.ts";
@@ -54,6 +54,30 @@ function SideLegend() {
   );
 }
 
+function TurnTimer({ deadline, totalMs }: { deadline: number; totalMs: number }) {
+  const { t } = useTranslation();
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 100);
+    return () => clearInterval(id);
+  }, []);
+
+  const remainingMs = Math.max(0, deadline - now);
+  const seconds = Math.ceil(remainingMs / 1000);
+  const pct = Math.max(0, Math.min(100, (remainingMs / totalMs) * 100));
+  const urgent = remainingMs <= 3000;
+
+  return (
+    <div className={`turn-timer ${urgent ? "turn-timer--urgent" : ""}`}>
+      <span className="turn-timer__label">{t("game.timeLeft", { seconds })}</span>
+      <div className="turn-timer__track">
+        <div className="turn-timer__bar" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
 function CoinFlipOverlay({ result }: { result: "player" | "bot" | null }) {
   const { t } = useTranslation();
   return (
@@ -102,37 +126,48 @@ type HexCellProps = {
   onMouseLeave: () => void;
 };
 
+const CLUE_FILL = "rgba(124, 106, 247, 0.22)";
+const CLUE_STROKE = "#7c6af7";
+const HOVER_FILL = "#ffffff22";
+
+function getCellFill(sides: number[], isHovered: boolean, owner: Player | undefined, showClue: boolean) {
+  if (showClue) return CLUE_FILL;
+  if (owner) return PLAYER_FILL[owner];
+  if (isHovered) return HOVER_FILL;
+  if (sides.length >= 2) return CELL_CORNER;
+  if (sides.length === 1) return SIDE_COLORS[sides[0]] + CELL_EDGE_OPACITY;
+  return CELL_BASE;
+}
+
+function getCellStroke(owner: Player | undefined, sides: number[], showClue: boolean) {
+  if (showClue) return CLUE_STROKE;
+  if (owner) return PLAYER_STROKE[owner];
+  return sides.length >= 2 ? CELL_STROKE_CORNER : CELL_STROKE;
+}
+
+function getCellStrokeWidth(showClue: boolean, sides: number[]) {
+  if (showClue) return 2;
+  return sides.length >= 2 ? 1.5 : 1;
+}
+
 function HexCell({ q, r, size, owner, isHovered, isClue, onClick, onMouseEnter, onMouseLeave }: HexCellProps) {
   const { x, y } = hexToPixel(q, r);
   const sides = getSides(q, r, size);
+  const showClue = !!isClue && !owner;
 
-  let fill = CELL_BASE;
-  if (sides.length === 1) fill = SIDE_COLORS[sides[0]] + CELL_EDGE_OPACITY;
-  if (sides.length >= 2) fill = CELL_CORNER;
-  if (isHovered) fill = "#ffffff22";
-  if (owner) fill = PLAYER_FILL[owner];
-
-  const baseStroke = owner
-    ? PLAYER_STROKE[owner]
-    : sides.length >= 2
-      ? CELL_STROKE_CORNER
-      : CELL_STROKE;
-
-  const stroke = isClue && !owner
-    ? "#6dfa60"
-    : baseStroke;
-
-  const strokeWidth = sides.length >= 2 ? 1.5 : 1;
+  const fill = getCellFill(sides, isHovered, owner, showClue);
+  const stroke = getCellStroke(owner, sides, showClue);
+  const strokeWidth = getCellStrokeWidth(showClue, sides);
 
   return (
     <g
-      className={`hex-cell${owner ? " hex-cell--occupied" : ""}`}
+      className={`hex-cell${owner ? " hex-cell--occupied" : ""}${showClue ? " hex-cell--clue" : ""}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <polygon
-        className="hex-polygon"
+        className={`hex-polygon${showClue ? " hex-polygon--clue" : ""}`}
         points={hexCorners(x, y)}
         fill={fill}
         stroke={stroke}
@@ -184,7 +219,7 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
 
 
 
-  const { board, clueCell, currentPlayer, loadingBot, gameOver, winner, handleCellClick, skipAction, resetGame, handleClue, masterPiecesLeft, fortuneFlip, coinAnimating, coinAnimResult } =
+  const { board, clueCell, currentPlayer, loadingBot, gameOver, winner, handleCellClick, skipAction, resetGame, handleClue, masterPiecesLeft, fortuneFlip, coinAnimating, coinAnimResult, turnDeadline, turnTimeoutMs } =
     useGameY(size, botId, difficulty, gameMode);
 
   const viewBox = useMemo(() => {
@@ -281,6 +316,9 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
                   ? t(fortuneFlip === "player" ? 'game.fortuneYourTurn' : 'game.fortuneBotTurn')
                   : t('game.turn', { player: t(PLAYER_LABEL_KEY[currentPlayer]) })}
           </span>
+          {turnDeadline !== null && (
+            <TurnTimer deadline={turnDeadline} totalMs={turnTimeoutMs} />
+          )}
         </div>
 
         {gameOver && <WinnerBanner winner={winner} />}
@@ -311,24 +349,24 @@ export default function GameBoard({ size = 9, botId = "random_bot", difficulty =
             })}
           </svg>
         </div>
-      </main>
-      <aside className="game-sidebar game-sidebar--right">
-        <button
-          className="skip-button"
-          onClick={() => skipAction(board)}
-          disabled={loadingBot || gameOver || currentPlayer !== 1}
-        >
-          {t('game.skip')}
-        </button>
 
-        <button
-          className="clue-button"
-          onClick={() => handleClue(board)}
-          disabled={loadingBot || gameOver || clueCell !== null || currentPlayer !== 1}
-        >
-          {t('game.clue')}
-        </button>
-      </aside>
+        <div className="game-actions">
+          <button
+            className="game-action game-action--skip"
+            onClick={() => skipAction(board)}
+            disabled={loadingBot || gameOver || currentPlayer !== 1}
+          >
+            {t('game.skip')}
+          </button>
+          <button
+            className="game-action game-action--clue"
+            onClick={() => handleClue(board)}
+            disabled={loadingBot || gameOver || clueCell !== null || currentPlayer !== 1}
+          >
+            {t('game.clue')}
+          </button>
+        </div>
+      </main>
     </div>
   );
 }

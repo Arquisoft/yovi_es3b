@@ -4,6 +4,7 @@
     "play": "Play",
     "profile": "My Profile",
     "history": "History",
+    "ranking": "Ranking",
     "logout": "Log Out"
   },
   "lobby": {
@@ -72,7 +73,8 @@
     "modeFortune": "Fortune Y",
     "masterPiece": "Piece {{current}} of {{total}}",
     "fortuneYourTurn": "🪙 Coin flip: your turn!",
-    "fortuneBotTurn": "🪙 Coin flip: bot's turn!"
+    "fortuneBotTurn": "🪙 Coin flip: bot's turn!",
+    "timeLeft": "{{seconds}}s"
   },
   "history": {
     "title": "Game history",
@@ -82,6 +84,7 @@
     "empty": "You have no recorded games",
     "win": "Win",
     "loss": "Loss",
+    "points": "pts",
     "duration": "Duration",
     "turns": "Turns",
     "difficulty": "Difficulty",
@@ -102,5 +105,20 @@
     "usernameRequired": "Username cannot be empty",
     "chooseAvatar": "Choose your avatar",
     "username": "New username"
+  },
+  "ranking": {
+    "title": "Player ranking",
+    "loading": "Loading ranking...",
+    "error": "Error loading ranking",
+    "empty": "No players in the ranking yet",
+    "filterDifficulty": "Filter by difficulty",
+    "colPos": "#",
+    "colUser": "Player",
+    "colPoints": "Points",
+    "colPlayed": "Games",
+    "colWon": "Wins",
+    "colLost": "Losses",
+    "colWinRate": "Win rate",
+    "pointsLegend": "Scoring: Classic +1000 · Master Y +600 · Fortune Y +400 · Loss −200"
   }
 }

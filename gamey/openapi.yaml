@@ -27,8 +27,8 @@ paths:
           schema:
             type: string
             enum: [easy, hard, extreme, impossible, corner]
-            default: easy
-          description: Difficulty level of the bot to play against. Defaults to "easy".
+            default: impossible
+          description: Difficulty level of the bot to play against. Defaults to "impossible" (montecarlo_bot).
           example: extreme
       responses:
         '200':

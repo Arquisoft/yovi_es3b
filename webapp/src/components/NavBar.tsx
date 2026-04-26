@@ -30,6 +30,7 @@ const Navbar: React.FC<Props> = ({ currentPage, onNavigate }) => {
     { id: "game", label: t("nav.play") },
     { id: "profile", label: t("nav.profile") },
     { id: "history", label: t("nav.history") },
+    { id: "ranking", label: t("nav.ranking") },
   ];
 
   return (

@@ -61,10 +61,21 @@ paths:
                     example: "Internal server error"
   /users:
     get:
-      summary: Returns top 50 users by wins
-      description: Returns a ranked list of up to 50 users sorted by games won in descending order
+      summary: Returns top 50 users in the points ranking
+      description: |
+        Returns a ranked list of up to 50 users sorted by accumulated points (clamped at 0).
+        Points formula: Classic win +1000, Master Y win +600, Fortune Y win +400, any loss -200.
+        If `difficulty` is provided, only games of that difficulty count toward the ranking.
       security:
         - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: difficulty
+          required: false
+          schema:
+            type: string
+            enum: [easy, hard, extreme, impossible]
+          description: If provided, only games of this difficulty count toward the ranking. Omit for global ranking.
       responses:
         '200':
           description: List of users retrieved successfully
@@ -81,6 +92,12 @@ paths:
                     username:
                       type: string
                       example: "testuser"
+                    photoURL:
+                      type: string
+                      example: "avatar_1.png"
+                    points:
+                      type: integer
+                      example: 2400
                     gamesPlayed:
                       type: integer
                       example: 10
@@ -90,6 +107,16 @@ paths:
                     gamesLost:
                       type: integer
                       example: 4
+        '400':
+          description: Invalid difficulty value
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid difficulty"
         '401':
           description: Unauthorized – missing or invalid token
         '500':
@@ -153,10 +180,34 @@ paths:
   /games:
     post:
       summary: Saves game result
-      description: Saves the winner, duration, number of turns and difficulty of a game
-        linked to a user by id
+      description: Saves the winner, duration, number of turns, difficulty and game mode of a game
+        linked to a user by id. Also increments the user's gamesPlayed and gamesWon/gamesLost counters.
       security:
         - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [winner, durationMs, turns, difficulty]
+              properties:
+                winner:
+                  type: string
+                  enum: [player, bot]
+                durationMs:
+                  type: integer
+                  example: 12000
+                turns:
+                  type: integer
+                  example: 15
+                difficulty:
+                  type: string
+                  enum: [easy, hard, extreme, impossible]
+                gameMode:
+                  type: string
+                  enum: [classic, master, fortune]
+                  default: classic
       responses:
         '201':
           description: Returns game data
@@ -173,7 +224,7 @@ paths:
                     example: "64a7f3bc2e4e2a001f3d5678"
                   winner:
                     type: string
-                    example: "user"
+                    example: "player"
                   durationMs:
                     type: integer
                     example: 12000
@@ -183,6 +234,9 @@ paths:
                   difficulty:
                     type: string
                     example: "hard"
+                  gameMode:
+                    type: string
+                    example: "classic"
                   createdAt:
                     type: string
                     format: date-time

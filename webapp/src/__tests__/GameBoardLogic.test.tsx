@@ -487,14 +487,12 @@ describe('useGameY — Fortune Y mode', () => {
         global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
         const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
 
-        // Advance past initial flip (player → no bot)
         await act(async () => { vi.advanceTimersByTime(1600) })
 
         act(() => { result.current.handleCellClick(1, 1) })
 
-        // Resolve player-move flip (→ "bot", triggers bot fetch + second flip timer)
         await act(async () => { vi.advanceTimersByTime(1600) })
-        // Resolve bot-move flip (→ "player", loop exits)
+
         await act(async () => { vi.advanceTimersByTime(1600) })
 
         expect(global.fetch).toHaveBeenCalledTimes(1)
@@ -510,7 +508,6 @@ describe('useGameY — Fortune Y mode', () => {
         global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
         const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
 
-        // Resolve initial flip (→ "bot") then bot fetch then second flip (→ "player")
         await act(async () => { vi.advanceTimersByTime(1600) })
         await act(async () => { vi.advanceTimersByTime(1600) })
 
@@ -523,8 +520,6 @@ describe('useGameY — Fortune Y mode', () => {
         vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // always → "player"
         global.fetch = mockBotResponse()
 
-        // Size-3 board: (0,0)→sideA+sideB, (0,1)→sideA, (0,2)→sideA+sideC
-        // Connected component {(0,0),(0,1),(0,2)} touches all three sides → win
         const { result } = renderHook(() => useGameY(3, 'random_bot', 'easy', 'fortune'))
 
         // Advance past initial flip
@@ -538,12 +533,11 @@ describe('useGameY — Fortune Y mode', () => {
         await act(async () => { vi.advanceTimersByTime(1600) })
 
         // Place winning piece — win detected before flipCoin is called.
-        // No timer needed: checkWin + finishGame has no setTimeout.
         await act(async () => { await result.current.handleCellClick(0, 2) })
 
         expect(result.current.gameOver).toBe(true)
         expect(result.current.winner).toBe('0')
-        // Bot never called: game ended before coin flip and bot turn
+
         expect(global.fetch).not.toHaveBeenCalled()
     })
 });
@@ -560,8 +554,8 @@ describe('useGameY — Hints', () => {
 
         const yen = buildYENReversed(3, board);
 
-        expect(yen.layout).toContain("R"); // player → R
-        expect(yen.layout).toContain("B"); // bot → B
+        expect(yen.layout).toContain("R");
+        expect(yen.layout).toContain("B");
 
         expect(yen.players).toEqual(["R", "B"]);
     });
@@ -630,4 +624,182 @@ describe('useGameY — Hints', () => {
             result.current.askForClue(result.current.board)
         ).rejects.toThrow()
     });
+});
+
+// ---------------------------------------------------------------------------
+// timer
+// ---------------------------------------------------------------------------
+
+describe('useGameY — turn timer', () => {
+    beforeEach(() => { vi.useFakeTimers() })
+    afterEach(() => { vi.useRealTimers() })
+
+    test('Classic — turnDeadline is armed on mount', () => {
+        global.fetch = mockBotResponse()
+        const before = Date.now()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        expect(result.current.turnDeadline).not.toBeNull()
+        expect(result.current.turnDeadline!).toBeGreaterThanOrEqual(before + 8000)
+        expect(result.current.turnTimeoutMs).toBe(8000)
+    })
+
+    test('Classic — expiring the timer cedes the turn to the bot without a click', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        expect(global.fetch).not.toHaveBeenCalled()
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(8000) })
+
+        expect(global.fetch).toHaveBeenCalledTimes(1)
+        expect(result.current.currentPlayer).toBe(1)
+    })
+
+    test('Classic — clicking before timeout does not cause a duplicate skip', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        await act(async () => { await result.current.handleCellClick(2, 2) })
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(8000) })
+
+        expect(result.current.board['2,2']).toBe(1)
+        expect(global.fetch).toHaveBeenCalled()
+    })
+
+    test('Classic — timer is rearmed after the bot finishes its move', async () => {
+        global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        const before = result.current.turnDeadline
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+
+        expect(result.current.currentPlayer).toBe(1)
+        expect(result.current.turnDeadline).not.toBeNull()
+        expect(result.current.turnDeadline!).toBeGreaterThanOrEqual(before!)
+    })
+
+    test('Master — expiring on the 1st piece only decrements masterPiecesLeft', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        expect(result.current.masterPiecesLeft).toBe(2)
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(8000) })
+
+        expect(result.current.masterPiecesLeft).toBe(1)
+        expect(result.current.currentPlayer).toBe(1)
+        expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    test('Master — placing 1st piece rearms the timer', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        const before = result.current.turnDeadline
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+
+        expect(result.current.masterPiecesLeft).toBe(1)
+        expect(result.current.turnDeadline).not.toBeNull()
+        expect(result.current.turnDeadline!).toBeGreaterThanOrEqual(before!)
+    })
+
+    test('Master — expiring on the 2nd piece cedes the turn (2 bot moves)', async () => {
+        global.fetch = mockBotResponse({ x: 3, y: 2, z: 3 })
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'master'))
+
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+        expect(result.current.masterPiecesLeft).toBe(1)
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(8000) })
+
+        expect(global.fetch).toHaveBeenCalledTimes(2)
+        expect(result.current.masterPiecesLeft).toBe(2)
+    })
+
+    test('Fortune — timer is NOT armed during the coin flip animation', () => {
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // → "player"
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        expect(result.current.turnDeadline).toBeNull()
+    })
+
+    test('Fortune — timer is armed after coin animation when flip = "player"', async () => {
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr }) // → "player"
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(1600) })
+
+        expect(result.current.fortuneFlip).toBe('player')
+        expect(result.current.turnDeadline).not.toBeNull()
+    })
+
+    test('Fortune — timer is NOT armed when flip = "bot"', async () => {
+        vi.spyOn(crypto, 'getRandomValues')
+            .mockImplementationOnce((arr) => { (arr as Uint32Array)[0] = 1; return arr })  // initial flip → "bot"
+            .mockImplementation((arr) => { (arr as Uint32Array)[0] = 1; return arr })  // keep "bot" so the loop runs
+
+        global.fetch = vi.fn(() => new Promise(() => {})) as unknown as typeof fetch
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(1600) })
+
+        expect(result.current.currentPlayer).toBe(2)
+        expect(result.current.turnDeadline).toBeNull()
+    })
+
+    test('Fortune — expiring the timer triggers another coin flip', async () => {
+        vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => { (arr as Uint32Array)[0] = 0; return arr })
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy', 'fortune'))
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(1600) })
+        expect(result.current.turnDeadline).not.toBeNull()
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(8000) })
+
+        expect(result.current.coinAnimating || result.current.fortuneFlip === 'player').toBe(true)
+        expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    test('resetGame() clears the pending timer', async () => {
+        global.fetch = mockBotResponse()
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        expect(result.current.turnDeadline).not.toBeNull()
+
+        act(() => { result.current.resetGame() })
+        const afterReset = result.current.turnDeadline
+
+        const fetchCallsAfterReset = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.length
+
+        await act(async () => { await vi.advanceTimersByTimeAsync(8000) })
+
+        expect(afterReset).not.toBeNull()
+        expect((global.fetch as ReturnType<typeof vi.fn>).mock.calls.length).toBe(fetchCallsAfterReset + 1)
+    })
+
+    test('Game over clears the timer (no skipAction fires after the game ends)', async () => {
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: false,
+            status: 409,
+            json: async () => ({ message: 'Game finished (winner: PlayerId(1))' }),
+            text: async () => '',
+        } as Response)
+
+        const { result } = renderHook(() => useGameY(9, 'random_bot', 'easy'))
+
+        await act(async () => { await result.current.handleCellClick(1, 1) })
+
+        expect(result.current.gameOver).toBe(true)
+        expect(result.current.turnDeadline).toBeNull()
+
+        const fetchCallsBefore = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.length
+        await act(async () => { await vi.advanceTimersByTimeAsync(20000) })
+
+        expect((global.fetch as ReturnType<typeof vi.fn>).mock.calls.length).toBe(fetchCallsBefore)
+    })
 });

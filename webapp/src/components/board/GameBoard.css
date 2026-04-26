@@ -508,55 +508,109 @@
   }
 }
 
-.game-sidebar--right {
+/* ── Acciones bajo el tablero ──────────────────────────── */
+.game-actions {
   display: flex;
-  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.2rem;
+  flex-wrap: wrap;
   justify-content: center;
 }
 
-.skip-button {
-  background-color: #facc15; /* amarillo */
-  color: #000;
-  padding: 12px 20px;
-  border-radius: 8px;
+.game-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.2rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
   font-weight: 600;
-  border: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
 }
 
-.skip-button:hover {
+.game-action:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-.skip-button:disabled {
-  opacity: 0.5;
+.game-action:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.game-action:disabled {
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
-.clue-button {
-  background-color: #6dfa60; /* azul claro tipo "hint" */
-  color: #000;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  margin-top: 10px;
-
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
+.game-action--skip:hover:not(:disabled) {
+  border-color: #facc15;
+  color: #facc15;
+  box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.25), 0 4px 14px rgba(250, 204, 21, 0.12);
 }
 
-.clue-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  background-color: #4fff3f;
+.game-action--clue:hover:not(:disabled) {
+  border-color: #7c6af7;
+  color: #b1a4ff;
+  box-shadow: 0 0 0 1px rgba(124, 106, 247, 0.3), 0 4px 14px rgba(124, 106, 247, 0.18);
 }
 
-.clue-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+/* ── Casilla resaltada por la pista ────────────────────── */
+.hex-polygon--clue {
+  animation: clue-pulse 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(124, 106, 247, 0.55));
+}
+
+@keyframes clue-pulse {
+  0%, 100% {
+    stroke-opacity: 0.55;
+    fill-opacity: 0.7;
+  }
+  50% {
+    stroke-opacity: 1;
+    fill-opacity: 1;
+  }
+}
+
+/* ────────────── temporizador ────────────── */
+.turn-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.turn-timer__label {
+  font-size: 12px;
+  color: #c0c0d0;
+  min-width: 28px;
+  text-align: right;
+}
+
+.turn-timer__track {
+  width: 80px;
+  height: 4px;
+  background: #2a2a3a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.turn-timer__bar {
+  height: 100%;
+  background: #7c6af7;
+  transition: width 100ms linear;
+}
+
+.turn-timer--urgent .turn-timer__label {
+  color: #f05070;
+}
+
+.turn-timer--urgent .turn-timer__bar {
+  background: #f05070;
 }
