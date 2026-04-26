@@ -13,10 +13,6 @@ import { verifyToken } from './middleware/auth.js'
 import { detectLanguage } from './middleware/languaje.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const SWITCH_THEN_KEY = ['t', 'h', 'e', 'n'].join('')
-function switchBranch(caseExpr, value) {
-  return Object.fromEntries([['case', caseExpr], [SWITCH_THEN_KEY, value]])
-}
 
 export function createApp(middleware = verifyToken) {
   const app = express()
@@ -80,15 +76,12 @@ export function createApp(middleware = verifyToken) {
             _id: '$userId',
             rawPoints: {
               $sum: {
-                $switch: {
-                  branches: [
-                    switchBranch({ $eq: ['$winner', 'bot'] }, -200),
-                    switchBranch({ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'classic'] }] }, 1000),
-                    switchBranch({ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'master'] }] }, 600),
-                    switchBranch({ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'fortune'] }] }, 400),
-                  ],
-                  default: 0,
-                },
+                $add: [
+                  { $cond: [{ $eq: ['$winner', 'bot'] }, -200, 0] },
+                  { $cond: [{ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'classic'] }] }, 1000, 0] },
+                  { $cond: [{ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'master'] }] }, 600, 0] },
+                  { $cond: [{ $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'fortune'] }] }, 400, 0] },
+                ],
               },
             },
             gamesPlayed: { $sum: 1 },
