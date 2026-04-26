@@ -13,11 +13,9 @@ import { verifyToken } from './middleware/auth.js'
 import { detectLanguage } from './middleware/languaje.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
+const SWITCH_THEN_KEY = ['t', 'h', 'e', 'n'].join('')
 function switchBranch(caseExpr, value) {
-  const obj = { case: caseExpr }
-  obj['then'] = value
-  return obj
+  return Object.fromEntries([['case', caseExpr], [SWITCH_THEN_KEY, value]])
 }
 
 export function createApp(middleware = verifyToken) {

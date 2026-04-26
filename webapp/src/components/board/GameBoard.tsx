@@ -126,26 +126,38 @@ type HexCellProps = {
   onMouseLeave: () => void;
 };
 
+const CLUE_FILL = "rgba(124, 106, 247, 0.22)";
+const CLUE_STROKE = "#7c6af7";
+const HOVER_FILL = "#ffffff22";
+
+function getCellFill(sides: number[], isHovered: boolean, owner: Player | undefined, showClue: boolean) {
+  if (showClue) return CLUE_FILL;
+  if (owner) return PLAYER_FILL[owner];
+  if (isHovered) return HOVER_FILL;
+  if (sides.length >= 2) return CELL_CORNER;
+  if (sides.length === 1) return SIDE_COLORS[sides[0]] + CELL_EDGE_OPACITY;
+  return CELL_BASE;
+}
+
+function getCellStroke(owner: Player | undefined, sides: number[], showClue: boolean) {
+  if (showClue) return CLUE_STROKE;
+  if (owner) return PLAYER_STROKE[owner];
+  return sides.length >= 2 ? CELL_STROKE_CORNER : CELL_STROKE;
+}
+
+function getCellStrokeWidth(showClue: boolean, sides: number[]) {
+  if (showClue) return 2;
+  return sides.length >= 2 ? 1.5 : 1;
+}
+
 function HexCell({ q, r, size, owner, isHovered, isClue, onClick, onMouseEnter, onMouseLeave }: HexCellProps) {
   const { x, y } = hexToPixel(q, r);
   const sides = getSides(q, r, size);
   const showClue = !!isClue && !owner;
 
-  let fill = CELL_BASE;
-  if (sides.length === 1) fill = SIDE_COLORS[sides[0]] + CELL_EDGE_OPACITY;
-  if (sides.length >= 2) fill = CELL_CORNER;
-  if (isHovered) fill = "#ffffff22";
-  if (owner) fill = PLAYER_FILL[owner];
-  if (showClue) fill = "rgba(124, 106, 247, 0.22)";
-
-  const baseStroke = owner
-    ? PLAYER_STROKE[owner]
-    : sides.length >= 2
-      ? CELL_STROKE_CORNER
-      : CELL_STROKE;
-
-  const stroke = showClue ? "#7c6af7" : baseStroke;
-  const strokeWidth = showClue ? 2 : sides.length >= 2 ? 1.5 : 1;
+  const fill = getCellFill(sides, isHovered, owner, showClue);
+  const stroke = getCellStroke(owner, sides, showClue);
+  const strokeWidth = getCellStrokeWidth(showClue, sides);
 
   return (
     <g
