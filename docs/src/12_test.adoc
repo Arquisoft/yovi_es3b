@@ -1,0 +1,48 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-app-test]]
+== App Testing
+The development of the app included multiple testing strategies to ensure the quality and reliability of the system. The testing process encompassed unit tests, end-to-end tests and load tests.
+
+=== Unit Testing
+Unit tests were implemented for individual components and functions across the codebase. These tests focused on verifying the correctness of isolated units of code, such as utility functions, game UI components and backend 
+services. 
+
+The main technique used was mocking. A mock is an object that mimics the behavior of real objects in controlled ways. By using mocks, we were able to isolate the code under test and simulate various scenarios without relying on external dependencies. Mocked examples are internationalized text utlities, users API responses or game engine responses. 
+
+We used different frameworks or utilities for testing:
+
+- Webapp: Vitest and React Testing Library
+- Users-service: Vitest and Supertest
+- Gamey-service: Rust's built-in testing framework (cargo test)
+
+=== End-to-end test
+The main goal in this test is to verify the interaction between the
+different services of the app. Frontend needs to comunicate with both 
+API users service and gamey service. We used Playwright and Cucumber for this purpose. Playwright allows us to automate browser interactions, while Cucumber provides a BDD (Behavior-Driven Development) framework to write test scenarios in a human-readable format.
+
+==== Example: Access history menu: user with 4 games
+image::test_e2e.drawio.png[Overview of an e2e test case]
+
+=== Load test
+Although the app is tested locally, we also have to ensure that it can
+handle a real world scenario. In this case we tested the performance of
+the app while 50 users were accessing the system at the same time. By doing so
+we try to detect bugs or problems under load, detect bottlenecks or demostrate the quality goals specify in the documentations.
+
+==== Gatling
+Gatling is a powerful open-source load testing tool that allows us to simulate a large number of users accessing the system concurrently. We created scenarios that mimic real user behavior, such as logging in. It works as an interceptor between the frontend and the backend, allowing us to measure response times, throughput and error rates under load. The script of the test is written in Scala and it is executed via JVM.
+
+==== Results
+We decided to test the response time to a request to get info from a user and to Firebase login. The test was done
+with 50 users in 25 seconds.
+
+image::tRespuesta.jpg[Statistics of the load test]
+
+We can conclude the response times are acceptable, with an average response time of 0.427 seconds for the user info request and 0.123 seconds for the Firebase login. The error rates were negligible, indicating that the system can handle the load without significant issues. Some delay was 
+expected, as the system is allocated in India Central region from Azure, and the test was executed from Spain.
+
+We can also analyze the variability in the times for the same request. If we look at the users data request, we can see that the response times are quite consistent, with a low standard deviation. This indicates that the system is performing reliably under load, with minimal fluctuations in response times.
+
+image::responseTimeDistribution.jpg[Statistics of the load test]
+
