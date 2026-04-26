@@ -56,12 +56,60 @@ export function createApp(middleware = verifyToken) {
     }
   })
 
-  app.get('/users', middleware, async (_req, res) => {
+  app.get('/users', middleware, async (req, res) => {
+    const VALID_DIFFICULTIES = ['easy', 'hard', 'extreme', 'impossible']
+    const { difficulty } = req.query
+
+    if (difficulty !== undefined && !VALID_DIFFICULTIES.includes(difficulty)) {
+      return res.status(400).json({ error: req.t('invalidDifficulty') })
+    }
+
     try {
-      const users = await User.find({}, { username: 1, gamesPlayed: 1, gamesWon: 1, gamesLost: 1 })
-          .sort({ gamesWon: -1 })
-          .limit(50)
-      res.json(users)
+      const pipeline = []
+      if (difficulty) pipeline.push({ $match: { difficulty } })
+
+      pipeline.push(
+        {
+          $group: {
+            _id: '$userId',
+            rawPoints: {
+              $sum: {
+                $switch: {
+                  branches: [
+                    { case: { $eq: ['$winner', 'bot'] }, then: -200 },
+                    { case: { $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'classic'] }] }, then: 1000 },
+                    { case: { $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'master'] }] }, then: 600 },
+                    { case: { $and: [{ $eq: ['$winner', 'player'] }, { $eq: ['$gameMode', 'fortune'] }] }, then: 400 },
+                  ],
+                  default: 0,
+                },
+              },
+            },
+            gamesPlayed: { $sum: 1 },
+            gamesWon: { $sum: { $cond: [{ $eq: ['$winner', 'player'] }, 1, 0] } },
+            gamesLost: { $sum: { $cond: [{ $eq: ['$winner', 'bot'] }, 1, 0] } },
+          },
+        },
+        { $addFields: { points: { $max: ['$rawPoints', 0] } } },
+        { $sort: { points: -1, gamesWon: -1 } },
+        { $limit: 50 },
+        { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'user' } },
+        { $unwind: '$user' },
+        {
+          $project: {
+            _id: '$user._id',
+            username: '$user.username',
+            photoURL: '$user.photoURL',
+            points: 1,
+            gamesPlayed: 1,
+            gamesWon: 1,
+            gamesLost: 1,
+          },
+        },
+      )
+
+      const ranking = await Game.aggregate(pipeline)
+      res.json(ranking)
     } catch (err) {
       res.status(500).json({ error: err.message })
     }
@@ -86,10 +134,16 @@ export function createApp(middleware = verifyToken) {
   })
 
   app.post('/games', middleware, async (req, res) => {
-    const { winner, durationMs, turns, difficulty } = req.body
+    const { winner, durationMs, turns, difficulty, gameMode } = req.body
+    const VALID_GAME_MODES = ['classic', 'master', 'fortune']
+
+    if (gameMode !== undefined && !VALID_GAME_MODES.includes(gameMode)) {
+      return res.status(400).json({ error: req.t('invalidGameMode') })
+    }
+
     try {
       const user = await User.findOne({ firebaseUid: req.user.uid })
-      if (!user) return res.status(404).json({ error: 'Usuario no encontrado' })
+      if (!user) return res.status(404).json({ error: req.t('userNotFound') })
 
       const game = await Game.create({
         userId: user._id,
@@ -97,7 +151,15 @@ export function createApp(middleware = verifyToken) {
         durationMs,
         turns,
         difficulty,
+        ...(gameMode && { gameMode }),
       })
+
+      const wonField = winner === 'player' ? 'gamesWon' : 'gamesLost'
+      await User.updateOne(
+        { _id: user._id },
+        { $inc: { gamesPlayed: 1, [wonField]: 1 } }
+      )
+
       res.status(201).json(game)
     } catch (err) {
       res.status(500).json({ error: err.message })

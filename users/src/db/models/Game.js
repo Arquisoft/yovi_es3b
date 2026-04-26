@@ -6,6 +6,7 @@ const gameSchema = new mongoose.Schema({
     durationMs: { type: Number, required: true },
     turns:      { type: Number, required: true },
     difficulty: { type: String, enum: ["easy", "hard", "extreme", "impossible"], required: true },
+    gameMode:   { type: String, enum: ["classic", "master", "fortune"], default: "classic" },
     createdAt:  { type: Date, default: Date.now },
 });
 

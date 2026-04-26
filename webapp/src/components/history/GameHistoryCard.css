@@ -26,6 +26,26 @@
     margin-bottom: 12px;
 }
 
+.game-card__header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.game-card__points {
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.game-card__points--win {
+    color: #5DCAA5;
+}
+
+.game-card__points--loss {
+    color: #F09595;
+}
+
 .game-card__result {
     font-size: 13px;
     font-weight: 500;

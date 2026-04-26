@@ -4,6 +4,7 @@
     "play": "Jugar",
     "profile": "Mi Perfil",
     "history": "Historial",
+    "ranking": "Ranking",
     "logout": "Cerrar Sesión"
   },
   "lobby": {
@@ -82,6 +83,7 @@
     "empty": "No tienes partidas registradas",
     "win": "Victoria",
     "loss": "Derrota",
+    "points": "pts",
     "duration": "Duración",
     "turns": "Turnos",
     "difficulty": "Dificultad",
@@ -102,5 +104,20 @@
     "usernameRequired": "El nombre de usuario no puede estar en blanco",
     "chooseAvatar": "Elija su avatar",
     "username": "Nuevo nombre de usuario"
+  },
+  "ranking": {
+    "title": "Ranking de jugadores",
+    "loading": "Cargando ranking...",
+    "error": "Error al cargar el ranking",
+    "empty": "Aún no hay jugadores en el ranking",
+    "filterDifficulty": "Filtrar por dificultad",
+    "colPos": "#",
+    "colUser": "Jugador",
+    "colPoints": "Puntos",
+    "colPlayed": "Partidas",
+    "colWon": "Ganadas",
+    "colLost": "Perdidas",
+    "colWinRate": "% Victorias",
+    "pointsLegend": "Puntuación: Clásico +1000 · Master Y +600 · Fortune Y +400 · Derrota −200"
   }
 }

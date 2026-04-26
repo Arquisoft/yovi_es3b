@@ -134,7 +134,8 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
             resolveWinner(winnerId),
             Date.now() - startTimeRef.current,
             turns,
-            difficulty
+            difficulty,
+            gameMode
         );
     };
 
