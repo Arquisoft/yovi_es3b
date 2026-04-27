@@ -27,6 +27,14 @@ Adaptabilidad a diferentes pantallas
     width: 100%;
 }
 
+@media (max-width: 500px) {
+    .history-grid {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
+}
+
 /*Para mostrar si sigue cargando los registros de partidas*/
 .history-status {
     padding: 2rem;
