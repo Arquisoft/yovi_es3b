@@ -1,247 +1,124 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-runtime-view]]
-== Runtime View
-
-
-ifdef::arc42help[]
-[role="arc42help"]
-****    
-.Contents
-The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios from the following areas:
-
-* important use cases or features: how do building blocks execute them?
-* interactions at critical external interfaces: how do building blocks cooperate with users and neighboring systems?
-* operation and administration: launch, start-up, stop
-* error and exception scenarios
-
-Remark: The main criterion for the choice of possible scenarios (sequences, workflows) is their *architectural relevance*. It is *not* important to describe a large number of scenarios. You should rather document a representative selection.
-
-.Motivation
-You should understand how (instances of) building blocks of your system perform their job and communicate at runtime.
-You will mainly capture scenarios in your documentation to communicate your architecture to stakeholders that are less willing or able to read and understand the static models (building block view, deployment view).
-
-.Form
-There are many notations for describing scenarios, e.g.
-
-* numbered list of steps (in natural language)
-* activity diagrams or flow charts
-* sequence diagrams
-* BPMN or EPCs (event process chains)
-* state machines
-* ...
-
-
-.Further Information
-
-See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
-
-****
-endif::arc42help[]
+[[section-runtime-view]] == Runtime View
 
 === Single Player Game Initialization
 [plantuml,"Game Initialization Sequence with Difficulty",png]
+----
 actor User #87CEFA
 participant "Web App" as Web #87CEFA
-participant "Auth Service" as Auth #87CEFA
+participant "Users Service" as Users #87CEFA
 participant "Game Engine (Gamey)" as Gamey #87CEFA
 participant "Bot (ybot)" as Bot #87CEFA
+
 User -> Web: Open app / Join game
-Web -> Auth: Validate session token (JWT)
-Auth --> Web: 200 OK — token valid, user identity confirmed
+
+Web -> Users: Validate session token (JWT)
+Users -> Users: Validate JWT\nExtract user identity
+Users --> Web: 200 OK — user confirmed
+
 Web --> User: Prompt to select difficulty
 User -> Web: Select difficulty (easy/medium/hard)
-Web -> Gamey: POST /gamey/new\n[Authorization: Bearer <JWT>]\n{ player_id, difficulty }
-Gamey -> Gamey: Validate JWT\nValidate difficulty value\nCreate game record\nAssign bot_id by difficulty
-Gamey -> Bot: POST /{api_version}/ybot/init/{bot_id}\n{ player_id, difficulty }
-Bot -> Bot: Load difficulty config\nInitialise internal state
-Bot --> Gamey: 200 OK — { bot_id, status: "ready" }
-Gamey --> Web: 201 Created\n{ game_id, initial_board (YEN), current_turn, status: "ongoing" }
+
+Web -> Gamey: POST /gamey/new\nAuthorization: Bearer <JWT>\n{ player_id, difficulty }
+
+Gamey -> Gamey: Validate JWT\nValidate difficulty\nCreate game\nAssign bot_id
+
+Gamey -> Bot: POST /v1/ybot/init/{bot_id}\n{ player_id, difficulty }
+
+Bot -> Bot: Load config\nInitialize state
+Bot --> Gamey: 200 OK — ready
+
+Gamey --> Web: 201 Created\n{ game_id, initial_board, status }
+
 Web --> User: Render initial board
-Description
+----
 
-The user opens the Web App and chooses to start a single-player game.
-The Web App validates the user's session by checking the JWT with the Auth Service.
-The Auth Service responds with 200 OK, confirming the token is valid and returning the user identity.
-The Web App prompts the user to select a difficulty level (easy, medium, or hard).
-The user selects the desired difficulty.
-The Web App sends a POST /gamey/new request to Gamey, including:
+***Description***
 
+The user opens the Web App and starts a game.  
+The Web App sends the JWT to the Users Service, which verifies it using Firebase Authentication.  
+Firebase validates the token and returns the user identity, which is forwarded back to the Web App.
 
-Authorization: Bearer <JWT> header
-Body: { player_id, difficulty }
+The user selects a difficulty level, and the Web App sends a request to Gamey to create a new game.
 
+Gamey validates the JWT again through the Users Service (which delegates verification to Firebase).  
+Once validated, Gamey creates the game, assigns a bot based on difficulty, and initializes it.
 
-Gamey performs internal validation:
-
-
-Verifies the JWT signature and expiry.
-Validates that difficulty is one of the accepted enum values.
-Creates a new game record and assigns a bot_id based on difficulty.
-
-
-Gamey sends POST /{api_version}/ybot/init/{bot_id} to the Bot service, with { player_id, difficulty }.
-The Bot loads its difficulty configuration and initialises its internal state.
-The Bot responds with 200 OK — { bot_id, status: "ready" }.
-Gamey responds to the Web App with 201 Created:
-
-json{
-  "game_id": "abc123",
-  "initial_board": {
-    "size": 5,
-    "turn": 1,
-    "players": ["B", "R"],
-    "layout": "..../.../.././."
-  },
-  "current_turn": "B",
-  "status": "ongoing"
-}
-
-The Web App renders the initial board for the user.
-
+The Bot prepares its internal state and confirms readiness.  
+Finally, Gamey returns the initial game state and the Web App renders the board.
 
 === Player Move and Bot Response
 [plantuml,"Player move sequence (Web App → Gamey → ybot)",png]
+----
 actor User #87CEFA
 participant "Web App" as Web #87CEFA
 participant "Game Engine (Gamey)" as Gamey #87CEFA
 participant "Bot (ybot)" as Bot #87CEFA
-User -> Web: Place stone at (x, y)
-Web -> Web: Build YEN from current board state\nbuildYEN(size, board)
-Web -> Gamey: POST /gamey/choose\n[Authorization: Bearer <JWT>]\n{ game_id, yen: { size, turn, players, layout } }
-Gamey -> Gamey: Validate JWT\nValidate game_id exists & is ongoing\nValidate it is the player's turn\nValidate move coords are in bounds\nApply player move to board
-Gamey -> Bot: POST /{api_version}/ybot/choose/{bot_id}\n[Content-Type: application/json]\n{ size, turn, players, layout }
-Bot -> Bot: Parse YEN layout\nRun move selection algorithm\nValidate chosen coords\nReturn best move
-Bot --> Gamey: 200 OK\nMoveResponse { api_version, bot_id, status, coords }
-Gamey -> Gamey: Apply bot move to board\nCheck win condition\nPersist updated game state
-Gamey --> Web: 200 OK\n{ game_id, bot_move: coords, board (YEN), status }
+
+User -> Web: Make a move
+
+Web -> Gamey: POST /v1/gamey/choose/{bot_id}\n{ YEN }
+
+Gamey -> Gamey: Validate game state\nApply player move (Movement::Placement)\nCheck game over condition
+
+Gamey -> Bot: POST /v1/ybot/choose/{bot_id}\n{ YEN }
+
+Bot -> Bot: Parse YEN\nCompute best move (choose_move)\nReturn coordinates
+
+Bot --> Gamey: MoveResponse { coords, status }
+
+Gamey -> Gamey: Apply bot move\nUpdate internal board\nCheck win condition
+
+Gamey --> Web: 200 OK\n{ coords, status, updated board }
+
 Web --> User: Render updated board
-Description
+----
 
-The user places a stone at position (x, y) in the Web App.
-The Web App serialises the current board into YEN format using buildYEN(size, board):
+***Description***
 
+The user performs a move in the Web App.  
+The request is sent to Gamey along with the JWT.
 
-Each cell is mapped to B (player 1), R (bot), or . (empty).
-Rows are built from x = size-1 down to x = 0, each row having size - x cells.
-Rows are joined with / to form the layout string.
+Gamey validates the token via the Users Service, which in turn uses Firebase Authentication.  
+Once validated, Gamey processes the move, updates the board, and forwards the state to the Bot.
 
-json{
-  "size": 5,
-  "turn": 1,
-  "players": ["B", "R"],
-  "layout": "..../.../.././."
-}
+The Bot computes its move and returns it.  
+Gamey applies the bot move, checks for win conditions, and persists the updated state.
 
-The Web App sends POST /gamey/choose to Gamey:
+The updated board is returned to the Web App and rendered to the user.
 
-
-Header: Authorization: Bearer <JWT>
-Body: { game_id, yen: { size, turn, players, layout } }
-
-
-Gamey performs internal validation:
-
-
-Verifies the JWT and extracts the user identity.
-Checks the game_id exists and has status: "ongoing".
-Confirms it is currently the player's (B) turn.
-Validates that the player's chosen coords are within bounds and not already occupied.
-Applies the player's move to the internal board state.
-
-
-Gamey forwards the YEN game state to the Bot via POST /{api_version}/ybot/choose/{bot_id}:
-
-
-Header: Content-Type: application/json
-Body: the full YEN object
-
-
-The Bot parses the YEN layout, runs its move-selection algorithm (depth varies by difficulty), validates the resulting coordinates, and returns the best move.
-The Bot responds with 200 OK and a MoveResponse:
-
-json{
-  "api_version": "v1",
-  "bot_id": "easy-bot",
-  "status": "ongoing",
-  "coords": { "x": 2, "y": 1 }
-}
-
-Gamey applies the bot's move to the board, checks win conditions, and persists the updated game state.
-Gamey responds to the Web App with 200 OK:
-
-json{
-  "game_id": "abc123",
-  "bot_move": { "x": 2, "y": 1 },
-  "board": {
-    "size": 5,
-    "turn": 2,
-    "players": ["B", "R"],
-    "layout": "..../..R/.././."
-  },
-  "status": "ongoing"
-}
-
-The Web App updates the board rendering with the bot's move.
-
-Error cases
-ScenarioHTTP StatusResponseInvalid / expired JWT401 Unauthorized{ error: "invalid_token" }game_id not found404 Not Found{ error: "game_not_found" }Game already finished409 Conflict{ error: "game_already_finished" }Move out of bounds422 Unprocessable Entity{ error: "invalid_coords" }Cell already occupied422 Unprocessable Entity{ error: "cell_occupied" }Bot service unreachable502 Bad Gateway{ error: "bot_unavailable" }
 
 === View Match History
 [plantuml,"Match history sequence (Web App → Users Module)",png]
+----
 actor User #87CEFA
 participant "Web App" as Web #87CEFA
-participant "Auth Service" as Auth #87CEFA
-participant "Users Module" as Users #87CEFA
-User -> Web: Click "History" in navigation bar
-Web -> Auth: Validate session token (JWT)
-Auth --> Web: 200 OK — user identity confirmed
-Web -> Users: GET /users/history\n[Authorization: Bearer <JWT>]
-Users -> Users: Validate JWT\nExtract user_id\nQuery match records for user_id\nSort by date descending
-Users --> Web: 200 OK — MatchHistory (JSON)
-Web --> User: Display list of past matches
-Description
+participant "Users Service" as Users #87CEFA
+participant "Database" as DB #87CEFA
 
-After logging in, the user clicks "History" in the navigation bar.
-The Web App validates the active session JWT with the Auth Service.
-The Auth Service returns 200 OK and confirms the user identity.
-The Web App sends GET /users/history to the Users Module:
+User -> Web: Click "History"
 
+Web -> Users: GET /users/history\nAuthorization: Bearer <JWT>
 
-Header: Authorization: Bearer <JWT>
+Users -> Users: Validate JWT\nExtract user_id
 
+Users -> DB: Query matches by user_id\nSort by date DESC
 
-The Users Module performs internal steps:
+DB --> Users: Match list
 
+Users --> Web: 200 OK\n{ match_history }
 
-Validates the JWT signature and expiry.
-Extracts the user_id from the token claims.
-Queries the database for all match records associated with user_id.
-Sorts results by date, most recent first.
+Web --> User: Display match history
+----
 
+***Description***
 
-The Users Module responds with 200 OK and a MatchHistory payload:
+The user requests their match history from the Web App.  
+The Web App sends the request to the Users Service with the JWT.
 
-json{
-  "user_id": "user_42",
-  "matches": [
-    {
-      "game_id": "abc123",
-      "date": "2025-04-10T14:32:00Z",
-      "difficulty": "medium",
-      "result": "win",
-      "duration_seconds": 142,
-      "board_size": 5
-    },
-    {
-      "game_id": "xyz789",
-      "date": "2025-04-08T09:15:00Z",
-      "difficulty": "hard",
-      "result": "loss",
-      "duration_seconds": 87,
-      "board_size": 7
-    }
-  ]
-}
+The Users Service validates the token using Firebase Authentication and extracts the user_id.  
+It then queries the database for matches associated with that user.
 
-The Web App renders the list of past matches for the user.
+The results are returned to the Web App, which displays them to the user.
+

@@ -76,32 +76,36 @@ Receives JSON responses containing user and game state data and sends YEN.
 
 **Quality/Performance Characteristics**
 
-Responsive UI with low latency interaction
+The application features a responsive user interface with low-latency interactions, 
+ensuring a smooth user experience. It is designed to be compatible across multiple browsers, 
+providing consistent behavior regardless of the platform. 
 
-Cross-browser compatibility
-
-Fast rendering using modern frontend tooling (Vite)
+Additionally, it achieves fast rendering performance by leveraging modern frontend tooling such as Vite.
 
 **Directory/File Location: **
 /webapp
 
 **Fulfilled Requirements**
 
-User interaction and gameplay visualization
+The system supports user interaction and provides clear gameplay visualization, allowing users to engage 
+with the application effectively. 
 
-Display of game state and results
+It also includes functionality to display the current game state and results in a way that is easy to understand.
 
 **Open Issues/Problems/Risks**
 
-Performance limitations for complex UI updates
+There are potential performance limitations when handling complex UI updates, 
+which could affect responsiveness under heavier workloads. 
 
-Dependency on backend availability
+Additionally, the system relies on backend availability, 
+meaning any downtime or instability on the backend could impact overall functionality.
 
 ==== Users Service (Node.js / Express)
 
 **Purpose/Responsibility**
 
-Acts as the central backend service. It manages user-related functionality, handles authentication, and coordinates communication between the frontend, database, and game engine.
+Acts as the central backend service. It manages user-related functionality, handles authentication, 
+and coordinates communication between the frontend, database, and game engine.
 
 **Interface(s)**
 
@@ -115,28 +119,30 @@ Database queries (CRUD operations)
 
 **Quality/Performance Characteristics**
 
-Stateless service for scalability
-
-Handles concurrent requests efficiently
+The service is designed to be stateless, enabling better scalability and easier distribution across multiple instances 
+and it efficiently handles concurrent requests, supporting multiple users without significant degradation in performance.
 
 **Directory/File Location: **
 /users
 
 **Fulfilled Requirements**
 
-User management and authentication
+The system provides user management and authentication capabilities, 
+ensuring users can be created, managed, and securely access the application.
 
 **Open Issues/Problems/Risks**
 
-Single point of failure if not replicated
-
-Performance bottleneck under high load
+There is a potential single point of failure if the service is not properly replicated, 
+which could impact availability and when under high load conditions, 
+the system may experience performance bottlenecks that affect responsiveness.
 
 ==== Game Engine (Rust)
 
 **Purpose/Responsibility**
 
-Implements the core game logic, including rules, state transitions, and bot behavior. It processes game actions and computes the resulting game state.
+Implements the core game logic, including rules, state transitions, 
+bot behavior, processing game actions and computing the resulting game state.
+
 
 **Interface(s)**
 
@@ -148,28 +154,27 @@ Output: updated game state and bot actions
 
 **Quality/Performance Characteristics**
 
-High performance and low-level efficiency
+This component is built for high performance and low-level efficiency, 
+enabling fast execution of operations. 
 
-Deterministic and reliable computation
-
-Suitable for complex game logic and AI
+It provides deterministic and reliable computation, which is essential for consistent behavior. 
+Its design makes it well-suited for handling complex game logic and AI functionality.
 
 **Directory/File Location: **
 /gamey
 
 **Fulfilled Requirements**
 
-Game rules enforcement
-
-Bot/AI decision making
-
-Game state updates
+The system enforces game rules accurately, supports bot and AI decision-making processes, 
+and manages game state updates effectively to ensure smooth gameplay.
 
 **Open Issues/Problems/Risks**
 
-Integration complexity with Node.js service
+Integrating this component with the Node.js service introduces complexity, 
+particularly in maintaining seamless communication between different technologies. 
 
-Debugging can be harder across language boundaries
+Additionally, debugging can be more challenging due to crossing language boundaries, 
+which may slow down issue resolution.
 
 ==== Database
 
@@ -179,37 +184,29 @@ Provides persistent storage for the system, including user data, game states, an
 
 **Interface(s)**
 
-Accessed by Users Service via database queries (e.g., SQL or NoSQL queries)
-
-Supports CRUD operations:
-
-Create/update user data
-
-Store and retrieve game state
+This component is accessed by the Users Service through database queries, 
+enabling interaction with stored data. It supports full CRUD operations, 
+allowing the creation and updating of user data as well as the storage and retrieval of game state information.
 
 **Quality/Performance Characteristics**
 
-Data consistency and reliability
-
-Scalable depending on chosen database system
-
-Performance depends on query optimization
+The system ensures data consistency and reliability, which are critical for maintaining accurate records. 
+Its scalability depends on the chosen database technology, allowing it to grow with demand. 
+However, overall performance is closely tied to how well queries are optimized.
 
 **Directory/File Location**
 External system (not part of source directories)
 
 **Fulfilled Requirements**
 
-Persistent storage of users and game data
-
-Retrieval of historical and current game information
+It provides persistent storage for both user and game data, 
+and enables retrieval of both historical and current game information as needed.
 
 **Open Issues/Problems/Risks**
 
-Potential performance bottlenecks with large datasets
-
-Requires backup and data integrity strategies
-
+The system may encounter performance bottlenecks when handling large datasets, 
+particularly if queries are not optimized. It also requires robust backup solutions and data integrity 
+strategies to prevent data loss and ensure reliability.
 
 
 === Level 2
@@ -244,30 +241,27 @@ Renders the visual game board, updates state based on player actions, and commun
 
 **Interface(s)**
 
-Receives game state from Gamey (JSON)
-
-Sends player moves back via Backend API
+This component receives the game state from Gamey in JSON format and 
+communicates player moves back through the backend API, enabling continuous interaction between 
+the frontend and the game logic.
 
 **Quality/Performance Characteristics**
 
-Responsive UI
-
-Low latency updates
-
-Reactive updates via React state management
+It delivers a responsive user interface with low-latency updates, ensuring smooth gameplay. 
+The use of React state management allows for reactive updates, keeping the UI in sync with the latest game state.
 
 **Directory/File Location: **
 webapp/src/components/GameBoard.tsx
 
 **Fulfilled Requirements**
 
-Visual display of the game board
-
-Handles player interactions
+The component provides a visual representation of 
+the game board and effectively handles player interactions, allowing users to engage directly with the game.
 
 **Open Issues/Problems/Risks**
 
-Complex rendering for larger boards may affect performance
+Rendering complexity may increase significantly for larger boards, 
+which could negatively impact performance and responsiveness.
 
 ==== White Box Gamey – Bots
 
@@ -289,24 +283,18 @@ Exposed via the Backend API
 
 **Quality/Performance Characteristics**
 
-Efficient computation for AI moves
-
-Deterministic behavior for testing
+It is designed for efficient computation of AI-driven moves, ensuring minimal delay during gameplay. Additionally, 
+its deterministic behavior supports consistent results, which is particularly useful for testing and debugging.
 
 **Directory/File Location: **
 gamey/src/bot/
 
 **Fulfilled Requirements**
 
-Automates bot moves in the game
-
-Ensures challenge for players
+The component automates bot moves within the game, 
+contributing to gameplay progression and providing a level of challenge for players.
 
 **Open Issues/Problems/Risks**
 
-Scaling to multiple bots simultaneously may increase processing time
-
-
-=== Level 3
-
-Not needed for this version yet.
+Scaling to support multiple bots simultaneously may lead to increased processing time, 
+potentially affecting overall system performance.
