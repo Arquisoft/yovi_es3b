@@ -477,65 +477,60 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_whitebox_overall_system">5.1. Whitebox Overall System</a></li>
 <li><a href="#_level_2">5.2. Level 2</a></li>
-<li><a href="#_level_3">5.3. Level 3</a></li>
+<li><a href="#_single_player_game_initialization">5.3. Single Player Game Initialization</a></li>
+<li><a href="#_player_move_and_bot_response">5.4. Player Move and Bot Response</a></li>
+<li><a href="#_view_match_history">5.5. View Match History</a></li>
 </ul>
 </li>
-<li><a href="#section-runtime-view">6. Runtime View</a>
+<li><a href="#section-deployment-view">6. Deployment View</a>
 <ul class="sectlevel2">
-<li><a href="#_single_player_game_initialization">6.1. Single Player Game Initialization</a></li>
-<li><a href="#_player_move_and_bot_response">6.2. Player Move and Bot Response</a></li>
-<li><a href="#_view_match_history">6.3. View Match History</a></li>
+<li><a href="#_infrastructure_level_1">6.1. Infrastructure Level 1</a></li>
+<li><a href="#_infrastructure_level_2">6.2. Infrastructure Level 2</a></li>
 </ul>
 </li>
-<li><a href="#section-deployment-view">7. Deployment View</a>
+<li><a href="#section-concepts">7. Cross-cutting Concepts</a>
 <ul class="sectlevel2">
-<li><a href="#_infrastructure_level_1">7.1. Infrastructure Level 1</a></li>
-<li><a href="#_infrastructure_level_2">7.2. Infrastructure Level 2</a></li>
+<li><a href="#_domain_concepts">7.1. Domain Concepts</a></li>
+<li><a href="#_safety_security">7.2. Safety &amp; Security</a></li>
+<li><a href="#_architecture_design_patterns">7.3. Architecture &amp; Design Patterns</a></li>
+<li><a href="#_under_the_hood_technical_concepts">7.4. Under-the-hood (Technical Concepts)</a></li>
+<li><a href="#_user_interface_experience">7.5. User Interface &amp; Experience</a></li>
+<li><a href="#_development_concepts">7.6. Development Concepts</a></li>
+<li><a href="#_operation_administration">7.7. Operation &amp; Administration</a></li>
 </ul>
 </li>
-<li><a href="#section-concepts">8. Cross-cutting Concepts</a>
+<li><a href="#section-design-decisions">8. Architecture Decisions</a>
 <ul class="sectlevel2">
-<li><a href="#_domain_concepts">8.1. Domain Concepts</a></li>
-<li><a href="#_safety_security">8.2. Safety &amp; Security</a></li>
-<li><a href="#_architecture_design_patterns">8.3. Architecture &amp; Design Patterns</a></li>
-<li><a href="#_under_the_hood_technical_concepts">8.4. Under-the-hood (Technical Concepts)</a></li>
-<li><a href="#_user_interface_experience">8.5. User Interface &amp; Experience</a></li>
-<li><a href="#_development_concepts">8.6. Development Concepts</a></li>
-<li><a href="#_operation_administration">8.7. Operation &amp; Administration</a></li>
+<li><a href="#_adr_1_rust_for_the_gamey_engine">8.1. ADR 1: Rust for the Gamey Engine</a></li>
+<li><a href="#_adr_2_node_js_express_for_the_users_service">8.2. ADR 2: Node.js &amp; Express for the Users Service</a></li>
+<li><a href="#_adr_3_react_typescript_for_the_webapp_frontend">8.3. ADR 3: React &amp; TypeScript for the Webapp Frontend</a></li>
+<li><a href="#_adr_4_vite_as_the_frontend_build_tool">8.4. ADR 4: Vite as the Frontend Build Tool</a></li>
+<li><a href="#_adr_5_mongodb_with_mongoose_for_persistence">8.5. ADR 5: MongoDB with Mongoose for Persistence</a></li>
+<li><a href="#_adr_6_docker_docker_compose_for_orchestration">8.6. ADR 6: Docker &amp; Docker Compose for Orchestration</a></li>
+<li><a href="#_adr_7_github_actions">8.7. ADR 7: GitHub Actions</a></li>
+<li><a href="#_adr_8_code_quality_monitoring_sonarcloud_codescene">8.8. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</a></li>
 </ul>
 </li>
-<li><a href="#section-design-decisions">9. Architecture Decisions</a>
+<li><a href="#section-quality-scenarios">9. Quality Requirements</a>
 <ul class="sectlevel2">
-<li><a href="#_adr_1_rust_for_the_gamey_engine">9.1. ADR 1: Rust for the Gamey Engine</a></li>
-<li><a href="#_adr_2_node_js_express_for_the_users_service">9.2. ADR 2: Node.js &amp; Express for the Users Service</a></li>
-<li><a href="#_adr_3_react_typescript_for_the_webapp_frontend">9.3. ADR 3: React &amp; TypeScript for the Webapp Frontend</a></li>
-<li><a href="#_adr_4_vite_as_the_frontend_build_tool">9.4. ADR 4: Vite as the Frontend Build Tool</a></li>
-<li><a href="#_adr_5_mongodb_with_mongoose_for_persistence">9.5. ADR 5: MongoDB with Mongoose for Persistence</a></li>
-<li><a href="#_adr_6_docker_docker_compose_for_orchestration">9.6. ADR 6: Docker &amp; Docker Compose for Orchestration</a></li>
-<li><a href="#_adr_7_github_actions">9.7. ADR 7: GitHub Actions</a></li>
-<li><a href="#_adr_8_code_quality_monitoring_sonarcloud_codescene">9.8. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</a></li>
+<li><a href="#_quality_tree">9.1. Quality Tree</a></li>
+<li><a href="#_quality_scenarios">9.2. Quality Scenarios</a></li>
 </ul>
 </li>
-<li><a href="#section-quality-scenarios">10. Quality Requirements</a>
+<li><a href="#section-technical-risks">10. Risks and Technical Debts</a>
 <ul class="sectlevel2">
-<li><a href="#_quality_tree">10.1. Quality Tree</a></li>
-<li><a href="#_quality_scenarios">10.2. Quality Scenarios</a></li>
+<li><a href="#_identified_risks">10.1. Identified Risks</a></li>
+<li><a href="#_technical_debt">10.2. Technical Debt</a></li>
 </ul>
 </li>
-<li><a href="#section-technical-risks">11. Risks and Technical Debts</a>
+<li><a href="#section-app-test">11. App Testing</a>
 <ul class="sectlevel2">
-<li><a href="#_identified_risks">11.1. Identified Risks</a></li>
-<li><a href="#_technical_debt">11.2. Technical Debt</a></li>
+<li><a href="#_unit_testing">11.1. Unit Testing</a></li>
+<li><a href="#_end_to_end_test">11.2. End-to-end test</a></li>
+<li><a href="#_load_test">11.3. Load test</a></li>
 </ul>
 </li>
-<li><a href="#section-app-test">12. App Testing</a>
-<ul class="sectlevel2">
-<li><a href="#_unit_testing">12.1. Unit Testing</a></li>
-<li><a href="#_end_to_end_test">12.2. End-to-end test</a></li>
-<li><a href="#_load_test">12.3. Load test</a></li>
-</ul>
-</li>
-<li><a href="#section-glossary">13. Glossary</a></li>
+<li><a href="#section-glossary">12. Glossary</a></li>
 </ul>
 </div>
 </div>
@@ -1604,13 +1599,12 @@ according the the following black box template:</p>
 <p><strong>Quality/Performance Characteristics</strong></p>
 </div>
 <div class="paragraph">
-<p>Responsive UI with low latency interaction</p>
+<p>The application features a responsive user interface with low-latency interactions,
+ensuring a smooth user experience. It is designed to be compatible across multiple browsers,
+providing consistent behavior regardless of the platform.</p>
 </div>
 <div class="paragraph">
-<p>Cross-browser compatibility</p>
-</div>
-<div class="paragraph">
-<p>Fast rendering using modern frontend tooling (Vite)</p>
+<p>Additionally, it achieves fast rendering performance by leveraging modern frontend tooling such as Vite.</p>
 </div>
 <div class="paragraph">
 <p><strong>Directory/File Location: </strong>
@@ -1620,19 +1614,22 @@ according the the following black box template:</p>
 <p><strong>Fulfilled Requirements</strong></p>
 </div>
 <div class="paragraph">
-<p>User interaction and gameplay visualization</p>
+<p>The system supports user interaction and provides clear gameplay visualization, allowing users to engage
+with the application effectively.</p>
 </div>
 <div class="paragraph">
-<p>Display of game state and results</p>
+<p>It also includes functionality to display the current game state and results in a way that is easy to understand.</p>
 </div>
 <div class="paragraph">
 <p><strong>Open Issues/Problems/Risks</strong></p>
 </div>
 <div class="paragraph">
-<p>Performance limitations for complex UI updates</p>
+<p>There are potential performance limitations when handling complex UI updates,
+which could affect responsiveness under heavier workloads.</p>
 </div>
 <div class="paragraph">
-<p>Dependency on backend availability</p>
+<p>Additionally, the system relies on backend availability,
+meaning any downtime or instability on the backend could impact overall functionality.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1641,7 +1638,8 @@ according the the following black box template:</p>
 <p><strong>Purpose/Responsibility</strong></p>
 </div>
 <div class="paragraph">
-<p>Acts as the central backend service. It manages user-related functionality, handles authentication, and coordinates communication between the frontend, database, and game engine.</p>
+<p>Acts as the central backend service. It manages user-related functionality, handles authentication,
+and coordinates communication between the frontend, database, and game engine.</p>
 </div>
 <div class="paragraph">
 <p><strong>Interface(s)</strong></p>
@@ -1662,10 +1660,8 @@ according the the following black box template:</p>
 <p><strong>Quality/Performance Characteristics</strong></p>
 </div>
 <div class="paragraph">
-<p>Stateless service for scalability</p>
-</div>
-<div class="paragraph">
-<p>Handles concurrent requests efficiently</p>
+<p>The service is designed to be stateless, enabling better scalability and easier distribution across multiple instances
+and it efficiently handles concurrent requests, supporting multiple users without significant degradation in performance.</p>
 </div>
 <div class="paragraph">
 <p><strong>Directory/File Location: </strong>
@@ -1675,16 +1671,16 @@ according the the following black box template:</p>
 <p><strong>Fulfilled Requirements</strong></p>
 </div>
 <div class="paragraph">
-<p>User management and authentication</p>
+<p>The system provides user management and authentication capabilities,
+ensuring users can be created, managed, and securely access the application.</p>
 </div>
 <div class="paragraph">
 <p><strong>Open Issues/Problems/Risks</strong></p>
 </div>
 <div class="paragraph">
-<p>Single point of failure if not replicated</p>
-</div>
-<div class="paragraph">
-<p>Performance bottleneck under high load</p>
+<p>There is a potential single point of failure if the service is not properly replicated,
+which could impact availability and when under high load conditions,
+the system may experience performance bottlenecks that affect responsiveness.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1693,7 +1689,8 @@ according the the following black box template:</p>
 <p><strong>Purpose/Responsibility</strong></p>
 </div>
 <div class="paragraph">
-<p>Implements the core game logic, including rules, state transitions, and bot behavior. It processes game actions and computes the resulting game state.</p>
+<p>Implements the core game logic, including rules, state transitions,
+bot behavior, processing game actions and computing the resulting game state.</p>
 </div>
 <div class="paragraph">
 <p><strong>Interface(s)</strong></p>
@@ -1711,13 +1708,12 @@ according the the following black box template:</p>
 <p><strong>Quality/Performance Characteristics</strong></p>
 </div>
 <div class="paragraph">
-<p>High performance and low-level efficiency</p>
+<p>This component is built for high performance and low-level efficiency,
+enabling fast execution of operations.</p>
 </div>
 <div class="paragraph">
-<p>Deterministic and reliable computation</p>
-</div>
-<div class="paragraph">
-<p>Suitable for complex game logic and AI</p>
+<p>It provides deterministic and reliable computation, which is essential for consistent behavior.
+Its design makes it well-suited for handling complex game logic and AI functionality.</p>
 </div>
 <div class="paragraph">
 <p><strong>Directory/File Location: </strong>
@@ -1727,22 +1723,19 @@ according the the following black box template:</p>
 <p><strong>Fulfilled Requirements</strong></p>
 </div>
 <div class="paragraph">
-<p>Game rules enforcement</p>
-</div>
-<div class="paragraph">
-<p>Bot/AI decision making</p>
-</div>
-<div class="paragraph">
-<p>Game state updates</p>
+<p>The system enforces game rules accurately, supports bot and AI decision-making processes,
+and manages game state updates effectively to ensure smooth gameplay.</p>
 </div>
 <div class="paragraph">
 <p><strong>Open Issues/Problems/Risks</strong></p>
 </div>
 <div class="paragraph">
-<p>Integration complexity with Node.js service</p>
+<p>Integrating this component with the Node.js service introduces complexity,
+particularly in maintaining seamless communication between different technologies.</p>
 </div>
 <div class="paragraph">
-<p>Debugging can be harder across language boundaries</p>
+<p>Additionally, debugging can be more challenging due to crossing language boundaries,
+which may slow down issue resolution.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1757,28 +1750,17 @@ according the the following black box template:</p>
 <p><strong>Interface(s)</strong></p>
 </div>
 <div class="paragraph">
-<p>Accessed by Users Service via database queries (e.g., SQL or NoSQL queries)</p>
-</div>
-<div class="paragraph">
-<p>Supports CRUD operations:</p>
-</div>
-<div class="paragraph">
-<p>Create/update user data</p>
-</div>
-<div class="paragraph">
-<p>Store and retrieve game state</p>
+<p>This component is accessed by the Users Service through database queries,
+enabling interaction with stored data. It supports full CRUD operations,
+allowing the creation and updating of user data as well as the storage and retrieval of game state information.</p>
 </div>
 <div class="paragraph">
 <p><strong>Quality/Performance Characteristics</strong></p>
 </div>
 <div class="paragraph">
-<p>Data consistency and reliability</p>
-</div>
-<div class="paragraph">
-<p>Scalable depending on chosen database system</p>
-</div>
-<div class="paragraph">
-<p>Performance depends on query optimization</p>
+<p>The system ensures data consistency and reliability, which are critical for maintaining accurate records.
+Its scalability depends on the chosen database technology, allowing it to grow with demand.
+However, overall performance is closely tied to how well queries are optimized.</p>
 </div>
 <div class="paragraph">
 <p><strong>Directory/File Location</strong>
@@ -1788,19 +1770,16 @@ External system (not part of source directories)</p>
 <p><strong>Fulfilled Requirements</strong></p>
 </div>
 <div class="paragraph">
-<p>Persistent storage of users and game data</p>
-</div>
-<div class="paragraph">
-<p>Retrieval of historical and current game information</p>
+<p>It provides persistent storage for both user and game data,
+and enables retrieval of both historical and current game information as needed.</p>
 </div>
 <div class="paragraph">
 <p><strong>Open Issues/Problems/Risks</strong></p>
 </div>
 <div class="paragraph">
-<p>Potential performance bottlenecks with large datasets</p>
-</div>
-<div class="paragraph">
-<p>Requires backup and data integrity strategies</p>
+<p>The system may encounter performance bottlenecks when handling large datasets,
+particularly if queries are not optimized. It also requires robust backup solutions and data integrity
+strategies to prevent data loss and ensure reliability.</p>
 </div>
 </div>
 </div>
@@ -1845,22 +1824,16 @@ Leave out normal, simple, boring or standardized parts of your system</p>
 <p><strong>Interface(s)</strong></p>
 </div>
 <div class="paragraph">
-<p>Receives game state from Gamey (JSON)</p>
-</div>
-<div class="paragraph">
-<p>Sends player moves back via Backend API</p>
+<p>This component receives the game state from Gamey in JSON format and
+communicates player moves back through the backend API, enabling continuous interaction between
+the frontend and the game logic.</p>
 </div>
 <div class="paragraph">
 <p><strong>Quality/Performance Characteristics</strong></p>
 </div>
 <div class="paragraph">
-<p>Responsive UI</p>
-</div>
-<div class="paragraph">
-<p>Low latency updates</p>
-</div>
-<div class="paragraph">
-<p>Reactive updates via React state management</p>
+<p>It delivers a responsive user interface with low-latency updates, ensuring smooth gameplay.
+The use of React state management allows for reactive updates, keeping the UI in sync with the latest game state.</p>
 </div>
 <div class="paragraph">
 <p><strong>Directory/File Location: </strong>
@@ -1870,16 +1843,15 @@ webapp/src/components/GameBoard.tsx</p>
 <p><strong>Fulfilled Requirements</strong></p>
 </div>
 <div class="paragraph">
-<p>Visual display of the game board</p>
-</div>
-<div class="paragraph">
-<p>Handles player interactions</p>
+<p>The component provides a visual representation of
+the game board and effectively handles player interactions, allowing users to engage directly with the game.</p>
 </div>
 <div class="paragraph">
 <p><strong>Open Issues/Problems/Risks</strong></p>
 </div>
 <div class="paragraph">
-<p>Complex rendering for larger boards may affect performance</p>
+<p>Rendering complexity may increase significantly for larger boards,
+which could negatively impact performance and responsiveness.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1914,10 +1886,8 @@ webapp/src/components/GameBoard.tsx</p>
 <p><strong>Quality/Performance Characteristics</strong></p>
 </div>
 <div class="paragraph">
-<p>Efficient computation for AI moves</p>
-</div>
-<div class="paragraph">
-<p>Deterministic behavior for testing</p>
+<p>It is designed for efficient computation of AI-driven moves, ensuring minimal delay during gameplay. Additionally,
+its deterministic behavior supports consistent results, which is particularly useful for testing and debugging.</p>
 </div>
 <div class="paragraph">
 <p><strong>Directory/File Location: </strong>
@@ -1927,203 +1897,105 @@ gamey/src/bot/</p>
 <p><strong>Fulfilled Requirements</strong></p>
 </div>
 <div class="paragraph">
-<p>Automates bot moves in the game</p>
-</div>
-<div class="paragraph">
-<p>Ensures challenge for players</p>
+<p>The component automates bot moves within the game,
+contributing to gameplay progression and providing a level of challenge for players.</p>
 </div>
 <div class="paragraph">
 <p><strong>Open Issues/Problems/Risks</strong></p>
 </div>
 <div class="paragraph">
-<p>Scaling to multiple bots simultaneously may increase processing time</p>
+<p>Scaling to support multiple bots simultaneously may lead to increased processing time,
+potentially affecting overall system performance.</p>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="paragraph">
+<p><a id="section-runtime-view"></a> == Runtime View</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_level_3">5.3. Level 3</h3>
+<h3 id="_single_player_game_initialization">5.3. Single Player Game Initialization</h3>
+<div class="imageblock">
+<div class="content">
+<img src="./images/Game%20Initialization%20Sequence%20with%20Difficulty.png" alt="Game Initialization Sequence with Difficulty" width="853" height="764">
+</div>
+</div>
 <div class="paragraph">
-<p>Not needed for this version yet.</p>
+<p><strong><strong>Description</strong></strong></p>
+</div>
+<div class="paragraph">
+<p>The user opens the Web App and starts a game.
+The Web App sends the JWT to the Users Service, which verifies it using Firebase Authentication.
+Firebase validates the token and returns the user identity, which is forwarded back to the Web App.</p>
+</div>
+<div class="paragraph">
+<p>The user selects a difficulty level, and the Web App sends a request to Gamey to create a new game.</p>
+</div>
+<div class="paragraph">
+<p>Gamey validates the JWT again through the Users Service (which delegates verification to Firebase).
+Once validated, Gamey creates the game, assigns a bot based on difficulty, and initializes it.</p>
+</div>
+<div class="paragraph">
+<p>The Bot prepares its internal state and confirms readiness.
+Finally, Gamey returns the initial game state and the Web App renders the board.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_player_move_and_bot_response">5.4. Player Move and Bot Response</h3>
+<div class="imageblock">
+<div class="content">
+<img src="./images/Player%20move%20sequence%20(Web%20App%20→%20Gamey%20→%20ybot).png" alt="Player move sequence (Web App → Gamey → ybot)" width="878" height="643">
+</div>
+</div>
+<div class="paragraph">
+<p><strong><strong>Description</strong></strong></p>
+</div>
+<div class="paragraph">
+<p>The user performs a move in the Web App.
+The request is sent to Gamey along with the JWT.</p>
+</div>
+<div class="paragraph">
+<p>Gamey validates the token via the Users Service, which in turn uses Firebase Authentication.
+Once validated, Gamey processes the move, updates the board, and forwards the state to the Bot.</p>
+</div>
+<div class="paragraph">
+<p>The Bot computes its move and returns it.
+Gamey applies the bot move, checks for win conditions, and persists the updated state.</p>
+</div>
+<div class="paragraph">
+<p>The updated board is returned to the Web App and rendered to the user.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_view_match_history">5.5. View Match History</h3>
+<div class="imageblock">
+<div class="content">
+<img src="./images/Match%20history%20sequence%20(Web%20App%20→%20Users%20Module).png" alt="Match history sequence (Web App → Users Module)" width="579" height="474">
+</div>
+</div>
+<div class="paragraph">
+<p><strong><strong>Description</strong></strong></p>
+</div>
+<div class="paragraph">
+<p>The user requests their match history from the Web App.
+The Web App sends the request to the Users Service with the JWT.</p>
+</div>
+<div class="paragraph">
+<p>The Users Service validates the token using Firebase Authentication and extracts the user_id.
+It then queries the database for matches associated with that user.</p>
+</div>
+<div class="paragraph">
+<p>The results are returned to the Web App, which displays them to the user.</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-runtime-view">6. Runtime View</h2>
-<div class="sectionbody">
-<div class="sidebarblock arc42help">
-<div class="content">
-<div class="paragraph">
-<div class="title">Contents</div>
-<p>The runtime view describes concrete behavior and interactions of the system’s building blocks in form of scenarios from the following areas:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>important use cases or features: how do building blocks execute them?</p>
-</li>
-<li>
-<p>interactions at critical external interfaces: how do building blocks cooperate with users and neighboring systems?</p>
-</li>
-<li>
-<p>operation and administration: launch, start-up, stop</p>
-</li>
-<li>
-<p>error and exception scenarios</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Remark: The main criterion for the choice of possible scenarios (sequences, workflows) is their <strong>architectural relevance</strong>. It is <strong>not</strong> important to describe a large number of scenarios. You should rather document a representative selection.</p>
-</div>
-<div class="paragraph">
-<div class="title">Motivation</div>
-<p>You should understand how (instances of) building blocks of your system perform their job and communicate at runtime.
-You will mainly capture scenarios in your documentation to communicate your architecture to stakeholders that are less willing or able to read and understand the static models (building block view, deployment view).</p>
-</div>
-<div class="paragraph">
-<div class="title">Form</div>
-<p>There are many notations for describing scenarios, e.g.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>numbered list of steps (in natural language)</p>
-</li>
-<li>
-<p>activity diagrams or flow charts</p>
-</li>
-<li>
-<p>sequence diagrams</p>
-</li>
-<li>
-<p>BPMN or EPCs (event process chains)</p>
-</li>
-<li>
-<p>state machines</p>
-</li>
-<li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<div class="title">Further Information</div>
-<p>See <a href="https://docs.arc42.org/section-6/">Runtime View</a> in the arc42 documentation.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_single_player_game_initialization">6.1. Single Player Game Initialization</h3>
-<div class="imageblock">
-<div class="content">
-<img src="./images/Game%20Initialization%20Sequence%20with%20Difficulty.png" alt="Game Initialization Sequence with Difficulty" width="740" height="426">
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Description</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>The user opens the Web App and chooses to join a game.</p>
-</li>
-<li>
-<p>The Web App prompts the user to select a difficulty level.</p>
-</li>
-<li>
-<p>The user selects the desired difficulty.</p>
-</li>
-<li>
-<p>The Web App sends a request to Gamey to start a new game, including player info and difficulty.</p>
-</li>
-<li>
-<p>The Game Engine initializes bot players according to the chosen difficulty.</p>
-</li>
-<li>
-<p>Bots report readiness to the Game Engine.</p>
-</li>
-<li>
-<p>Gamey sends the initial game state and board to the Web App.</p>
-</li>
-<li>
-<p>The Web App renders the initial board for the user.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_player_move_and_bot_response">6.2. Player Move and Bot Response</h3>
-<div class="imageblock">
-<div class="content">
-<img src="./images/Player%20move%20sequence%20(Web%20App%20→%20Gamey).png" alt="Player move sequence (Web App → Gamey)" width="633" height="365">
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Description</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>The user performs a move in the Web App.</p>
-</li>
-<li>
-<p>The Web App sends the game state directly to the Game Engine (Gamey).</p>
-</li>
-<li>
-<p>The Game Engine selects the appropriate bot.</p>
-</li>
-<li>
-<p>The bot computes the next move.</p>
-</li>
-<li>
-<p>The result is returned directly back to the Web App.</p>
-</li>
-<li>
-<p>The UI updates with the new game state.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_view_match_history">6.3. View Match History</h3>
-<div class="imageblock">
-<div class="content">
-<img src="./images/Match%20history%20sequence%20(WebApp%20→%20Game.js).png" alt="Match history sequence (WebApp → Game" width="429" height="305">
-</div>
-</div>
-<div class="paragraph">
-<p><strong>Description</strong></p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>After logging in, the user accesses the history section from the navigation bar.</p>
-</li>
-<li>
-<p>The WebApp requests the user&#8217;s match history from the users module.</p>
-</li>
-<li>
-<p>Game.js retrieves all past matches associated with the user.</p>
-</li>
-<li>
-<p>The data is returned to the WebApp in JSON format.</p>
-</li>
-<li>
-<p>The interface displays the list of previously played matches of the player.</p>
-</li>
-</ol>
-</div>
-<div style="page-break-after: always;"></div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="section-deployment-view">7. Deployment View</h2>
+<h2 id="section-deployment-view">6. Deployment View</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_infrastructure_level_1">7.1. Infrastructure Level 1</h3>
+<h3 id="_infrastructure_level_1">6.1. Infrastructure Level 1</h3>
 <div class="imageblock text-center">
 <div class="content">
 <img src="./images/Infrastructure-Level1.jpg" alt="Infrastructure Level 1 Diagram">
@@ -2205,15 +2077,15 @@ You will mainly capture scenarios in your documentation to communicate your arch
 </table>
 </div>
 <div class="sect2">
-<h3 id="_infrastructure_level_2">7.2. Infrastructure Level 2</h3>
+<h3 id="_infrastructure_level_2">6.2. Infrastructure Level 2</h3>
 <div class="sect3">
-<h4 id="_azure_virtual_machine">7.2.1. Azure Virtual Machine</h4>
+<h4 id="_azure_virtual_machine">6.2.1. Azure Virtual Machine</h4>
 <div class="paragraph">
 <p>The VM runs Ubuntu 24.04 LTS. Docker Engine and Docker Compose are installed directly on the machine. SSH access for deployments is restricted via public/private key pair, with the private key stored as a GitHub Actions secret (<code>DEPLOY_KEY</code>). All containers share the internal <code>monitor-net</code> bridge network, which allows inter-service communication by container name (e.g. <code>users</code> connects to MongoDB as <code>mongodb://mongo:27017/yovi</code> and reaches the game engine at <code><a href="http://gamey:4000" class="bare">http://gamey:4000</a></code>). The <code>mongo</code> container is the only service not exposed externally. A named volume <code>mongo_data</code> persists database contents across deployments.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_cicd_pipeline_github_actions">7.2.2. CI/CD Pipeline (GitHub Actions)</h4>
+<h4 id="_cicd_pipeline_github_actions">6.2.2. CI/CD Pipeline (GitHub Actions)</h4>
 <div class="imageblock text-center">
 <div class="content">
 <img src="./images/githubactions.jpg" alt="GitHub Actions CI/CD Pipeline">
@@ -2230,7 +2102,7 @@ You will mainly capture scenarios in your documentation to communicate your arch
 </div>
 </div>
 <div class="sect3">
-<h4 id="_monitoring_stack">7.2.3. Monitoring Stack</h4>
+<h4 id="_monitoring_stack">6.2.3. Monitoring Stack</h4>
 <div class="paragraph">
 <p>Prometheus is configured via <code>users/monitoring/prometheus/</code> and scrapes metrics from the <code>users</code> service at <code>/metrics</code>. Grafana reads from Prometheus and is provisioned automatically via <code>users/monitoring/grafana/provisioning/</code>. Both services are part of the <code>monitor-net</code> network. Grafana is accessible on port 9091 of the Azure VM (internally mapped from Grafana&#8217;s default port 3000).</p>
 </div>
@@ -2240,10 +2112,10 @@ You will mainly capture scenarios in your documentation to communicate your arch
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-concepts">8. Cross-cutting Concepts</h2>
+<h2 id="section-concepts">7. Cross-cutting Concepts</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_domain_concepts">8.1. Domain Concepts</h3>
+<h3 id="_domain_concepts">7.1. Domain Concepts</h3>
 <div class="paragraph">
 <p>The system’s domain revolves around the board game Y,
 encompassing gameplay mechanics, user interactions, and data persistence.
@@ -2266,7 +2138,7 @@ saving the results at the end, and retrieving their history to review previously
 </div>
 </div>
 <div class="sect2">
-<h3 id="_safety_security">8.2. Safety &amp; Security</h3>
+<h3 id="_safety_security">7.2. Safety &amp; Security</h3>
 <div class="paragraph">
 <p>Security is a primary cross-cutting concern and is largely handled via Firebase,
 complemented by backend enforcement. Authentication is managed through Firebase Authentication using JWTs,
@@ -2281,7 +2153,7 @@ compromise the state of the system.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_architecture_design_patterns">8.3. Architecture &amp; Design Patterns</h3>
+<h3 id="_architecture_design_patterns">7.3. Architecture &amp; Design Patterns</h3>
 <div class="paragraph">
 <p>The system follows a client-server architecture with a stateless backend implemented in Rust.
 Several design patterns are applied to enhance modularity and maintainability, including a layered architecture,
@@ -2295,7 +2167,7 @@ its responsibilities while maintaining clean interfaces between them.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_under_the_hood_technical_concepts">8.4. Under-the-hood (Technical Concepts)</h3>
+<h3 id="_under_the_hood_technical_concepts">7.4. Under-the-hood (Technical Concepts)</h3>
 <div class="paragraph">
 <p>The database stores game history and user references based on Firebase UID.
 The system communicates through a REST API using JSON over HTTP, and all authenticated requests include a
@@ -2306,7 +2178,7 @@ computations for each difficulty level.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_user_interface_experience">8.5. User Interface &amp; Experience</h3>
+<h3 id="_user_interface_experience">7.5. User Interface &amp; Experience</h3>
 <div class="paragraph">
 <p>The UI is built with React using modular components for the game board, history, and authentication.
 Users experience instant feedback on moves, clear win and loss states, and smooth transitions between screens.
@@ -2316,7 +2188,7 @@ experience across components.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_development_concepts">8.6. Development Concepts</h3>
+<h3 id="_development_concepts">7.6. Development Concepts</h3>
 <div class="paragraph">
 <p>The system’s build and configuration processes are streamlined with React’s build pipeline and Rust builds managed
 via Cargo. Testing is performed at multiple levels, including unit tests for game logic and UI components,
@@ -2325,7 +2197,7 @@ backend allows the addition of new game modes or features without impacting exis
 </div>
 </div>
 <div class="sect2">
-<h3 id="_operation_administration">8.7. Operation &amp; Administration</h3>
+<h3 id="_operation_administration">7.7. Operation &amp; Administration</h3>
 <div class="paragraph">
 <p>The frontend is deployed as a static hosting application on Azure,
 providing fast load times and easy scalability.
@@ -2347,7 +2219,7 @@ stateless backend promotes scalability, simplicity, and overall system resilienc
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-design-decisions">9. Architecture Decisions</h2>
+<h2 id="section-design-decisions">8. Architecture Decisions</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This section documents the important, high-impact architectural decisions that influence the design and development of Yovi_es3b.
@@ -2355,7 +2227,7 @@ The decisions are documented using the ADR format, organized by importance and c
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_adr_1_rust_for_the_gamey_engine">9.1. ADR 1: Rust for the Gamey Engine</h3>
+<h3 id="_adr_1_rust_for_the_gamey_engine">8.1. ADR 1: Rust for the Gamey Engine</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2390,7 +2262,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_2_node_js_express_for_the_users_service">9.2. ADR 2: Node.js &amp; Express for the Users Service</h3>
+<h3 id="_adr_2_node_js_express_for_the_users_service">8.2. ADR 2: Node.js &amp; Express for the Users Service</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2426,7 +2298,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_3_react_typescript_for_the_webapp_frontend">9.3. ADR 3: React &amp; TypeScript for the Webapp Frontend</h3>
+<h3 id="_adr_3_react_typescript_for_the_webapp_frontend">8.3. ADR 3: React &amp; TypeScript for the Webapp Frontend</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2461,7 +2333,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_4_vite_as_the_frontend_build_tool">9.4. ADR 4: Vite as the Frontend Build Tool</h3>
+<h3 id="_adr_4_vite_as_the_frontend_build_tool">8.4. ADR 4: Vite as the Frontend Build Tool</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2496,7 +2368,7 @@ The decisions are documented using the ADR format, organized by importance and c
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_5_mongodb_with_mongoose_for_persistence">9.5. ADR 5: MongoDB with Mongoose for Persistence</h3>
+<h3 id="_adr_5_mongodb_with_mongoose_for_persistence">8.5. ADR 5: MongoDB with Mongoose for Persistence</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2540,7 +2412,7 @@ The database needed to store user profiles and authentication data and persist g
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_6_docker_docker_compose_for_orchestration">9.6. ADR 6: Docker &amp; Docker Compose for Orchestration</h3>
+<h3 id="_adr_6_docker_docker_compose_for_orchestration">8.6. ADR 6: Docker &amp; Docker Compose for Orchestration</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2576,7 +2448,7 @@ The database needed to store user profiles and authentication data and persist g
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_7_github_actions">9.7. ADR 7: GitHub Actions</h3>
+<h3 id="_adr_7_github_actions">8.7. ADR 7: GitHub Actions</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2610,7 +2482,7 @@ The database needed to store user profiles and authentication data and persist g
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_adr_8_code_quality_monitoring_sonarcloud_codescene">9.8. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</h3>
+<h3 id="_adr_8_code_quality_monitoring_sonarcloud_codescene">8.8. ADR 8: Code Quality Monitoring (SonarCloud &amp; CodeScene)</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -2647,10 +2519,10 @@ The database needed to store user profiles and authentication data and persist g
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-quality-scenarios">10. Quality Requirements</h2>
+<h2 id="section-quality-scenarios">9. Quality Requirements</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_quality_tree">10.1. Quality Tree</h3>
+<h3 id="_quality_tree">9.1. Quality Tree</h3>
 <div class="imageblock">
 <div class="content">
 <svg contentStyleType='text/css' data-diagram-type='MINDMAP' preserveAspectRatio='none' version='1.1' viewBox='0 0 873 1001' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns='http://www.w3.org/2000/svg' zoomAndPan='magnify' width="873" height="1001"><defs/><g><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='63.5723' x='10' y='480.875'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='43.5723' x='20' y='505.4082'>Quality</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='72.9033' x='123.5723' y='77.6094'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='52.9033' x='133.5723' y='102.1426'>Usability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='415.2949' x='246.4756' y='20'/><a xlink:actuate='onRequest' xlink:href='#scenario-U1' href='#scenario-U1' xlink:show='new' target='_top' xlink:title='#scenario-U1' title='#scenario-U1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='256.4756' y='44.5332'>#scenario-U1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='308.1436' x='343.627' y='44.5332'>U1 - The UI adapts clearly to different board sizes</text><path d='M196.4756,96.4141 L206.4756,96.4141 C221.4756,96.4141 221.4756,38.8047 236.4756,38.8047 L246.4756,38.8047' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='434.7568' x='246.4756' y='77.6094'/><a xlink:actuate='onRequest' xlink:href='#scenario-U2' href='#scenario-U2' xlink:show='new' target='_top' xlink:title='#scenario-U2' title='#scenario-U2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='256.4756' y='102.1426'>#scenario-U2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='327.6055' x='343.627' y='102.1426'>U2 - A new user can start a game in under 2 minutes</text><path d='M196.4756,96.4141 L206.4756,96.4141 C221.4756,96.4141 221.4756,96.4141 236.4756,96.4141 L246.4756,96.4141' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='418.3574' x='246.4756' y='135.2188'/><a xlink:actuate='onRequest' xlink:href='#scenario-U3' href='#scenario-U3' xlink:show='new' target='_top' xlink:title='#scenario-U3' title='#scenario-U3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='256.4756' y='159.752'>#scenario-U3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='311.2061' x='343.627' y='159.752'>U3 - Game history is accessible in at most 3 clicks</text><path d='M196.4756,96.4141 L206.4756,96.4141 C221.4756,96.4141 221.4756,154.0234 236.4756,154.0234 L246.4756,154.0234' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,96.4141 113.5723,96.4141 L123.5723,96.4141' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='79.9102' x='123.5723' y='250.4375'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='59.9102' x='133.5723' y='274.9707'>Reliability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='493.0947' x='253.4824' y='192.8281'/><a xlink:actuate='onRequest' xlink:href='#scenario-R1' href='#scenario-R1' xlink:show='new' target='_top' xlink:title='#scenario-R1' title='#scenario-R1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='263.4824' y='217.3613'>#scenario-R1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='385.9434' x='350.6338' y='217.3613'>R1 - The system saves match results even if connection drops</text><path d='M203.4824,269.2422 L213.4824,269.2422 C228.4824,269.2422 228.4824,211.6328 243.4824,211.6328 L253.4824,211.6328' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='353.8057' x='253.4824' y='250.4375'/><a xlink:actuate='onRequest' xlink:href='#scenario-R2' href='#scenario-R2' xlink:show='new' target='_top' xlink:title='#scenario-R2' title='#scenario-R2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='263.4824' y='274.9707'>#scenario-R2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='246.6543' x='350.6338' y='274.9707'>R2 - User login works 99.9% of the time</text><path d='M203.4824,269.2422 L213.4824,269.2422 C228.4824,269.2422 228.4824,269.2422 243.4824,269.2422 L253.4824,269.2422' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='456.5225' x='253.4824' y='308.0469'/><a xlink:actuate='onRequest' xlink:href='#scenario-R3' href='#scenario-R3' xlink:show='new' target='_top' xlink:title='#scenario-R3' title='#scenario-R3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='83.2617' x='263.4824' y='332.5801'>#scenario-R3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='349.3711' x='350.6338' y='332.5801'>R3 - The bot always makes a valid move within the rules</text><path d='M203.4824,269.2422 L213.4824,269.2422 C228.4824,269.2422 228.4824,326.8516 243.4824,326.8516 L253.4824,326.8516' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,269.2422 113.5723,269.2422 L123.5723,269.2422' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='100.1445' x='123.5723' y='423.2656'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='80.1445' x='133.5723' y='447.7988'>Performance</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='507.9492' x='273.7168' y='365.6563'/><a xlink:actuate='onRequest' xlink:href='#scenario-P1' href='#scenario-P1' xlink:show='new' target='_top' xlink:title='#scenario-P1' title='#scenario-P1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='283.7168' y='390.1895'>#scenario-P1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='401.5703' x='370.0957' y='390.1895'>P1 - The board renders in under 1 second for any supported size</text><path d='M223.7168,442.0703 L233.7168,442.0703 C248.7168,442.0703 248.7168,384.4609 263.7168,384.4609 L273.7168,384.4609' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='500.1631' x='273.7168' y='423.2656'/><a xlink:actuate='onRequest' xlink:href='#scenario-P2' href='#scenario-P2' xlink:show='new' target='_top' xlink:title='#scenario-P2' title='#scenario-P2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='283.7168' y='447.7988'>#scenario-P2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='393.7842' x='370.0957' y='447.7988'>P2 - The bot responds in under 2 seconds on any difficulty level</text><path d='M223.7168,442.0703 L233.7168,442.0703 C248.7168,442.0703 248.7168,442.0703 263.7168,442.0703 L273.7168,442.0703' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='378.7432' x='273.7168' y='480.875'/><a xlink:actuate='onRequest' xlink:href='#scenario-P3' href='#scenario-P3' xlink:show='new' target='_top' xlink:title='#scenario-P3' title='#scenario-P3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='283.7168' y='505.4082'>#scenario-P3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='272.3643' x='370.0957' y='505.4082'>P3 - Match history loads in under 3 seconds</text><path d='M223.7168,442.0703 L233.7168,442.0703 C248.7168,442.0703 248.7168,499.6797 263.7168,499.6797 L273.7168,499.6797' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,442.0703 113.5723,442.0703 L123.5723,442.0703' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='70.5723' x='123.5723' y='596.0938'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='50.5723' x='133.5723' y='620.627'>Security</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='415.2881' x='244.1445' y='538.4844'/><a xlink:actuate='onRequest' xlink:href='#scenario-S1' href='#scenario-S1' xlink:show='new' target='_top' xlink:title='#scenario-S1' title='#scenario-S1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='254.1445' y='563.0176'>#scenario-S1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='308.9092' x='340.5234' y='563.0176'>S1 - Passwords are stored encrypted (e.g. bcrypt)</text><path d='M194.1445,614.8984 L204.1445,614.8984 C219.1445,614.8984 219.1445,557.2891 234.1445,557.2891 L244.1445,557.2891' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='427.7363' x='244.1445' y='596.0938'/><a xlink:actuate='onRequest' xlink:href='#scenario-S2' href='#scenario-S2' xlink:show='new' target='_top' xlink:title='#scenario-S2' title='#scenario-S2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='254.1445' y='620.627'>#scenario-S2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='321.3574' x='340.5234' y='620.627'>S2 - A user can only access their own match history</text><path d='M194.1445,614.8984 L204.1445,614.8984 C219.1445,614.8984 219.1445,614.8984 234.1445,614.8984 L244.1445,614.8984' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='394.2949' x='244.1445' y='653.7031'/><a xlink:actuate='onRequest' xlink:href='#scenario-S3' href='#scenario-S3' xlink:show='new' target='_top' xlink:title='#scenario-S3' title='#scenario-S3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='82.4893' x='254.1445' y='678.2363'>#scenario-S3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='287.916' x='340.5234' y='678.2363'>S3 - Sessions expire after a period of inactivity</text><path d='M194.1445,614.8984 L204.1445,614.8984 C219.1445,614.8984 219.1445,672.5078 234.1445,672.5078 L244.1445,672.5078' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,614.8984 113.5723,614.8984 L123.5723,614.8984' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='108.71' x='123.5723' y='768.9219'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='88.71' x='133.5723' y='793.4551'>Maintainability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='579.542' x='282.2822' y='711.3125'/><a xlink:actuate='onRequest' xlink:href='#scenario-M1' href='#scenario-M1' xlink:show='new' target='_top' xlink:title='#scenario-M1' title='#scenario-M1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='84.8135' x='292.2822' y='735.8457'>#scenario-M1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='470.8389' x='380.9854' y='735.8457'>M1 - Adding a new bot difficulty requires no changes outside the bot module</text><path d='M232.2822,787.7266 L242.2822,787.7266 C257.2822,787.7266 257.2822,730.1172 272.2822,730.1172 L282.2822,730.1172' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='472.9014' x='282.2822' y='768.9219'/><a xlink:actuate='onRequest' xlink:href='#scenario-M2' href='#scenario-M2' xlink:show='new' target='_top' xlink:title='#scenario-M2' title='#scenario-M2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='84.8135' x='292.2822' y='793.4551'>#scenario-M2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='364.1982' x='380.9854' y='793.4551'>M2 - Board size logic is configurable without code changes</text><path d='M232.2822,787.7266 L242.2822,787.7266 C257.2822,787.7266 257.2822,787.7266 272.2822,787.7266 L282.2822,787.7266' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='481.4463' x='282.2822' y='826.5313'/><a xlink:actuate='onRequest' xlink:href='#scenario-M3' href='#scenario-M3' xlink:show='new' target='_top' xlink:title='#scenario-M3' title='#scenario-M3' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='84.8135' x='292.2822' y='851.0645'>#scenario-M3</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='372.7432' x='380.9854' y='851.0645'>M3 - The codebase follows a consistent layered architecture</text><path d='M232.2822,787.7266 L242.2822,787.7266 C257.2822,787.7266 257.2822,845.3359 272.2822,845.3359 L282.2822,845.3359' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,787.7266 113.5723,787.7266 L123.5723,787.7266' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='81.4688' x='123.5723' y='912.9453'/><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='61.4688' x='133.5723' y='937.4785'>Portability</text><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='495.4668' x='255.041' y='884.1406'/><a xlink:actuate='onRequest' xlink:href='#scenario-Po1' href='#scenario-Po1' xlink:show='new' target='_top' xlink:title='#scenario-Po1' title='#scenario-Po1' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='90.2754' x='265.041' y='908.6738'>#scenario-Po1</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='381.3018' x='359.2061' y='908.6738'>Po1 - The game runs on modern browsers without installation</text><path d='M205.041,931.75 L215.041,931.75 C230.041,931.75 230.041,902.9453 245.041,902.9453 L255.041,902.9453' fill='none' style='stroke:#181818;stroke-width:1;'/><rect fill='#F1F1F1' height='37.6094' rx='12.5' ry='12.5' style='stroke:#181818;stroke-width:1.5;' width='535.2246' x='255.041' y='941.75'/><a xlink:actuate='onRequest' xlink:href='#scenario-Po2' href='#scenario-Po2' xlink:show='new' target='_top' xlink:title='#scenario-Po2' title='#scenario-Po2' xlink:type='simple'><text fill='#0000FF' font-family='sans-serif' font-size='14' lengthAdjust='spacing' text-decoration='underline' textLength='90.2754' x='265.041' y='966.2832'>#scenario-Po2</text></a><text fill='#000000' font-family='sans-serif' font-size='14' lengthAdjust='spacing' textLength='421.0596' x='359.2061' y='966.2832'>Po2 - The backend can be deployed on any standard cloud provider</text><path d='M205.041,931.75 L215.041,931.75 C230.041,931.75 230.041,960.5547 245.041,960.5547 L255.041,960.5547' fill='none' style='stroke:#181818;stroke-width:1;'/><path d='M73.5723,499.6797 L83.5723,499.6797 C98.5723,499.6797 98.5723,931.75 113.5723,931.75 L123.5723,931.75' fill='none' style='stroke:#181818;stroke-width:1;'/><?plantuml-src TPHDZzem48Rl_8gHgaejqg82KgMzxVPIzO2KGZcjzZ2n9s3XsAd7WQQ_lZCXeKZPFI0HI1xF-p5vuemfroxO6flP77wsw5tkPlCvx1bBDrpCuUNb0niAc5nys2zVNs6_X0VuTIJO_m2qs6G6umcJxo17iAwgA578K4PC5jZz9Pw2LWfQ2UWP0bsWPKfWC40_5I0Si2Pm0TfWvPyLoA1jVWkqLj1QGD_rYQFZ75C7ZW6D8MPN-fw36Uh86TOogpCd1S6Ml7jFwLQLRaUbt76c6XZFn51ZDaT8nAqNwNIc0Au24qCWarqCO5DiffDkLV9M9UzLh8y76UiIqudXyN7n-15Y1LdEogwcwSCgSxiUnYcZMEGlsEam9na9uIpfMP5u9hYuV1IqibBhUy-We5J5L6CmKtQXKelbZQsfIO3YE_zFO0bC8j62O0131zmsJKoPhWbFeQgsMDqDB8Or0k3xLAzC1Z5DcTeTPyJM3hpuwgTKjQ5G6pPz26FSFk8zU3s2LVgEJ9lUYdYdkdUgkq1cIK8Gc2HiGOei2YPrZGhyH8l30ih-ylCKeqftrohVQXo3RCErWHg4In0lOMZECFGKfE9sAcwdnOr1olMdSJ8HLbcu20t9VLQBuW9Aryx3mcxGXIoVzygyKQKRLVfihGi7GUdIQIftbYVwtSff3262EM8uoDVOPdQM-ZBfxNMqKgdf0Uh1HZtuTblwlk56Dr6YgDoXJQYxgEqKglmesE6OAK-js8nrrrjBP9BkUHylMdT1ijYehncF7MbUcCpHPLd1Db5VUMddUuOKiUzy74lVlsrI6_ecYaPA0SeaH-aEZ1Ex82ydxr5t_0rYN_XuQpoQa-nGNuQIm5BZOoTJ3aqNKh3gbF6njT2aU1QRq-n9dXdVoRFbOlLbzNMn-WS0?></g></svg>
@@ -2658,7 +2530,7 @@ The database needed to store user profiles and authentication data and persist g
 </div>
 </div>
 <div class="sect2">
-<h3 id="_quality_scenarios">10.2. Quality Scenarios</h3>
+<h3 id="_quality_scenarios">9.2. Quality Scenarios</h3>
 <div class="sidebarblock arc42help">
 <div class="content">
 <div class="paragraph">
@@ -3195,14 +3067,14 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-technical-risks">11. Risks and Technical Debts</h2>
+<h2 id="section-technical-risks">10. Risks and Technical Debts</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This section serves as a list of identified technical risks and technical debts, ordered by priority with associated mitigation measures.</p>
 </div>
 <hr>
 <div class="sect2">
-<h3 id="_identified_risks">11.1. Identified Risks</h3>
+<h3 id="_identified_risks">10.1. Identified Risks</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 9.0909%;">
@@ -3276,7 +3148,7 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_technical_debt">11.2. Technical Debt</h3>
+<h3 id="_technical_debt">10.2. Technical Debt</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 10%;">
@@ -3337,13 +3209,13 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-app-test">12. App Testing</h2>
+<h2 id="section-app-test">11. App Testing</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The development of the app included multiple testing strategies to ensure the quality and reliability of the system. The testing process encompassed unit tests, end-to-end tests and load tests.</p>
 </div>
 <div class="sect2">
-<h3 id="_unit_testing">12.1. Unit Testing</h3>
+<h3 id="_unit_testing">11.1. Unit Testing</h3>
 <div class="paragraph">
 <p>Unit tests were implemented for individual components and functions across the codebase. These tests focused on verifying the correctness of isolated units of code, such as utility functions, game UI components and backend
 services.</p>
@@ -3369,14 +3241,14 @@ services.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_end_to_end_test">12.2. End-to-end test</h3>
+<h3 id="_end_to_end_test">11.2. End-to-end test</h3>
 <div class="paragraph">
 <p>The main goal in this test is to verify the interaction between the
 different services of the app. Frontend needs to comunicate with both
 API users service and gamey service. We used Playwright and Cucumber for this purpose. Playwright allows us to automate browser interactions, while Cucumber provides a BDD (Behavior-Driven Development) framework to write test scenarios in a human-readable format.</p>
 </div>
 <div class="sect3">
-<h4 id="_example_access_history_menu_user_with_4_games">12.2.1. Example: Access history menu: user with 4 games</h4>
+<h4 id="_example_access_history_menu_user_with_4_games">11.2.1. Example: Access history menu: user with 4 games</h4>
 <div class="imageblock">
 <div class="content">
 <img src="./images/test_e2e.drawio.png" alt="Overview of an e2e test case">
@@ -3385,7 +3257,7 @@ API users service and gamey service. We used Playwright and Cucumber for this pu
 </div>
 </div>
 <div class="sect2">
-<h3 id="_load_test">12.3. Load test</h3>
+<h3 id="_load_test">11.3. Load test</h3>
 <div class="paragraph">
 <p>Although the app is tested locally, we also have to ensure that it can
 handle a real world scenario. In this case we tested the performance of
@@ -3393,13 +3265,13 @@ the app while 50 users were accessing the system at the same time. By doing so
 we try to detect bugs or problems under load, detect bottlenecks or demostrate the quality goals specify in the documentations.</p>
 </div>
 <div class="sect3">
-<h4 id="_gatling">12.3.1. Gatling</h4>
+<h4 id="_gatling">11.3.1. Gatling</h4>
 <div class="paragraph">
 <p>Gatling is a powerful open-source load testing tool that allows us to simulate a large number of users accessing the system concurrently. We created scenarios that mimic real user behavior, such as logging in. It works as an interceptor between the frontend and the backend, allowing us to measure response times, throughput and error rates under load. The script of the test is written in Scala and it is executed via JVM.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_results">12.3.2. Results</h4>
+<h4 id="_results">11.3.2. Results</h4>
 <div class="paragraph">
 <p>We decided to test the response time to a request to get info from a user and to Firebase login. The test was done
 with 50 users in 25 seconds.</p>
@@ -3427,7 +3299,7 @@ expected, as the system is allocated in India Central region from Azure, and the
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-glossary">13. Glossary</h2>
+<h2 id="section-glossary">12. Glossary</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The most important domain and technical terms that stakeholders should know the meaning.</p>
@@ -3508,7 +3380,7 @@ expected, as the system is allocated in India Central region from Azure, and the
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2026-04-26 19:29:03 +0200
+Last updated 2026-04-27 11:16:43 +0200
 </div>
 </div>
 </body>
