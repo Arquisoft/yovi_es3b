@@ -5,6 +5,7 @@ import LobbyPage from './LobbyPage';
 import GamePage from './GamePage';
 import ProfilePage from './ProfilePage';
 import HistoryPage from './components/history/HistoryPage.tsx';
+import RankingPage from './components/ranking/RankingPage.tsx';
 import Navbar from './components/NavBar';
 import './App.css';
 
@@ -21,6 +22,7 @@ function App() {
             case 'game':    return <GamePage />;
             case 'profile': return <ProfilePage />;
             case 'history': return <HistoryPage />;
+            case 'ranking': return <RankingPage />;
             default:        return <LobbyPage />;
         }
     };

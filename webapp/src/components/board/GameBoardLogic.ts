@@ -6,6 +6,8 @@ export type Player = 1 | 2;
 export type Board = Record<string, Player>;
 export type GameMode = "classic" | "master" | "fortune";
 
+const TURN_TIMEOUT_MS = 8000;
+
 // YEN serialisation — converts the board state to the format the bot API
 // expects: rows of B (player 1), R (bot), or . (empty), joined by "/"
 export function buildYEN(size: number, board: Board) {
@@ -27,6 +29,33 @@ export function buildYEN(size: number, board: Board) {
         size,
         turn: 1,
         players: ["B", "R"] as [string, string],
+        layout: rows.join("/"),
+    };
+}
+
+// YEN serialization reversed — swaps player and bot perspective
+// Player (1 -> "B") becomes bot, and bot (2 -> "R") becomes player
+export function buildYENReversed(size: number, board: Board) {
+    const occupied: Record<string, string> = {};
+
+    for (const [key, player] of Object.entries(board)) {
+        occupied[key] = player === 1 ? "R" : "B";
+    }
+
+    const rows: string[] = [];
+
+    for (let x = size - 1; x >= 0; x--) {
+        let row = "";
+        for (let y = 0; y < size - x; y++) {
+            row += occupied[`${x},${y}`] ?? ".";
+        }
+        rows.push(row);
+    }
+
+    return {
+        size,
+        turn: 1,
+        players: ["R", "B"] as [string, string], // swapped order
         layout: rows.join("/"),
     };
 }
@@ -78,6 +107,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
     const { user } = useAuth();
 
     const [board, setBoard] = useState<Board>({});
+    const [clueCell, setClueCell] = useState<string | null>(null);
     const [currentPlayer, setCurrentPlayer] = useState<Player>(1);
     const [loadingBot, setLoadingBot] = useState(false);
     const [gameOver, setGameOver] = useState(false);
@@ -94,6 +124,12 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
     const [coinAnimating, setCoinAnimating] = useState(false);
     const [coinAnimResult, setCoinAnimResult] = useState<"player" | "bot" | null>(null);
 
+    // timer 8seg
+    const [turnDeadline, setTurnDeadline] = useState<number | null>(null);
+    const turnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const boardRef = useRef<Board>({});
+    useEffect(() => { boardRef.current = board; }, [board]);
+
     const gameFinishedRef = useRef(false);
     const startTimeRef = useRef(Date.now());
 
@@ -106,7 +142,8 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
             resolveWinner(winnerId),
             Date.now() - startTimeRef.current,
             turns,
-            difficulty
+            difficulty,
+            gameMode
         );
     };
 
@@ -285,6 +322,8 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         const key = `${q},${r}`;
         if (board[key]) return;
 
+        setClueCell(null);
+
         const nextBoard: Board = { ...board, [key]: 1 };
         setBoard(nextBoard);
         setTurns((t) => t + 1);
@@ -333,6 +372,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         setFortuneFlip(null);
         setCoinAnimating(false);
         setCoinAnimResult(null);
+        clearTurnTimer();
 
         if (gameMode === "fortune") {
             initialFlipStartedRef.current = false;
@@ -340,17 +380,136 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         }
     };
 
+
+    // ---- extra actions -------------------------------------------------------
+    const skipAction = async (currentBoard: Board) => {
+        if (gameFinishedRef.current || gameOver || loadingBot || coinAnimating || currentPlayer !== 1) return;
+
+        setClueCell(null);
+
+        if (gameMode === "master") {
+            if (masterPiecesLeft > 1) {
+                // Player still has a second piece to place this turn
+                setMasterPiecesLeft(1);
+                return;
+            }
+            setMasterPiecesLeft(2);
+            await runMasterBotTurn(currentBoard);
+
+        } else if (gameMode === "fortune") {
+            const flip = await flipCoin();
+            setFortuneFlip(flip);
+            if (flip === "bot") {
+                await runFortuneBotTurn(currentBoard);
+            }
+
+        } else {
+            // Classic
+            await runClassicBotTurn(currentBoard);
+        }
+    };
+
+    const askForClue = async (currentBoard: Board): Promise<{ x: number; y: number; z: number } | null> => {
+    const API_URL = import.meta.env.VITE_GAMEY_URL ?? "http://localhost:4000";
+
+    const yen = buildYENReversed(size, currentBoard);
+
+    const res = await fetch(`${API_URL}/v1/ybot/choose/montecarlo_bot`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify(yen),
+    });
+
+    if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Clue request failed ${res.status}${text ? `: ${text}` : ""}`);
+    }
+
+    const data = await res.json();
+
+    const { x, y, z } = data?.coords ?? {};
+
+    const valid =
+        typeof x === "number" &&
+        typeof y === "number" &&
+        typeof z === "number";
+
+    if (!valid) return null;
+
+    return { x, y, z };
+};
+
+const handleClue = async (currentBoard: Board) => {
+    try {
+        const coords = await askForClue(currentBoard);
+        if (!coords) return;
+
+        const key = `${coords.x},${coords.y}`;
+        setClueCell(key);
+    } catch (e) {
+        console.error("Clue error:", e);
+    }
+};
+
+    // ---- timer ------
+    // in master skips one piece
+
+    function clearTurnTimer() {
+        if (turnTimeoutRef.current) {
+            clearTimeout(turnTimeoutRef.current);
+            turnTimeoutRef.current = null;
+        }
+        setTurnDeadline(null);
+    }
+
+    function armTurnTimer() {
+        clearTurnTimer();
+        setTurnDeadline(Date.now() + TURN_TIMEOUT_MS);
+        turnTimeoutRef.current = setTimeout(() => {
+            turnTimeoutRef.current = null;
+            setTurnDeadline(null);
+            if (!gameFinishedRef.current) {
+                void skipAction(boardRef.current);
+            }
+        }, TURN_TIMEOUT_MS);
+    }
+
+    useEffect(() => {
+        const playerActive =
+            !gameOver &&
+            !loadingBot &&
+            !coinAnimating &&
+            currentPlayer === 1 &&
+            (gameMode !== "fortune" || fortuneFlip === "player");
+
+        if (playerActive) {
+            armTurnTimer();
+        } else {
+            clearTurnTimer();
+        }
+        return clearTurnTimer;
+    }, [currentPlayer, loadingBot, coinAnimating, gameOver, gameMode, fortuneFlip, masterPiecesLeft, board]);
+
     return {
         board,
+        clueCell,
         currentPlayer,
         loadingBot,
         gameOver,
         winner,
         handleCellClick,
+        skipAction,
+        askForClue,
+        handleClue,
         resetGame,
         masterPiecesLeft,
         fortuneFlip,
         coinAnimating,
         coinAnimResult,
+        turnDeadline,
+        turnTimeoutMs: TURN_TIMEOUT_MS,
     };
 }

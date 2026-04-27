@@ -10,14 +10,16 @@ vi.mock('../src/db/models/User.js', () => ({
         findOne: vi.fn(),
         create: vi.fn(),
         find: vi.fn(),
-        findOneAndUpdate: vi.fn()
+        findOneAndUpdate: vi.fn(),
+        updateOne: vi.fn()
     }
 }))
 
 vi.mock('../src/db/models/Game.js', () => ({
     default: {
         create: vi.fn(),
-        find: vi.fn()
+        find: vi.fn(),
+        aggregate: vi.fn()
     }
 }))
 
@@ -115,8 +117,9 @@ describe('POST /register', () => {
     })
 
     it('creates user and returns 201', async () => {
+        const mockUser = { _id: '507f1f77bcf86cd799439011', firebaseUid: 'test-uid-123', username: 'Pablo' }
         User.findOne.mockResolvedValue(null)
-        User.create.mockResolvedValue({ firebaseUid: 'test-uid-123', username: 'Pablo' })
+        User.create.mockResolvedValue(mockUser)
 
         const res = await request(appWithAuth)
             .post('/register')
@@ -125,6 +128,9 @@ describe('POST /register', () => {
 
         expect(res.status).toBe(201)
         expect(res.body).toHaveProperty('message')
+        expect(res.body).toHaveProperty('user')
+        expect(res.body.user).toHaveProperty('username', 'Pablo')
+        expect(res.body.user).toHaveProperty('_id', '507f1f77bcf86cd799439011')
     })
 
     it('returns 409 if user already exists', async () => {
@@ -140,69 +146,64 @@ describe('POST /register', () => {
 })
 
 describe('GET /users', () => {
-    // Mock para el retorno de users:
-    // Recibe una query, aplica sort y limit y devuelve un array
-    const mockQuery = (result) => ({
-        sort: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockResolvedValue(result),
-    });
-
     it('returns 401 when no token is provided', async () => {
         const res = await request(appWithoutAuth).get('/users/me')
         expect(res.status).toBe(401)
     })
 
-    it('returns a collection of users when request is correct', async () => {
-        const mockUsers = [
-            {
-                username: 'Pablo',
-                gamesPlayed: 10,
-                gamesWon: 7,
-                gamesLost: 3,
-            },
-            {
-                username: 'Ana',
-                gamesPlayed: 8,
-                gamesWon: 5,
-                gamesLost: 3,
-            },
-        ];
-
-        User.find.mockReturnValue(
-            mockQuery(mockUsers)
-        );
+    it('returns the points ranking when request is correct', async () => {
+        const mockRanking = [
+            { _id: '1', username: 'Pablo', photoURL: 'avatar_1.png', points: 2400, gamesPlayed: 5, gamesWon: 3, gamesLost: 2 },
+            { _id: '2', username: 'Ana',   photoURL: 'avatar_2.png', points: 1000, gamesPlayed: 4, gamesWon: 2, gamesLost: 2 },
+        ]
+        Game.aggregate.mockResolvedValue(mockRanking)
 
         const res = await request(appWithAuth)
             .get('/users')
-            .set('Authorization', 'Bearer fake-token');
+            .set('Authorization', 'Bearer fake-token')
 
-        expect(res.status).toBe(200);
-        expect(Array.isArray(res.body)).toBe(true);
-        expect(res.body).toHaveLength(2);
+        expect(res.status).toBe(200)
+        expect(Array.isArray(res.body)).toBe(true)
+        expect(res.body).toHaveLength(2)
+        expect(res.body[0]).toEqual(expect.objectContaining({
+            username: 'Pablo', points: 2400, gamesWon: 3
+        }))
 
-        // Esperamos que el primer usuario sea Pablo y que la
-        // estructura sea correcta
-        expect(res.body[0]).toEqual(
-            expect.objectContaining({
-                username: 'Pablo',
-                gamesPlayed: 10,
-                gamesWon: 7,
-                gamesLost: 3,
-            })
-        );
-    });
+        const pipeline = Game.aggregate.mock.calls[0][0]
+        expect(pipeline.some(stage => stage.$match)).toBe(false)
+    })
+
+    it('filters by difficulty when ?difficulty=hard is passed', async () => {
+        Game.aggregate.mockResolvedValue([])
+
+        const res = await request(appWithAuth)
+            .get('/users?difficulty=hard')
+            .set('Authorization', 'Bearer fake-token')
+
+        expect(res.status).toBe(200)
+        const pipeline = Game.aggregate.mock.calls[0][0]
+        expect(pipeline[0]).toEqual({ $match: { difficulty: 'hard' } })
+    })
+
+    it('returns 400 when difficulty is invalid', async () => {
+        const res = await request(appWithAuth)
+            .get('/users?difficulty=foo')
+            .set('Authorization', 'Bearer fake-token')
+
+        expect(res.status).toBe(400)
+        expect(res.body).toHaveProperty('error')
+        expect(Game.aggregate).not.toHaveBeenCalled()
+    })
 
     it('returns 500 when database throws an error', async () => {
-        User.find.mockRejectedValue(() => {
-            throw new Error('Test error');
-        });
+        Game.aggregate.mockRejectedValue(new Error('Test error'))
 
         const res = await request(appWithAuth)
             .get('/users')
-            .set('Authorization', 'Bearer fake-token');
+            .set('Authorization', 'Bearer fake-token')
 
-        expect(res.status).toBe(500);
-    });
+        expect(res.status).toBe(500)
+    })
 })
 
 describe('POST /games', () => {
@@ -221,9 +222,10 @@ describe('POST /games', () => {
     });
 
 
-    it('return 201 when game is stored correctly', async () => {
-        User.findOne.mockResolvedValue({username: 'Pablo'});
+    it('return 201 and increments user counters when player wins', async () => {
+        User.findOne.mockResolvedValue({_id: '507f1f77bcf86cd799439011', username: 'Pablo'});
         Game.create.mockResolvedValue({});
+        User.updateOne.mockResolvedValue({});
 
         const res = await request(appWithAuth)
             .post('/games')
@@ -232,19 +234,50 @@ describe('POST /games', () => {
                 durationMs: 1200,
                 turns: 6,
                 difficulty: 'easy',
+                gameMode: 'master',
             });
 
         expect(res.status).toBe(201);
+        expect(Game.create).toHaveBeenCalledWith(expect.objectContaining({
+            winner: 'player', difficulty: 'easy', gameMode: 'master'
+        }));
+        expect(User.updateOne).toHaveBeenCalledWith(
+            { _id: '507f1f77bcf86cd799439011' },
+            { $inc: { gamesPlayed: 1, gamesWon: 1 } }
+        );
+    })
+
+    it('increments gamesLost when bot wins', async () => {
+        User.findOne.mockResolvedValue({_id: '507f1f77bcf86cd799439011', username: 'Pablo'});
+        Game.create.mockResolvedValue({});
+        User.updateOne.mockResolvedValue({});
+
+        await request(appWithAuth)
+            .post('/games')
+            .send({ winner: 'bot', durationMs: 1000, turns: 5, difficulty: 'easy' });
+
+        expect(User.updateOne).toHaveBeenCalledWith(
+            { _id: '507f1f77bcf86cd799439011' },
+            { $inc: { gamesPlayed: 1, gamesLost: 1 } }
+        );
+    })
+
+    it('returns 400 when gameMode is invalid', async () => {
+        const res = await request(appWithAuth)
+            .post('/games')
+            .send({ winner: 'player', durationMs: 1, turns: 1, difficulty: 'easy', gameMode: 'foo' });
+
+        expect(res.status).toBe(400);
+        expect(Game.create).not.toHaveBeenCalled();
     })
 
     it('return 500 when an internal error occurs', async () => {
-        User.find.mockRejectedValue(() => {
-            throw new Error('Test error');
-        });
+        User.findOne.mockRejectedValue(new Error('Test error'));
 
         const res = await request(appWithAuth)
             .post('/games')
-            .set('Authorization', 'Bearer fake-token');
+            .set('Authorization', 'Bearer fake-token')
+            .send({ winner: 'player', durationMs: 1, turns: 1, difficulty: 'easy' });
 
         expect(res.status).toBe(500);
     })
@@ -262,17 +295,17 @@ describe('GET /games/me', () => {
     })
 
     it('returns a collection of games when request is correct', async () => {
-        User.findOne.mockResolvedValue({username: 'Pablo'});
+        User.findOne.mockResolvedValue({_id: '507f1f77bcf86cd799439011', username: 'Pablo'});
         const mockGames = [
             {
-                username:   'Pablo',
+                userId:     '507f1f77bcf86cd799439011',
                 winner:     "player",
                 durationMs: 10000,
                 turns:      20,
                 difficulty: "extreme",
             },
             {
-                username:   'Pablo',
+                userId:     '507f1f77bcf86cd799439011',
                 winner:     "bot",
                 durationMs: 30000,
                 turns:      15,
@@ -294,7 +327,7 @@ describe('GET /games/me', () => {
 
         expect(res.body[0]).toEqual(
             expect.objectContaining({
-                username:   'Pablo',
+                userId:     '507f1f77bcf86cd799439011',
                 winner:     "player",
                 durationMs: 10000,
                 turns:      20,
@@ -314,7 +347,7 @@ describe('GET /games/me', () => {
     })
 
     it('return 500 when an internal error occurs', async () => {
-        User.findOne.mockResolvedValue({username: 'Pablo'});
+        User.findOne.mockResolvedValue({_id: '507f1f77bcf86cd799439011', username: 'Pablo'});
         Game.find.mockReturnValue(
             null
         );

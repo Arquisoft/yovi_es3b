@@ -36,6 +36,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const idToken = await firebaseUser.getIdToken();
                 setToken(idToken);
 
+                // Seteamos el displayName para usarlo en el lobby
+                if (firebaseUser.displayName) {
+                    setUsername(firebaseUser.displayName);
+                }
+
+                // Luego intentar obtener datos de BD y actualizar si es necesario
                 try {
                     const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
                     const res = await fetch(`${API_URL}/users/me`, {
@@ -45,12 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         const data = await res.json();
                         setUsername(data.username);
                         setPhotoURL(data.photoURL);
-                    } else {
-                        setUsername(firebaseUser.displayName);
                     }
                 } catch (err) {
                     console.error('Error obteniendo perfil:', err);
-                    setUsername(firebaseUser.displayName);
                 }
             } else {
                 setToken(null);

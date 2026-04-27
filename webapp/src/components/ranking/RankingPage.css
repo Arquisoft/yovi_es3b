@@ -1,0 +1,127 @@
+.ranking-page {
+    padding: 2rem;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.ranking-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0 0 1.25rem;
+    text-align: center;
+}
+
+.ranking-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.ranking-filter {
+    padding: 0.5rem 1rem;
+    border: 1px solid #444;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.ranking-filter:hover {
+    border-color: #888;
+}
+
+.ranking-filter--active {
+    background: var(--accent, #4a90e2);
+    border-color: var(--accent, #4a90e2);
+    color: #fff;
+}
+
+.ranking-status {
+    padding: 2rem;
+    color: #888;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.ranking-status--error {
+    color: #E24B4A;
+}
+
+.ranking-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+}
+
+.ranking-table thead th {
+    text-align: left;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #aaa;
+    border-bottom: 1px solid #333;
+}
+
+.ranking-table tbody td {
+    padding: 0.65rem 0.5rem;
+    border-bottom: 1px solid #222;
+    font-size: 0.95rem;
+}
+
+.ranking-row--me {
+    background: rgba(74, 144, 226, 0.1);
+    outline: 1px solid rgba(74, 144, 226, 0.4);
+}
+
+.ranking-pos {
+    width: 2.5rem;
+    color: #888;
+    font-variant-numeric: tabular-nums;
+}
+
+.ranking-user {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.ranking-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ranking-points {
+    font-weight: 600;
+    color: var(--accent, #4a90e2);
+    font-variant-numeric: tabular-nums;
+}
+
+.ranking-legend {
+    margin-top: 1.25rem;
+    color: #888;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .ranking-page {
+        padding: 1rem;
+    }
+    .ranking-filter {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}

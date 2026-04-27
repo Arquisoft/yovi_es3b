@@ -4,5 +4,7 @@
   "userNotFound": "Usuario no encontrado",
   "userAlreadyRegistered": "Usuario ya registrado",
   "serverError": "Error del servidor",
-  "welcomeUser": "¡Bienvenido {{username}}!"
+  "welcomeUser": "¡Bienvenido {{username}}!",
+  "invalidDifficulty": "Dificultad inválida",
+  "invalidGameMode": "Modo de juego inválido"
 }
