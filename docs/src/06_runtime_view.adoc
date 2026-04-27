@@ -4,6 +4,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 == Runtime View
 
 === Single Player Game Initialization
+
+**Diagram**
+
 [plantuml,"Game Initialization Sequence with Difficulty",png]
 ----
 actor User #87CEFA
@@ -35,7 +38,7 @@ Gamey --> Web: 201 Created\n{ game_id, initial_board, status }
 Web --> User: Render initial board
 ----
 
-***Description***
+**Description**
 
 The user opens the Web App and starts a game.  
 The Web App sends the JWT to the Users Service, which verifies it using Firebase Authentication.  
@@ -50,6 +53,9 @@ The Bot prepares its internal state and confirms readiness.
 Finally, Gamey returns the initial game state and the Web App renders the board.
 
 === Player Move and Bot Response
+
+**Diagram**
+
 [plantuml,"Player move sequence (Web App → Gamey → ybot)",png]
 ----
 actor User #87CEFA
@@ -76,7 +82,7 @@ Gamey --> Web: 200 OK\n{ coords, status, updated board }
 Web --> User: Render updated board
 ----
 
-***Description***
+**Description**
 
 The user performs a move in the Web App.  
 The request is sent to Gamey along with the JWT.
@@ -91,6 +97,9 @@ The updated board is returned to the Web App and rendered to the user.
 
 
 === View Match History
+
+**Diagram**
+
 [plantuml,"Match history sequence (Web App → Users Module)",png]
 ----
 actor User #87CEFA
@@ -113,7 +122,7 @@ Users --> Web: 200 OK\n{ match_history }
 Web --> User: Display match history
 ----
 
-***Description***
+**Description**
 
 The user requests their match history from the Web App.  
 The Web App sends the request to the Users Service with the JWT.
