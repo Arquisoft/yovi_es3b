@@ -528,7 +528,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_technical_debt">11.2. Technical Debt</a></li>
 </ul>
 </li>
-<li><a href="#section-glossary">12. Glossary</a></li>
+<li><a href="#section-app-test">12. App Testing</a>
+<ul class="sectlevel2">
+<li><a href="#_unit_testing">12.1. Unit Testing</a></li>
+<li><a href="#_end_to_end_test">12.2. End-to-end test</a></li>
+<li><a href="#_load_test">12.3. Load test</a></li>
+</ul>
+</li>
+<li><a href="#section-glossary">13. Glossary</a></li>
 </ul>
 </div>
 </div>
@@ -3330,7 +3337,97 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 </div>
 </div>
 <div class="sect1">
-<h2 id="section-glossary">12. Glossary</h2>
+<h2 id="section-app-test">12. App Testing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The development of the app included multiple testing strategies to ensure the quality and reliability of the system. The testing process encompassed unit tests, end-to-end tests and load tests.</p>
+</div>
+<div class="sect2">
+<h3 id="_unit_testing">12.1. Unit Testing</h3>
+<div class="paragraph">
+<p>Unit tests were implemented for individual components and functions across the codebase. These tests focused on verifying the correctness of isolated units of code, such as utility functions, game UI components and backend
+services.</p>
+</div>
+<div class="paragraph">
+<p>The main technique used was mocking. A mock is an object that mimics the behavior of real objects in controlled ways. By using mocks, we were able to isolate the code under test and simulate various scenarios without relying on external dependencies. Mocked examples are internationalized text utlities, users API responses or game engine responses.</p>
+</div>
+<div class="paragraph">
+<p>We used different frameworks or utilities for testing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Webapp: Vitest and React Testing Library</p>
+</li>
+<li>
+<p>Users-service: Vitest and Supertest</p>
+</li>
+<li>
+<p>Gamey-service: Rust&#8217;s built-in testing framework (cargo test)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_end_to_end_test">12.2. End-to-end test</h3>
+<div class="paragraph">
+<p>The main goal in this test is to verify the interaction between the
+different services of the app. Frontend needs to comunicate with both
+API users service and gamey service. We used Playwright and Cucumber for this purpose. Playwright allows us to automate browser interactions, while Cucumber provides a BDD (Behavior-Driven Development) framework to write test scenarios in a human-readable format.</p>
+</div>
+<div class="sect3">
+<h4 id="_example_access_history_menu_user_with_4_games">12.2.1. Example: Access history menu: user with 4 games</h4>
+<div class="imageblock">
+<div class="content">
+<img src="./images/test_e2e.drawio.png" alt="Overview of an e2e test case">
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_load_test">12.3. Load test</h3>
+<div class="paragraph">
+<p>Although the app is tested locally, we also have to ensure that it can
+handle a real world scenario. In this case we tested the performance of
+the app while 50 users were accessing the system at the same time. By doing so
+we try to detect bugs or problems under load, detect bottlenecks or demostrate the quality goals specify in the documentations.</p>
+</div>
+<div class="sect3">
+<h4 id="_gatling">12.3.1. Gatling</h4>
+<div class="paragraph">
+<p>Gatling is a powerful open-source load testing tool that allows us to simulate a large number of users accessing the system concurrently. We created scenarios that mimic real user behavior, such as logging in. It works as an interceptor between the frontend and the backend, allowing us to measure response times, throughput and error rates under load. The script of the test is written in Scala and it is executed via JVM.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_results">12.3.2. Results</h4>
+<div class="paragraph">
+<p>We decided to test the response time to a request to get info from a user and to Firebase login. The test was done
+with 50 users in 25 seconds.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/tRespuesta.jpg" alt="Statistics of the load test">
+</div>
+</div>
+<div class="paragraph">
+<p>We can conclude the response times are acceptable, with an average response time of 0.427 seconds for the user info request and 0.123 seconds for the Firebase login. The error rates were negligible, indicating that the system can handle the load without significant issues. Some delay was
+expected, as the system is allocated in India Central region from Azure, and the test was executed from Spain.</p>
+</div>
+<div class="paragraph">
+<p>We can also analyze the variability in the times for the same request. If we look at the users data request, we can see that the response times are quite consistent, with a low standard deviation. This indicates that the system is performing reliably under load, with minimal fluctuations in response times.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/responseTimeDistribution.jpg" alt="Statistics of the load test">
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-glossary">13. Glossary</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The most important domain and technical terms that stakeholders should know the meaning.</p>
@@ -3411,7 +3508,7 @@ more precisely down to a level of scenarios that can be discussed and evaluated.
 <div id="footer">
 <div id="footer-text">
 Version 8.2 EN<br>
-Last updated 2026-02-15 15:50:11 +0100
+Last updated 2026-04-26 19:29:03 +0200
 </div>
 </div>
 </body>
