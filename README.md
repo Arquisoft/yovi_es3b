@@ -68,81 +68,11 @@ The `gamey` component is a Rust-based game engine with bot support, built with [
 
 ## Running the Project
 
-You can run this project using Docker (recommended) or locally without Docker.
-
-### With Docker
-
-This is the easiest way to get the project running. You need to have [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) installed.
-
-1. **Build and run the containers:**
-    From the root directory of the project, run:
-
-```bash
-docker-compose up --build
-```
-
-This command will build the Docker images for both the `webapp` and `users` services and start them.
-
-2.**Access the application:**
-- Web application: [http://localhost](http://localhost)
-- User service API: [http://localhost:3000](http://localhost:3000)
-- Gamey API: [http://localhost:4000](http://localhost:4000)
-
-### Without Docker
-
-To run the project locally without Docker, you will need to run each component in a separate terminal.
-
-#### Prerequisites
-
-* [Node.js](https://nodejs.org/) and npm installed.
-
-#### 1. Running the User Service
-
-Navigate to the `users` directory:
-
-```bash
-cd users
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run the service:
-
-```bash
-npm start
-```
-
-The user service will be available at `http://localhost:3000`.
-
-#### 2. Running the Web Application
-
-Navigate to the `webapp` directory:
-
-```bash
-cd webapp
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run the application:
-
-```bash
-npm run dev
-```
-
-The web application will be available at `http://localhost:5173`.
-
-#### 3. Running the GameY application
-
-At this moment the GameY application is not needed but once it is needed you should also start it from the command line.
+The project is accesible via : [Web](http://20.244.6.215/)
+The documentation is in : [Documentation](https://arquisoft.github.io/yovi_es3b/)
+The APIs are documentated in :
+- [Users](http://20.244.6.215:3000/api-docs/)
+- [Gamey](To fill)
 
 ## Available Scripts
 
