@@ -57,9 +57,9 @@ Players can now choose their preferred difficulty before starting a game.
 Each level adjusts the reason of each bot move:
 
 - **Easy** – Random moves.
-- **Hard** – Standard board and timing. TO BE CHANGED
-- **Extreme** – Larger board with increased challenge. TO BE CHANGED
-- **Impossible** - Before each move, the bot simulate a certain amount of matches and picks de move that lead to more percentage of winning
+- **Hard** – Heuristic that calculate the turn for each criteria
+- **Extreme** – [Minimax with Alpha-Beta pruning](https://es.wikipedia.org/wiki/Minimax)
+- **Impossible** - Uses the [Montecarlo algorithm](https://es.wikipedia.org/wiki/M%C3%A9todo_de_Montecarlo).
 
 ---
 
