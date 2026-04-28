@@ -1,8 +1,20 @@
 openapi: 3.0.0
 info:
-  title: User Service API
+  title: User Service API and Gamey API
   version: 1.0.0
-  description: API for managing users
+  description: | 
+    Users API -> API for managing users
+    
+    Gamey API -> play the game or request moves from backend
+servers:
+  - url: http://localhost:3000
+    description: Users API (Local)
+  - url: http://localhost:4000
+    description: Gamey API (Local)
+  - url: http://20.244.6.215:3000
+    description: Users API (Production)
+  - url: http://20.244.6.215:4000
+    description: Gamey API (Production)
 paths:
   /users/me:
     get:
@@ -11,7 +23,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: User found successfully
           content:
             application/json:
@@ -37,9 +49,9 @@ paths:
                     type: string
                     format: date-time
                     example: "2024-01-15T10:30:00Z"
-        '401':
+        "401":
           description: Unauthorized – missing or invalid token
-        '404':
+        "404":
           description: User not found
           content:
             application/json:
@@ -49,7 +61,7 @@ paths:
                   error:
                     type: string
                     example: "userNotFound"
-        '500':
+        "500":
           description: Internal server error
           content:
             application/json:
@@ -67,7 +79,7 @@ paths:
         Points formula: Classic win +1000, Master Y win +600, Fortune Y win +400, any loss -200.
         If `difficulty` is provided, only games of that difficulty count toward the ranking.
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       parameters:
         - in: query
           name: difficulty
@@ -77,7 +89,7 @@ paths:
             enum: [easy, hard, extreme, impossible]
           description: If provided, only games of this difficulty count toward the ranking. Omit for global ranking.
       responses:
-        '200':
+        "200":
           description: List of users retrieved successfully
           content:
             application/json:
@@ -107,7 +119,7 @@ paths:
                     gamesLost:
                       type: integer
                       example: 4
-        '400':
+        "400":
           description: Invalid difficulty value
           content:
             application/json:
@@ -117,9 +129,9 @@ paths:
                   error:
                     type: string
                     example: "Invalid difficulty"
-        '401':
+        "401":
           description: Unauthorized – missing or invalid token
-        '500':
+        "500":
           description: Internal server error
           content:
             application/json:
@@ -137,21 +149,21 @@ paths:
         Requires a valid Firebase ID token in the Authorization header.
         The token provides the Firebase UID which is linked to the new user.
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [ username ]
+              required: [username]
               properties:
                 username:
                   type: string
                   description: The username for the new user
                   example: "Pablo"
       responses:
-        '201':
+        "201":
           description: Returns the message "Welcome <userName>" and user data
           content:
             application/json:
@@ -170,9 +182,9 @@ paths:
                       _id:
                         type: string
                         example: "64a7f3bc2e4e2a001f3d1234"
-        '401':
+        "401":
           description: Unauthorized – missing or invalid token
-        '409':
+        "409":
           description: There is already an existing user with the same id
           content:
             application/json:
@@ -182,7 +194,7 @@ paths:
                   error:
                     type: string
                     example: "User already registered"
-        '500':
+        "500":
           description: There is an unexpected error
           content:
             application/json:
@@ -195,10 +207,11 @@ paths:
   /games:
     post:
       summary: Saves game result
-      description: Saves the winner, duration, number of turns, difficulty and game mode of a game
+      description:
+        Saves the winner, duration, number of turns, difficulty and game mode of a game
         linked to a user by id. Also increments the user's gamesPlayed and gamesWon/gamesLost counters.
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -224,7 +237,7 @@ paths:
                   enum: [classic, master, fortune]
                   default: classic
       responses:
-        '201':
+        "201":
           description: Returns game data
           content:
             application/json:
@@ -260,9 +273,9 @@ paths:
                     type: string
                     format: date-time
                     example: "2024-01-15T10:30:00Z"
-        '401':
+        "401":
           description: Unauthorized – missing or invalid token
-        '409':
+        "409":
           description: There is already an existing user with the same id
           content:
             application/json:
@@ -272,7 +285,7 @@ paths:
                   error:
                     type: string
                     example: "User already registered"
-        '500':
+        "500":
           description: There is an unexpected error
           content:
             application/json:
@@ -287,9 +300,9 @@ paths:
       summary: Retrieves user games
       description: Returns the lastest 50 games from a user given the user id
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Returns the last games
           content:
             application/json:
@@ -313,9 +326,9 @@ paths:
                     difficulty:
                       type: string
                       example: "extreme"
-        '401':
+        "401":
           description: Unauthorized – missing or invalid token
-        '404':
+        "404":
           description: There is no user with that id
           content:
             application/json:
@@ -325,7 +338,7 @@ paths:
                   error:
                     type: string
                     example: "User not found"
-        '500':
+        "500":
           description: There is an unexpected error
           content:
             application/json:
@@ -341,7 +354,7 @@ paths:
       description: Updates the authenticated user's profile information.
         Allows partial updates of username and/or photoURL.
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -371,7 +384,7 @@ paths:
                   username: "NuevoNombre"
                   photoURL: "avatar_2.png"
       responses:
-        '200':
+        "200":
           description: User profile updated successfully
           content:
             application/json:
@@ -384,9 +397,9 @@ paths:
                   photoURL:
                     type: string
                     example: "avatar_2.png"
-        '401':
+        "401":
           description: Unauthorized – missing or invalid token
-        '404':
+        "404":
           description: User not found
           content:
             application/json:
@@ -396,7 +409,7 @@ paths:
                   error:
                     type: string
                     example: "Usuario no encontrado"
-        '500':
+        "500":
           description: Error while updating user profile
           content:
             application/json:
@@ -406,9 +419,247 @@ paths:
                   error:
                     type: string
                     example: "Internal server error"
+
+  /play:
+    get:
+      servers:
+        - url: http://localhost:4000
+          description: Gamey API (Local)
+        - url: http://20.244.6.215:4000
+          description: Gamey API (Production)
+      summary: Request the next bot move
+      description: >
+        Main endpoint for external bots to interact with the game engine.
+        Accepts "position" (required) as a JSON-encoded YEN string in the query,
+        and "bot_id" (optional) to select the difficulty. Returns the coordinates
+        of the bot's chosen move. Authentication is not required.
+      parameters:
+        - in: query
+          name: position
+          required: true
+          schema:
+            type: string
+          description: Current board state serialized as a JSON string in YEN format.
+          example: '{"size":4,"turn":1,"players":["B","R"],"layout":"B/.B/RB./B..R"}'
+        - in: query
+          name: bot_id
+          required: false
+          schema:
+            type: string
+            enum: [easy, hard, extreme, impossible, corner]
+            default: impossible
+          description: Difficulty level of the bot to play against.
+          example: extreme
+      responses:
+        "200":
+          description: Bot move successfully computed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayResponse"
+              example:
+                coords:
+                  x: 0
+                  y: 1
+                  z: 2
+        "400":
+          description: Invalid YEN format or bot not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameErrorResponse"
+
+  /{api_version}/ybot/choose/{bot_id}:
+    post:
+      servers:
+        - url: http://localhost:4000
+          description: Gamey API (Local)
+        - url: http://20.244.6.215:4000
+          description: Gamey API (Production)
+      summary: Request a move from a specific internal bot
+      description: >
+        Low-level endpoint that accepts a game state in YEN format and returns
+        the coordinates chosen by the specified bot.
+      parameters:
+        - in: path
+          name: api_version
+          required: true
+          schema:
+            type: string
+            example: v1
+          description: API version (currently only "v1" is supported).
+        - in: path
+          name: bot_id
+          required: true
+          schema:
+            type: string
+            enum:
+              [
+                random_bot,
+                corner_bot,
+                heuristic_bot,
+                minimax_bot,
+                montecarlo_bot,
+              ]
+          description: Internal bot identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/YEN"
+            example:
+              size: 4
+              turn: 1
+              players: ["B", "R"]
+              layout: "B/.B/RB./B..R"
+      responses:
+        "200":
+          description: Bot move computed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoveResponse"
+              example:
+                api_version: v1
+                bot_id: random_bot
+                coords:
+                  x: 0
+                  y: 2
+                  z: 1
+        "400":
+          description: Invalid YEN format or bot not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameErrorResponse"
+
+  /status:
+    get:
+      servers:
+        - url: http://localhost:4000
+          description: Gamey API (Local)
+        - url: http://20.244.6.215:4000
+          description: Gamey API (Production)
+      summary: Health check for game engine
+      description: Returns "OK" if the service is running.
+      responses:
+        "200":
+          description: Service is running.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
+  schemas:
+    YEN:
+      type: object
+      description: >
+        Y Exchange Notation — compact JSON representation of a Y game state.
+        Rows in the layout are separated by "/" ordered top to bottom.
+        Each cell is a player symbol or "." for empty.
+      required: [size, turn, players, layout]
+      properties:
+        size:
+          type: integer
+          example: 4
+          description: Length of one side of the triangular board.
+        turn:
+          type: integer
+          example: 1
+          description: 0-indexed index of the player whose turn it is.
+        players:
+          type: array
+          items:
+            type: string
+          example: ["B", "R"]
+          description: Character symbols representing each player.
+        layout:
+          type: string
+          example: "B/.B/RB./B..R"
+          description: Compact board string with rows separated by "/".
+
+    Coordinates:
+      type: object
+      description: Barycentric coordinates (x, y, z) on the triangular board. Valid coordinates satisfy x + y + z = size - 1.
+      properties:
+        x:
+          type: integer
+          example: 0
+        y:
+          type: integer
+          example: 1
+        z:
+          type: integer
+          example: 2
+
+    PlayResponse:
+      type: object
+      required:
+        - coords
+      properties:
+        coords:
+          $ref: "#/components/schemas/Coordinates"
+          description: Coordinates of the bot's chosen move.
+
+    MoveResponse:
+      type: object
+      properties:
+        api_version:
+          type: string
+          example: v1
+        bot_id:
+          type: string
+          example: random_bot
+        coords:
+          $ref: "#/components/schemas/Coordinates"
+        status:
+          $ref: "#/components/schemas/GameStatus"
+
+    GameStatus:
+      type: object
+      description: >
+        Game status. Either Ongoing (with next player) or Finished (with winner).
+      example:
+        Ongoing:
+          next_player: 0
+      oneOf:
+        - type: object
+          properties:
+            Ongoing:
+              type: object
+              properties:
+                next_player:
+                  type: integer
+                  example: 0
+        - type: object
+          properties:
+            Finished:
+              type: object
+              properties:
+                winner:
+                  type: integer
+                  example: 0
+
+    GameErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Invalid YEN format: ..."
+        api_version:
+          type: string
+          nullable: true
+          example: v1
+        bot_id:
+          type: string
+          nullable: true
+          example: easy

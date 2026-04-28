@@ -15,10 +15,8 @@ pub mod play;
 pub mod state;
 pub mod version;
 
-use axum::http::HeaderMap;
 use axum::{
-    http::header,
-    response::{IntoResponse, Response},
+    response::IntoResponse,
     routing::{get, post},
     Router,
 };
@@ -42,35 +40,9 @@ use crate::{
     YBotRegistry,
 };
 
-/// Serve
-/// s the raw openapi.yaml file embedded at compile time.
-async fn openapi_yaml() -> Response {
-    let yaml = include_str!("openapi.yaml");
-    (
-        [(header::CONTENT_TYPE, "application/yaml")],
-        yaml,
-    )
-        .into_response()
-}
-
-async fn swagger_ui(headers: HeaderMap) -> Response {
-    let host = headers
-        .get("host")
-        .and_then(|h| h.to_str().ok())
-        .unwrap_or("localhost:4000");
-    
-    Response::builder()
-        .status(302)
-        .header("Location", format!("https://petstore.swagger.io/?url=http://{}/api-docs/openapi.yaml", host))
-        .body("".into())
-        .unwrap()
-}
-
 /// Creates the Axum router with the given state.
 pub fn create_router(state: AppState) -> Router {
     Router::new()
-        .route("/api-docs", get(swagger_ui))
-        .route("/api-docs/openapi.yaml", get(openapi_yaml))
         .route("/status", get(status))
         .route("/play", get(play::play))
         .route(
