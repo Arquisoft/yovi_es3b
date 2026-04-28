@@ -9,6 +9,12 @@
     border-left: 3px solid transparent;
 }
 
+@media (max-width: 500px) {
+    .game-card {
+        width: 90vw;
+    }
+}
+
 /*Color de borde verde para partidas ganadas*/
 .game-card--win {
     border-left-color: #1D9E75;
@@ -33,7 +39,7 @@
 }
 
 .game-card__points {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }

@@ -132,9 +132,24 @@ paths:
   /register:
     post:
       summary: Creates a new user given the name and id
-      description: Creates a new user given the name and Firebase id and returns a welcome message
+      description: |
+        Creates a new user document in MongoDB after Firebase authentication.
+        Requires a valid Firebase ID token in the Authorization header.
+        The token provides the Firebase UID which is linked to the new user.
       security:
         - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ username ]
+              properties:
+                username:
+                  type: string
+                  description: The username for the new user
+                  example: "Pablo"
       responses:
         '201':
           description: Returns the message "Welcome <userName>" and user data
