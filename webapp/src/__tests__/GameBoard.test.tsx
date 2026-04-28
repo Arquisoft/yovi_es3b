@@ -124,10 +124,10 @@ describe('GameBoard', () => {
             global.fetch = mockBotResponse()
             const { container } = render(<GameBoard size={3} difficulty="easy" />)
 
-            // Initially the timer is at 8s — not urgent
+            // Al inicio el temporizador está en 8s, todavía no marca urgente
             expect(container.querySelector('.turn-timer--urgent')).not.toBeInTheDocument()
 
-            // Advance ~5.5s so the displayed countdown reaches ~2.5s remaining
+            // Avanzamos ~5.5s para que queden ~2.5s en la cuenta atrás
             await act(async () => { await vi.advanceTimersByTimeAsync(5500) })
 
             expect(container.querySelector('.turn-timer--urgent')).toBeInTheDocument()
@@ -137,7 +137,7 @@ describe('GameBoard', () => {
     })
 
     test('turn timer is hidden during the bot turn', async () => {
-        // Bot fetch never resolves — we stay in the loadingBot state forever
+        // La petición al bot nunca termina, así nos quedamos siempre en loadingBot
         global.fetch = vi.fn(() => new Promise(() => {})) as unknown as typeof fetch
         const user = userEvent.setup()
         const { container } = render(<GameBoard size={3} difficulty="easy" />)

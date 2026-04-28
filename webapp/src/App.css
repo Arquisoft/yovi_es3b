@@ -16,7 +16,7 @@
   z-index: 101;
 }
 
-/* ── Navbar ─────────────────────────────────────────────── */
+/* Barra de navegación */
 .navbar {
   position: fixed;
   top: 2px; /* deja espacio para la línea decorativa */
@@ -98,7 +98,7 @@
   border-color: var(--side-2);
 }
 
-/* ── Hamburger Menu ─────────────────────────────────────── */
+/* Botón de menú hamburguesa */
 .navbar-hamburger {
   display: none;
   background: none;
@@ -118,7 +118,7 @@
   transform: rotate(90deg);
 }
 
-/* ── Mobile Menu ────────────────────────────────────────── */
+/* Menú desplegable para móvil */
 .navbar-mobile-menu {
   display: none;
   position: absolute;
@@ -183,7 +183,7 @@
   color: var(--side-2);
 }
 
-/* ── Movil y tablet ──────────────────────────────────── */
+/* Adaptación para móvil y tablet */
 @media (max-width: 768px) {
   .navbar {
     padding: 0 1rem;
@@ -230,14 +230,13 @@
   }
 }
 
-/* ── Contenido principal ─────────────────────────────────── */
+/* Contenido principal */
 .main-content {
   padding-top: 3.5rem; /* altura del navbar */
   flex: 1;
 }
 
-/* ── Auth page ──────────────────────────────────────────── */
-/* ── Auth page ──────────────────────────────────────────── */
+/* Página de autenticación */
 .auth-page {
   display: flex;
   flex-direction: column;
@@ -268,7 +267,7 @@
   align-items: center;
 }
 
-/* ── Lobby ──────────────────────────────────────────────── */
+/* Lobby */
 .lobby-page {
   display: flex;
   flex-direction: column;
@@ -282,7 +281,7 @@
   letter-spacing: 0.05em;
 }
 
-/* ── Profile ────────────────────────────────────────────── */
+/* Perfil de usuario */
 .profile-page {
   display: flex;
   flex-direction: column;
@@ -363,7 +362,7 @@
   color: #fff;
 }
 
-/* ── History ────────────────────────────────────────────── */
+/* Historial de partidas */
 .history-page {
   display: flex;
   flex-direction: column;
@@ -378,7 +377,7 @@
   font-size: 0.85rem;
 }
 
-/* ── Loading ────────────────────────────────────────────── */
+/* Pantalla de carga */
 .loading {
   display: flex;
   align-items: center;
@@ -391,7 +390,7 @@
   text-transform: uppercase;
 }
 
-/* ── Formulario de registro/login ───────────────────────── */
+/* Formulario de registro y login */
 .register-form {
   display: flex;
   flex-direction: column;
