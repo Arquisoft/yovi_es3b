@@ -33,6 +33,59 @@ Each component has its own `package.json` file with the necessary scripts to run
 - **User Service**: The user service receives the registration request, simulates some processing, and returns a welcome message.
 - **GameY**: A basic Game engine which only chooses a random piece.
 
+##  New Features
+
+The following features have been added on top of the original Memory Game:
+
+---
+
+###  Internationalization (i18n)
+
+The game is now fully available in two languages:
+
+- 🇬🇧 **English**
+- 🇪🇸 **Spanish**
+
+Language can be selected from the main menu. All UI text, labels and
+messages adapt automatically to the chosen language.
+
+---
+
+###  Difficulty Levels
+
+Players can now choose their preferred difficulty before starting a game.
+Each level adjusts the reason of each bot move:
+
+- **Easy** – Random moves.
+- **Hard** – Standard board and timing. TO BE CHANGED
+- **Extreme** – Larger board with increased challenge. TO BE CHANGED
+- **Impossible** - Before each move, the bot simulate a certain amount of matches and picks de move that lead to more percentage of winning
+
+---
+
+###  Score Ranking
+
+A persistent leaderboard has been added to track the best performances. The ranking displays
+the top results sorted by score, including player name, points, number of games won and lossed.
+
+---
+
+###  Game Modes
+
+Two new game modes have been introduced, offering different gameplay
+experiences:
+
+#### Double Turn Mode
+Each player gets **two moves per turn** instead of one. This mode
+rewards memory and strategy.
+
+#### Coin Flip Mode
+Before each turn, a **coin is flipped randomly**. The outcome
+determines whether the current player gets to take their turn or
+passes it to the opponent. This mode adds an element of chance and
+keeps every round unpredictable.
+
+
 ## Components
 
 ### Webapp
@@ -69,10 +122,12 @@ The `gamey` component is a Rust-based game engine with bot support, built with [
 ## Running the Project
 
 The project is accesible via : [Web](http://20.244.6.215/)
+
 The documentation is in : [Documentation](https://arquisoft.github.io/yovi_es3b/)
+
 The APIs are documentated in :
 - [Users](http://20.244.6.215:3000/api-docs/)
-- [Gamey](To fill)
+- [Gamey](http_//20.2424.6.215:4000/api-docs/)
 
 ## Available Scripts
 
