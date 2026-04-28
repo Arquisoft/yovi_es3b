@@ -12,8 +12,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 actor User #87CEFA
 participant "Web App" as Web #87CEFA
 participant "Users Service" as Users #87CEFA
-participant "Game Engine (Gamey)" as Gamey #87CEFA
-participant "Bot (ybot)" as Bot #87CEFA
 
 User -> Web: Open app / Join game
 
@@ -21,19 +19,8 @@ Web -> Users: Validate session token (JWT)
 Users -> Users: Validate JWT\nExtract user identity
 Users --> Web: 200 OK — user confirmed
 
-Web --> User: Prompt to select difficulty
-User -> Web: Select difficulty (easy/medium/hard)
-
-Web -> Gamey: POST /gamey/new\nAuthorization: Bearer <JWT>\n{ player_id, difficulty }
-
-Gamey -> Gamey: Validate JWT\nValidate difficulty\nCreate game\nAssign bot_id
-
-Gamey -> Bot: POST /v1/ybot/init/{bot_id}\n{ player_id, difficulty }
-
-Bot -> Bot: Load config\nInitialize state
-Bot --> Gamey: 200 OK — ready
-
-Gamey --> Web: 201 Created\n{ game_id, initial_board, status }
+Web --> User: Prompt to configure game\n(difficulty, board size, game mode)
+User -> Web: configure game
 
 Web --> User: Render initial board
 ----
@@ -109,7 +96,7 @@ participant "Database" as DB #87CEFA
 
 User -> Web: Click "History"
 
-Web -> Users: GET /users/history\nAuthorization: Bearer <JWT>
+Web -> Users: GET /users/me\nAuthorization: Bearer <JWT>
 
 Users -> Users: Validate JWT\nExtract user_id
 
