@@ -8,8 +8,8 @@ export type GameMode = "classic" | "master" | "fortune";
 
 const TURN_TIMEOUT_MS = 8000;
 
-// YEN serialisation — converts the board state to the format the bot API
-// expects: rows of B (player 1), R (bot), or . (empty), joined by "/"
+// Pasa el estado del tablero al formato que pide el bot:
+// filas con B (jugador 1), R (bot) o . (vacía) separadas por "/"
 export function buildYEN(size: number, board: Board) {
     const occupied: Record<string, string> = {};
     for (const [key, player] of Object.entries(board)) {
@@ -33,8 +33,8 @@ export function buildYEN(size: number, board: Board) {
     };
 }
 
-// YEN serialization reversed — swaps player and bot perspective
-// Player (1 -> "B") becomes bot, and bot (2 -> "R") becomes player
+// Igual que buildYEN pero cambia los roles:
+// el jugador (1 -> "B") pasa a ser bot, y el bot (2 -> "R") pasa a ser jugador
 export function buildYENReversed(size: number, board: Board) {
     const occupied: Record<string, string> = {};
 
@@ -62,7 +62,7 @@ export function buildYENReversed(size: number, board: Board) {
 
 // ---------------------------------------------------------------------------
 // Client-side win detection (mirrors the Rust Union-Find logic)
-// Sides: x===0 → side A, y===0 → side B, x+y===size-1 → side C
+// Sides: x===0 = side A, y===0 = side B, x+y===size-1 = side C
 // ---------------------------------------------------------------------------
 function checkWin(size: number, board: Board, player: Player): boolean {
     const owned = new Set<string>(
@@ -87,7 +87,7 @@ function checkWin(size: number, board: Board, player: Player): boolean {
             if (q + r === size - 1) sideC = true;
             if (sideA && sideB && sideC) return true;
 
-            // 6 neighbours in barycentric coords — only follow player-owned cells
+            // Las 6 casillas vecinas - solo se siguen las del propio jugador
             const nbrs: string[] = [];
             if (q > 0)            { nbrs.push(`${q-1},${r+1}`, `${q-1},${r}`); }
             if (r > 0)            { nbrs.push(`${q+1},${r-1}`, `${q},${r-1}`); }
@@ -133,7 +133,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
     const gameFinishedRef = useRef(false);
     const startTimeRef = useRef(Date.now());
 
-    // ---- helpers -----------------------------------------------------------
+    // ---- helpers ----------------
 
     const persistResult = async (winnerId: string) => {
         if (!user) return;
@@ -154,7 +154,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         await persistResult(winnerId);
     };
 
-    // ---- coin flip animation -----------------------------------------------
+    // ---- coin flip animation ----------------------
     // Returns the flip result after the visual animation completes.
 
     const flipCoin = (): Promise<"player" | "bot"> => {
@@ -172,7 +172,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         });
     };
 
-    // ---- bot move ----------------------------------------------------------
+    // ---- bot move --------------------
     // Returns the board after applying the bot's move so callers can chain moves.
 
     const fetchBotMove = async (currentBoard: Board): Promise<Board> => {
@@ -228,7 +228,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         return newBoard;
     };
 
-    // ---- classic bot turn --------------------------------------------------
+    // ---- classic bot turn -----------------------
 
     const runClassicBotTurn = async (boardAfterPlayer: Board) => {
         setCurrentPlayer(2);
@@ -246,7 +246,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         }
     };
 
-    // ---- master bot turn (2 pieces) ----------------------------------------
+    // ---- master bot turn (2 pieces) --------------------
 
     const runMasterBotTurn = async (boardAfterPlayer: Board) => {
         setCurrentPlayer(2);
@@ -268,7 +268,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         }
     };
 
-    // ---- fortune bot turn (loop until coin says player) --------------------
+    // ---- fortune bot turn (loop until coin says player) --------
 
     const runFortuneBotTurn = async (initialBoard: Board) => {
         setCurrentPlayer(2);
@@ -294,9 +294,8 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         }
     };
 
-    // ---- initial coin flip for Fortune Y ----------------------------------
+    // ---- initial coin flip for Fortune Y --------------
     // resetKey increments on each resetGame() call so the effect re-runs.
-    // startedRef prevents the double-invocation that React Strict Mode causes.
 
     const [resetKey, setResetKey] = useState(0);
     const initialFlipStartedRef = useRef(false);
@@ -311,10 +310,9 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
             setFortuneFlip(flip);
             if (flip === "bot") await runFortuneBotTurn({});
         })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [resetKey]);
 
-    // ---- player clicks a cell ----------------------------------------------
+    // ---- player clicks a cell ------------------
 
     const handleCellClick = async (q: number, r: number): Promise<void> => {
         if (gameFinishedRef.current || gameOver || loadingBot || coinAnimating || currentPlayer !== 1) return;
@@ -334,7 +332,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
                 setMasterPiecesLeft(1);
                 return;
             }
-            // Player placed their 2nd piece → bot places 2
+            // Player placed their 2nd piece = bot places 2
             setMasterPiecesLeft(2);
             await runMasterBotTurn(nextBoard);
 
@@ -349,7 +347,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
             if (flip === "bot") {
                 await runFortuneBotTurn(nextBoard);
             }
-            // flip === "player": player goes again, nothing else to do
+            // flip === "player", player goes again, nothing else to do
 
         } else {
             // Classic
@@ -357,7 +355,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
         }
     };
 
-    // ---- reset board -------------------------------------------------------
+    // ---- reset board ---------
 
     const resetGame = () => {
         gameFinishedRef.current = false;
@@ -381,7 +379,7 @@ export function useGameY(size: number, botId: string, difficulty: Difficulty, ga
     };
 
 
-    // ---- extra actions -------------------------------------------------------
+    // ---- extra actions ------
     const skipAction = async (currentBoard: Board) => {
         if (gameFinishedRef.current || gameOver || loadingBot || coinAnimating || currentPlayer !== 1) return;
 

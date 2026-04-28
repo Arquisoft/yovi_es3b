@@ -1,11 +1,11 @@
-/* ── Layout principal: sidebar + tablero ───────────────── */
+/* Diseño principal: barra lateral y tablero */
 .game-page {
   min-height: calc(100vh - 3.5rem);
   display: flex;
   align-items: stretch;
 }
 
-/* ── Sidebar ───────────────────────────────────────────── */
+/* Barra lateral */
 .game-sidebar {
   width: 260px;
   flex-shrink: 0;
@@ -184,7 +184,7 @@
   color: var(--text);
 }
 
-/* ── Zona central ──────────────────────────────────────── */
+/* Zona central */
 .game-main {
   flex: 1;
   display: flex;
@@ -197,7 +197,7 @@
   overflow: hidden;
 }
 
-/* ── Barra de turno ────────────────────────────────────── */
+/* Barra que indica de quién es el turno */
 .turn-bar {
   display: flex;
   align-items: center;
@@ -242,7 +242,7 @@
   color: var(--text-muted);
 }
 
-/* ── Banner de victoria/derrota ────────────────────────── */
+/* Banner de victoria o derrota */
 .game-over-banner {
   display: flex;
   align-items: center;
@@ -285,7 +285,7 @@
 .game-over-banner--win .game-over-banner__text { color: #5DCAA5; }
 .game-over-banner--loss .game-over-banner__text { color: #F09595; }
 
-/* ── Contenedor del tablero ────────────────────────────── */
+/* Contenedor del tablero */
 .board-container {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -311,7 +311,7 @@
   transform-origin: center;
 }
 
-/* ── Celdas SVG ────────────────────────────────────────── */
+/* Celdas del tablero */
 .hex-cell {
   cursor: pointer;
 }
@@ -324,7 +324,7 @@
   transition: fill 0.12s;
 }
 
-/* ── Leyenda de lados ──────────────────────────────────── */
+/* Leyenda con los colores de cada lado del tablero */
 .side-legend {
   display: flex;
   flex-direction: column;
@@ -355,7 +355,7 @@
   color: var(--text-muted);
 }
 
-/* ── Coin flip overlay ─────────────────────────────────── */
+/* Capa que aparece encima al lanzar la moneda */
 .game-main {
   position: relative;
 }
@@ -466,7 +466,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Responsive ────────────────────────────────────────── */
+/* Adaptación para móvil y tablet */
 @media (max-width: 768px) {
   .game-page {
     flex-direction: column;
@@ -508,7 +508,7 @@
   }
 }
 
-/* ── Acciones bajo el tablero ──────────────────────────── */
+/* Botones de acción debajo del tablero */
 .game-actions {
   display: flex;
   gap: 0.6rem;
@@ -560,7 +560,7 @@
   box-shadow: 0 0 0 1px rgba(124, 106, 247, 0.3), 0 4px 14px rgba(124, 106, 247, 0.18);
 }
 
-/* ── Casilla resaltada por la pista ────────────────────── */
+/* Casilla resaltada cuando se usa una pista */
 .hex-polygon--clue {
   animation: clue-pulse 1.4s ease-in-out infinite;
   filter: drop-shadow(0 0 4px rgba(124, 106, 247, 0.55));
@@ -577,7 +577,7 @@
   }
 }
 
-/* ────────────── temporizador ────────────── */
+/* Temporizador del turno */
 .turn-timer {
   display: flex;
   align-items: center;

@@ -217,7 +217,7 @@ describe('EditProfile', () => {
     test('save button shows loading state while submitting', async () => {
         const user = userEvent.setup()
 
-        // Promesa que nunca resuelve → el componente se queda en loading
+        // Promesa que nunca resuelve -> el componente se queda en loading
         let resolveFetch!: (p: never) => void
         ;(global.fetch as ReturnType<typeof vi.fn>).mockReturnValue(
             new Promise((resolve) => { resolveFetch = resolve })

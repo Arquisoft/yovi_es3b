@@ -1,5 +1,4 @@
-/* ── Pantalla de configuración de partida ──────────────── */
-
+/* Pantalla de configuración de partida */
 .setup {
   min-height: calc(100vh - 3.5rem);
   display: flex;
@@ -92,7 +91,7 @@
   color: var(--text-muted);
 }
 
-/* ── Selector de tamaño ────────────────────────────────── */
+/* Selector de tamaño */
 .setup__sizes {
   display: flex;
   justify-content: center;
@@ -137,7 +136,7 @@
   color: var(--text);
 }
 
-/* ── Selector de dificultad ────────────────────────────── */
+/* Selector de dificultad */
 .setup__diff-options {
   display: flex;
   flex-direction: column;
@@ -225,7 +224,7 @@
   color: var(--text-muted);
 }
 
-/* ── Botón de jugar ────────────────────────────────────── */
+/* Botón de jugar */
 .setup__play-btn {
   width: 100%;
   padding: 0.9rem;
@@ -248,7 +247,7 @@
   box-shadow: 0 0 28px var(--accent-glow);
 }
 
-/* ── Responsive ────────────────────────────────────────── */
+/* Estilos para pantallas pequeñas */
 @media (max-width: 480px) {
   .setup {
     padding: 1rem;
