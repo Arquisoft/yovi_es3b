@@ -127,7 +127,7 @@ The documentation is in : [Documentation](https://arquisoft.github.io/yovi_es3b/
 
 The APIs are documentated in :
 - [Users](http://20.244.6.215:3000/api-docs/)
-- [Gamey](http://20.2424.6.215:4000/api-docs/)
+- [Gamey](http://20.244.6.215:4000/api-docs/)
 
 ## Available Scripts
 
